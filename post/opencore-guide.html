@@ -8,6 +8,7 @@
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
+	<link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
 	<meta name="description" content="简介OpenCore(OC)是一种新的引导方式，越来越多的kexts开始放弃Clover, 我相信提早使用OC会对你未来使用黑苹果会有很大的帮助。这是一个自然的现象，就像变色龙被Clover淘汰，而现在OC代替Clover也是大势所趋。你应该需要看一些相关的文章，来帮助你理解我的正文内容，同时也需要下载我推荐的软件：  阅读Opencore Vanilla Desktop Guide Gettin">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用 OpenCore 引导黑苹果">
@@ -16,7 +17,7 @@
 <meta property="og:description" content="简介OpenCore(OC)是一种新的引导方式，越来越多的kexts开始放弃Clover, 我相信提早使用OC会对你未来使用黑苹果会有很大的帮助。这是一个自然的现象，就像变色龙被Clover淘汰，而现在OC代替Clover也是大势所趋。你应该需要看一些相关的文章，来帮助你理解我的正文内容，同时也需要下载我推荐的软件：  阅读Opencore Vanilla Desktop Guide Gettin">
 <meta property="og:locale">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2020-10-29T14:46:16.946Z">
+<meta property="article:modified_time" content="2020-10-29T16:12:46.169Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -583,7 +584,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-10-29 22:46:16">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-10-30 0:12:46">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -600,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							5.5k 字
+							7.1k 字
 						</div>
 					
 						
@@ -608,7 +609,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							24 分钟
+							30 分钟
 						</div>
 					
 		</div>
@@ -1687,6 +1688,213 @@ item 12     String      efi-boot-device-data</code></pre>
 </ul>
 <hr>
 <h3 id="2-8-7-Config—–UEFI—–ReservedMemory-Properties"><a href="#2-8-7-Config—–UEFI—–ReservedMemory-Properties" class="headerlink" title="2.8.7 Config—–UEFI—–ReservedMemory Properties"></a>2.8.7 Config—–UEFI—–ReservedMemory Properties</h3><p>此项为保留内存所用。一些硬件会把硬件EFI写进内存过程中占据必要的UEFI运行空间，所以我们可以通过此项来预留内存来保证UEFI的运行。填写方式可以参考<a target="_blank" rel="noopener" href="https://blog.daliansky.net/Slide-value-acquisition-and-calculation.html">小兵的文章</a>。来寻找指定内存的起始位置，以4K为一个节点。一般情况下，此项我们并不需要理会。</p>
+<hr>
+</br>
+
+<h2 id="3-0-OpenCore-完善"><a href="#3-0-OpenCore-完善" class="headerlink" title="3.0 OpenCore 完善"></a>3.0 OpenCore 完善</h2><h3 id="3-1-模拟NVRAM"><a href="#3-1-模拟NVRAM" class="headerlink" title="3.1 模拟NVRAM"></a>3.1 模拟NVRAM</h3><p>对OC而言，NVRAM是非常核心的一环，不管是原生还是模拟的。<span style="color:red;">如果你是原生nvram的主板，请不必理会这章节</span>。这章节的主要内容为非原生NVRAM模拟生成NVRAM.plist。</p>
+<ul>
+<li><p>首先打开我们之前下载好的OpenCore，进入目录下的Utilities/LogoutHook，并将LogoutHook放入一个安全的位置。这里我推荐将他放到文档目录下。</p>
+</li>
+<li><p>右键finder，前往目录，填/Users, 再点进入以你名字命名的文件夹，既能看到Documents(文档）目录了，把我们的LogoutHook放在里面。</p>
+</li>
+<li><p>打开Terminal （终端），输入一下命令：</p>
+<pre><code class="bash">sudo defaults write com.apple.loginwindow LogoutHook /Users/你的用户名/Documents/LogoutHook/LogoutHook.command 
+比如： 
+sudo defaults write com.apple.loginwindow LogoutHook /Users/xjn/Documents/LogoutHook/LogoutHook.command</code></pre>
+</li>
+<li><p>终端会提示要求你输入密码（密码打进去不会显示）。</p>
+</li>
+<li><p>重启，你会在ESP/EFI/下看到nvram.plist，代表已经成功模拟了。</p>
+</li>
+</ul>
+<hr>
+</br>
+
+<h2 id="3-2-建立自己的开机选择系统目录"><a href="#3-2-建立自己的开机选择系统目录" class="headerlink" title="3.2 建立自己的开机选择系统目录"></a>3.2 建立自己的开机选择系统目录</h2><details>
+  <summary><font color=red>因此部分需求太小众且繁琐，我折叠起来了，点击展开</font></summary>
+这个教程主要针对的是非原生nvram主板的用户，<span style="color:red;">如果你是原生nvram的用户，直接在偏好设置---启动磁盘中选定你希望设置为默认启动的磁盘即可，不必往下看浪费时间！</span> 
+
+<p>此步骤可能只适合oc纯净安装的系统，如果你之前使用过clover或者oc mod版本，请参照《精解opencore》中模拟nvram的方法。</p>
+<p>非原生nvram用户必须完成以下几点：</p>
+<ul>
+<li><p>通过3.1的教程建立nvram.plist.</p>
+</li>
+<li><p>确保OpenCore的版本为2019年11月20日之后的。更新OpenCore替换BOOT/BOOTx64.efi以及OC/OpenCore.efi即可。</p>
+</li>
+<li><p>确保config.plist下/Misc/Security/<code>ExposeSensitiveData</code>=3 ;  Booter/Quirks/<code>DisableVariableWrite</code>=YES ; NVRAM/<code>LegacyEnable</code>=YES </p>
+</li>
+<li><p>确保文件夹ESP/EFI/OC/Drivers/下没有<code>VariableRuntimeDxe.efi</code></p>
+</li>
+</ul>
+<p>如果你是华硕的非原生nvram主板，你还需要做（此文件由群友@哞 提供）：</p>
+<ul>
+<li>下载<a href="">LoginHook.command</a>，把它与LogoutHook.command放在一起，并执行:<pre><code class="bash">sudo defaults write com.apple.loginwindow LoginHook /写上你的路径/LoginHook.command</code></pre>
+</li>
+</ul>
+</br>
+
+<blockquote>
+<p>3.2.1以及3.2.2也是排列启动盘开机进入顺序的，比较麻烦，不推荐。</p>
+</blockquote>
+<hr>
+<h3 id="3-2-1-第一部分"><a href="#3-2-1-第一部分" class="headerlink" title="3.2.1 第一部分"></a>3.2.1 第一部分</h3><p>我们首先要对Config—Misc—Security—scanpolicy这个值进行修改，默认的是0，代表着扫描所有硬盘，而我们现在只让它扫我们的苹果系统硬盘。</p>
+<p>感谢@xlivans提供的OC扫描策略：</p>
+<blockquote>
+<p>  - <code>2F0303</code> —官方推荐值+允许扫描HFS文件系统+允许扫描USB设备</p>
+</blockquote>
+<blockquote>
+<p>    最终<code>扫描策略数值</code> = <code>3080963</code></p>
+</blockquote>
+<blockquote>
+<h2 id="OC-引导扫描策略"><a href="#OC-引导扫描策略" class="headerlink" title="OC-引导扫描策略"></a>OC-引导扫描策略</h2></blockquote>
+<blockquote>
+<ul>
+<li>设置位置：<code>Misc\Security\ScanPolicy</code></li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li><strong>定义：</strong></li>
+</ul>
+</blockquote>
+<blockquote>
+<p>  （01）0x00000001 — 限定为文件系统，由以下<code>允许扫描文件系统子项</code>开启</p>
+</blockquote>
+<blockquote>
+<p>  （02）0x00000002 — 限定为设备类型，由以下<code>允许扫描设备类型子项</code>开启</p>
+</blockquote>
+<blockquote>
+<p>  <code>允许扫描文件系统子项</code>：</p>
+</blockquote>
+<blockquote>
+<p>  （03）0x00000100 — 允许扫描APFS文件系统</p>
+</blockquote>
+<blockquote>
+<p>  （04）0x00000200 — 允许扫描HFS文件系统</p>
+</blockquote>
+<blockquote>
+<p>  （05）0x00000400 — 允许扫描EFI系统分区文件系统</p>
+</blockquote>
+<blockquote>
+<p>  <code>允许扫描设备类型子项</code>：</p>
+</blockquote>
+<blockquote>
+<p>  （06）0x00010000 — 允许扫描SATA设备</p>
+</blockquote>
+<blockquote>
+<p>  （07）0x00020000 — 允许扫描SAS和Mac NVMe设备</p>
+</blockquote>
+<blockquote>
+<p>  （08）0x00040000 — 允许扫描SCSI设备</p>
+</blockquote>
+<blockquote>
+<p>  （09）0x00080000 — 允许扫描NVMe设备</p>
+</blockquote>
+<blockquote>
+<p>  （10）0x00100000 — 允许扫描CD / DVD设备</p>
+</blockquote>
+<blockquote>
+<p>  （11）0x00200000 — 允许扫描USB设备</p>
+</blockquote>
+<blockquote>
+<p>  （12）0x00400000 — 允许扫描FireWire设备</p>
+</blockquote>
+<blockquote>
+<p>  （13）0x00800000 — 允许扫描读卡器设备</p>
+</blockquote>
+<blockquote>
+<p>  <code>扫描策略数值</code>=（01）+（02）+1个或数个<code>允许扫描文件系统子项</code>+1个或数个<code>允许扫描设备类型子项</code></p>
+</blockquote>
+<blockquote>
+<p>  例如：希望扫描对象是APFS文件系统的USB设备，<code>扫描策略数值</code>=（01）+（02）+（03）+（11），经16进制加法计算得出，<code>扫描策略数值</code>=<code>0x200103</code>。</p>
+</blockquote>
+<blockquote>
+<p>  <code>注意</code>，使用时需将16进制转换为10进制。示例最终<code>扫描策略数值</code>=<code>2097411</code></p>
+</blockquote>
+<blockquote>
+<ul>
+<li>几种扫描策略</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>  - <code>F0103</code> —官方推荐值：（01）+（02）+（03）+（06）+（07）+（08）+（09）</p>
+</blockquote>
+<p>  </p>
+<blockquote>
+<p>    最终<code>扫描策略数值</code> = <code>983299</code></p>
+</blockquote>
+<p>  </p>
+<blockquote>
+<p>  - <code>0</code>—允许扫描所有已知文件系统+允许扫描所有已知设备类型。</p>
+</blockquote>
+<p>  </p>
+<blockquote>
+<p>  - <code>2F0303</code> —官方推荐值+允许扫描HFS文件系统+允许扫描USB设备</p>
+</blockquote>
+<p>  </p>
+<blockquote>
+<p>    最终<code>扫描策略数值</code> = <code>3080963</code></p>
+</blockquote>
+<p>我们这里让OC只扫描MAC盘。根据说明，（1）+（2）是必须选的；因为我的MAC是APFS，所以系统子项类我选（3）；我的MAC是安装在NVME上的，所以我在设备类型上选择（09），如果你是安装在sata盘上的，你应该选（6）。</p>
+<p>这样我们的公式就是：</p>
+<pre><code class="bash">（1）+（2）+（3）+（9）= 0x00000001+0x00000002+0x00000100+0x00080000</code></pre>
+<p>拿起苹果自带的计算器，按住<code>command+3</code>切换到编程型计算器，并转换到16进制模式:</p>
+<pre><code class="bash">1+2+100+80000=80103</code></pre>
+<p>得到数值后，我们再按一下转换10进制的按键，得出<code>524547</code>这个数值。</p>
+<p>我们把<code>524547</code>填到<code>scanpolicy</code>中，重启，你就会看到第一个选项就是你的MAC盘了。但如果你还安装了WINDOWS什么的，选项中却没有了，别急，我们现在要把WIN的引导添加到mac的后面去。</p>
+<hr>
+<h3 id="3-2-2-第二部分"><a href="#3-2-2-第二部分" class="headerlink" title="3.2.2 第二部分"></a>3.2.2 第二部分</h3><p>现在我们要在开机画面中，将其他的一些系统排在mac后面。此项需要你下载debug版本的Opencore,请在文章开始部分提到的Opencore程序下载界面进行下载，并备份好你目前的EFI。</p>
+<p>首先我们需要把下载好的Opencore-Debug版本里的ESP/EFI/BOOT/BOOTx64.efi 以及ESP/EFI/OpenCore.efi两个文件替换到你正在使用中的EFI里去。修改你正在使用的EFI/OC/Config.plist:</p>
+<pre><code class="bash">Misc 
+    Debug 
+       DisableWatchDog    Boolean    YES 
+       Target             Number     65 
+
+     Security 
+       ScanPolicy         Number     0 //这里我们要先改为0来寻找windows的地址，之后找到后改回之前算出来的即可</code></pre>
+<p>接着，我们需要寻找你其他系统的UUID，我们打开终端，输入</p>
+<pre><code class="bash">diskutil list</code></pre>
+<p>找到你需要的盘的盘名，比如我的windows在disk0这个位置，而引导WIN的EFI文件夹的盘位是disk0s1。注意，Windows必须为<code>GPT引导模式</code>。</p>
+<pre><code class="bash">/dev/disk1 (internal, physical):
+   #:                       TYPE NAME                    SIZE       IDENTIFIER
+   0:      GUID_partition_scheme                        *1.0 TB     disk0
+   1:                        EFI                         314.6 MB   disk0s1
+   2:       Microsoft Basic Data BOOTCAMP                999.7 GB   disk0s2</code></pre>
+<p>接着输入：</p>
+<pre><code class="bash">diskutil info disk0s1</code></pre>
+<p>在输出内容里，我们需要的是<code>Disk / Partition UUID</code>，我的是FF555974-AB3F-40B7-8530-AE6462E197CE，把它记下来。</p>
+<p>现在我们通过oc的开机选项直接重启到windows，我们打开<a target="_blank" rel="noopener" href="https://www.diskgenius.cn/download.php">DiskGenius</a>，并且到我们mac的EFI盘符下，我们看到有一个日志报告opencore-xxxxx-xxxxx生成，为了好记，我们右键把它改名叫111.txt，并拖到桌面。</p>
+<p>打开刚才的111.txt，我们搜索刚才记录下来的FF555974-AB3F-40B7-8530-AE6462E197CE</p>
+<p>搜到类似这样的路径就是我们需要的：</p>
+<pre><code class="bash">PciRoot(0x0)/Pci(0x1B,0x0)/Pci(0x0,0x0)/NVMe(0x1,CB-27-B3-91-53-38-25-00)/HD(1,GPT,FF555974-AB3F-40B7-8530-AE6462E197CE,0x800,0x96000)/\EFI\BOOT\BOOTX64.EFI</code></pre>
+<p>把之前我们备份好的EFI，全部替换回去。把<code>disablewatchdog</code>，<code>target</code>，<code>scanpolicy</code>都改回原来的。这样我们的EFI又回到正式版本了，而不是DEBUG版本了。</p>
+<p>回到Mac，打开config.plist,我们把win的引导路径添加到misc—-entries，并在此下面添加一个item,输入如图内容：</p>
+<pre><code class="bash">Entries
+   Arguments     String    
+   Comment       String     Windows 10//你随便取个名字
+   Enabled       Boolean    YES
+   Name          String     Windows 10/开机选择界面的名字
+   Path          String     PciRoot(0x0)/Pci(0x1B,0x0)/Pci(0x0,0x0)/NVMe(0x1,CB-27-B3-91-53-38-25-00)/HD(1,GPT,FF555974-AB3F-40B7-8530-AE6462E197CE,0x800,0x96000)/\EFI\BOOT\BOOTX64.EFI</code></pre>
+<p>保存重启后，你会看到windows10放在了mac的下面。</p>
+<blockquote>
+<p>tips: 你可以<code>showpicker</code>选择no，就不会看到选择界面了，而当你需要时，只需要在开机时候按住option或者esc就可以唤出选择界面了，非常白果的体验哦。</p>
+</blockquote>
+</details>
+
+<hr>
+<h3 id="3-3-提取DSDT"><a href="#3-3-提取DSDT" class="headerlink" title="3.3 提取DSDT"></a>3.3 提取DSDT</h3><p>尽管提取原始DSDT的方法非常多，我认为<code>CLOVER</code>的提取方法是最方便并且靠谱的。我们需要一个空的U盘或者空的ESP分区，我的教程是非常偏向小白的，所以这里提取我也会用到windows，以及Diskgenius这个软件，做最简单的示范。</p>
+<ul>
+<li><p>进入Windows，插入U盘，打开<a target="_blank" rel="noopener" href="https://www.diskgenius.cn/download.php">DiskGenius</a>，选中我们的U盘，并选择顶部菜单栏的快速分区</p>
+<ul>
+<li>分区表类型：<code>GUID</code></li>
+<li>不要创建新的<code>ESP</code>分区</li>
+<li>不要创建<code>MSR</code>分区</li>
+<li>分区格式为<code>FAT32</code></li>
+</ul>
+</li>
+<li><p>格式化完成后，放入我从黑果小兵镜像包提取出来的EFI（点击下载）放进去。这是一个clover引导，但并不能引导你的系统，只能提取DSDT。</p>
+</li>
+</ul>
 
 	</div>
 
