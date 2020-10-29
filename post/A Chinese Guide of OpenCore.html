@@ -11,12 +11,12 @@
 	<meta name="description" content="简介OpenCore(OC)是一种新的引导方式，越来越多的kexts开始放弃Clover, 我相信提早使用OC会对你未来使用黑苹果会有很大的帮助。这是一个自然的现象，就像变色龙被Clover淘汰，而现在OC代替Clover也是大势所趋。你应该需要看一些相关的文章，来帮助你理解我的正文内容，同时也需要下载我推荐的软件：  阅读Opencore Vanilla Desktop Guide Gettin">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用 OpenCore 引导黑苹果">
-<meta property="og:url" content="https://blog.xjn819.com/post/A-Chinese-OpenCore-Guide.html">
+<meta property="og:url" content="https://blog.xjn819.com/post/A%20Chinese%20Guide%20of%20OpenCore.html">
 <meta property="og:site_name" content="Xjn&#39;s Blog">
 <meta property="og:description" content="简介OpenCore(OC)是一种新的引导方式，越来越多的kexts开始放弃Clover, 我相信提早使用OC会对你未来使用黑苹果会有很大的帮助。这是一个自然的现象，就像变色龙被Clover淘汰，而现在OC代替Clover也是大势所趋。你应该需要看一些相关的文章，来帮助你理解我的正文内容，同时也需要下载我推荐的软件：  阅读Opencore Vanilla Desktop Guide Gettin">
 <meta property="og:locale">
 <meta property="article:published_time" content="2020-10-29T09:08:50.000Z">
-<meta property="article:modified_time" content="2020-10-29T12:49:50.051Z">
+<meta property="article:modified_time" content="2020-10-29T14:15:38.622Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -577,13 +577,13 @@
 	<article class="post post-full card bg-white shadow-sm border-0 ">
 	<header class="post-header text-center">
 		
-		<a class="post-title" href="/post/A-Chinese-OpenCore-Guide.html">使用 OpenCore 引导黑苹果</a>
+		<a class="post-title" href="/post/A%20Chinese%20Guide%20of%20OpenCore.html">使用 OpenCore 引导黑苹果</a>
 		<div class="post-meta">
 			
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 17:08:50 | 编辑于 2020-10-29 20:49:50">2020-10-29 17:08
+							<time title="发布于 2020-10-29 17:08:50 | 编辑于 2020-10-29 22:15:38">2020-10-29 17:08
 							</time>
 						</div>
 					
@@ -600,7 +600,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							4.6k 字
+							5.5k 字
 						</div>
 					
 						
@@ -608,7 +608,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							20 分钟
+							24 分钟
 						</div>
 					
 		</div>
@@ -1405,7 +1405,78 @@ item 12     String      efi-boot-device-data</code></pre>
 </li>
 </ul>
 <hr>
-<h2 id="2-8-Config—–UEFI"><a href="#2-8-Config—–UEFI" class="headerlink" title="2.8 Config—–UEFI"></a>2.8 Config—–UEFI</h2><ul>
+<h2 id="2-8-Config—–UEFI"><a href="#2-8-Config—–UEFI" class="headerlink" title="2.8 Config—–UEFI"></a>2.8 Config—–UEFI</h2><h3 id="2-8-1-Config—–UEFI—–APFS"><a href="#2-8-1-Config—–UEFI—–APFS" class="headerlink" title="2.8.1 Config—–UEFI—–APFS"></a>2.8.1 Config—–UEFI—–APFS</h3><ul>
+<li><p><strong>EnableJumpstart</strong> <code>YES</code></p>
+<ul>
+<li>从APFS容器中加载内置APFS驱动，建议开启YES。此选项仍然依据你的<code>Scanpolicy</code>来做出决定，请确保在<code>Scanpolicy</code>中放开APFS格式。</li>
+</ul>
+</li>
+<li><p><strong>GlobalConnect</strong> <code>NO</code></p>
+<ul>
+<li>一些主板需要选择yes才能完全加载APFS，比如HP笔记本。</li>
+</ul>
+</li>
+<li><p><strong>HideVerbose</strong> <code>YES</code></p>
+<ul>
+<li>是否隐藏啰嗦模式，一般我们需要看日志的时候才开启，所以我们选择隐藏，选择YES。</li>
+</ul>
+</li>
+<li><p><strong>JumpstartHotPlug</strong> <code>YES</code></p>
+<ul>
+<li>是否加载APFS格式的热插设备.</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>MinDate</strong> <code>0</code></p>
+<ul>
+<li>加载最低发行的APFS格式。一些旧的apfs可能会危害电脑，我们填0。如果你想加载旧的发行日期的APFS格式硬盘，请填-1。</li>
+</ul>
+</li>
+<li><p><strong>MinVersion</strong> <code>0</code></p>
+<ul>
+<li>加载最低版本的APFS格式。填0代表从HIGH SIERRA开始加载。填-1代表所有版本，建议填0。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-8-2-Config—–UEFI—–Audio"><a href="#2-8-2-Config—–UEFI—–Audio" class="headerlink" title="2.8.2 Config—–UEFI—–Audio"></a>2.8.2 Config—–UEFI—–Audio</h3><p>此项的内容是帮助你在开机阶段驱动板载音频，此项对DP等数字音频无效。</p>
+<ul>
+<li><p><strong>AudioCodec</strong> <code>0</code></p>
+<ul>
+<li>：填写音频声卡in节点。可以用PinConfigurator提取。</li>
+</ul>
+</li>
+<li><p><strong>AudioDevice</strong> <code>0</code></p>
+<ul>
+<li>：填写你声卡的路径。这里我们填写章节2.3.1中寻找到的声卡路径。这里我填了<code>PciRoot(0x0)/Pci(0x1f,0x3)</code>，请按你自己的实际情况填写。</li>
+</ul>
+</li>
+<li><p><strong>AudioOut</strong> <code>0</code></p>
+<ul>
+<li>：音频声卡out节点。可以用PinConfigurator提取。</li>
+</ul>
+</li>
+<li><p><strong>AudioSupport</strong> <code>NO</code></p>
+<ul>
+<li>：是否开启黑苹果的开机提示音支持。</li>
+</ul>
+</li>
+<li><p><strong>MinimumVolume</strong> <code>20</code></p>
+<ul>
+<li>：声音音量，范围在0-100之间。</li>
+</ul>
+<p><strong>MinimumVolume</strong> <code>20</code></p>
+<ul>
+<li>：按照默认设置。<blockquote>
+<p>开启UEFI加载阶段的音频你必须下载<a target="_blank" rel="noopener" href="https://github.com/acidanthera/OcBinaryData/tree/master/Resources">Audio文件夹</a>,并把Audio文件夹放到ESP/EFI/OC/Resources下。另外你必须注意<code>AppleAudio</code>选项。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
 <li><p><strong>ConnectDrivers</strong> <code>YES</code></p>
 <ul>
 <li>是否加载补丁</li>
@@ -1418,13 +1489,203 @@ item 12     String      efi-boot-device-data</code></pre>
        .................... OpenRuntime.efi
        .................... HFSPlus.efi 
        .................... OpenCanopy.efi
-
 </code></pre>
 </li>
 </ul>
-<h3 id="2-8-1-Config—–UEFI—–APFS"><a href="#2-8-1-Config—–UEFI—–APFS" class="headerlink" title="2.8.1 Config—–UEFI—–APFS"></a>2.8.1 Config—–UEFI—–APFS</h3><ul>
-<li>是否加载补丁</li>
+<h3 id="2-8-3-Config—–UEFI—–Input"><a href="#2-8-3-Config—–UEFI—–Input" class="headerlink" title="2.8.3 Config—–UEFI—–Input"></a>2.8.3 Config—–UEFI—–Input</h3><p>此选项是原生apple开机热键的选项，需要配合我们之前设置的<code>PollAppleHotKeys=yes</code>一起用。下面的设置完全按照默认情况就行了。</p>
+<blockquote>
+<p>如果你是华硕的z87或者z97，你需要打开PointerSupport这个选项。</p>
+</blockquote>
+<hr>
+<h3 id="2-8-4-Config—–UEFI—–Output"><a href="#2-8-4-Config—–UEFI—–Output" class="headerlink" title="2.8.4 Config—–UEFI—–Output"></a>2.8.4 Config—–UEFI—–Output</h3><ul>
+<li><p><strong>ClearScreenOnModeSwitch</strong> <code>NO</code></p>
+<ul>
+<li>消除开机时从图形模式转换到文本时出现残影的问题，如果没有这个问题我们选择NO。</li>
 </ul>
+</li>
+<li><p><strong>ConsoleMode</strong> <code>MAX</code></p>
+<ul>
+<li>主机的输出方式，一般情况下填MAX，或者留空。</li>
+</ul>
+</li>
+<li><p><strong>DirectGopRendering</strong> <code>NO</code></p>
+<ul>
+<li>是否使用内置显卡直接渲染开机画面。</li>
+</ul>
+</li>
+<li><p><strong>IgnoreTextInGraphics</strong> <code>NO</code></p>
+<ul>
+<li>修复在不使用-v跑马模式时候，开机日志导致的苹果logo显示不正确的问题。</li>
+</ul>
+</li>
+<li><p><strong>ProvideConsoleGop</strong> <code>YES</code></p>
+<ul>
+<li>调用显卡GOP。</li>
+</ul>
+</li>
+<li><p><strong>ReconnectOnResChange</strong> <code>NO</code></p>
+<ul>
+<li>一些固件在 GOP 分辨率改变后会重新连接显示器才能输出，一般情况下选择NO。</li>
+</ul>
+</li>
+<li><p><strong>ReplaceTabWithSpace</strong> <code>NO</code></p>
+<ul>
+<li>一些固件在UEFI Shell下TAB功能键不生效，开启这个会用空格键代替。</li>
+</ul>
+</li>
+<li><p><strong>Resolution</strong> </p>
+<ul>
+<li>开机UEFI阶段的分辨率。比如我的显示器是4K、16：9的，就填写3840x2160。根据情况填写或者不填。</li>
+</ul>
+</li>
+<li><p><strong>SanitiseClearScreen</strong> <code>YES</code></p>
+<ul>
+<li>修复4k及以上显示器的输出问题。</li>
+</ul>
+</li>
+<li><p><strong>TextRenderer</strong> <code>BuiltinGraphics</code></p>
+<ul>
+<li>OC开机代码字体渲染方式</li>
+</ul>
+</li>
+<li><p><strong>UgaPassThrough</strong> <code>NO</code></p>
+<ul>
+<li>通过uga来代替那些无法使用gop的主板，一般带uefi的主板以及显卡请选择NO。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-8-5-Config—–UEFI—–ProtocolOverrides"><a href="#2-8-5-Config—–UEFI—–ProtocolOverrides" class="headerlink" title="2.8.5 Config—–UEFI—–ProtocolOverrides"></a>2.8.5 Config—–UEFI—–ProtocolOverrides</h3><ul>
+<li><p><strong>AppleAudio</strong> <code>NO</code></p>
+<ul>
+<li>如果你想要开启如同白苹果一样的开机音效，请开启它，并且还需要配合UEFI—-Audio的正确设置。</li>
+</ul>
+</li>
+<li><p><strong>AppleBootPolicy</strong> <code>NO</code></p>
+<ul>
+<li>虚拟机的mac需要用的。</li>
+</ul>
+</li>
+<li><p><strong>AppleDebugLog</strong> <code>NO</code></p>
+<ul>
+<li>重新安装苹果错误日志界面。</li>
+</ul>
+</li>
+<li><p><strong>AppleEvent</strong> <code>NO</code></p>
+<ul>
+<li>虚拟机并具有vault的mac需要用的。</li>
+</ul>
+</li>
+<li><p><strong>AppleFramebufferInfo</strong> <code>NO</code></p>
+<ul>
+<li>为虚拟机使用，不是虚拟机选择NO。</li>
+</ul>
+</li>
+<li><p><strong>AppleImageConversion</strong> <code>NO</code></p>
+<ul>
+<li>重建apple图标。</li>
+</ul>
+</li>
+<li><p><strong>AppleImg4Verification</strong> <code>NO</code></p>
+<ul>
+<li>当开启安全启动时必须开启它。</li>
+</ul>
+</li>
+<li><p><strong>AppleKeyMap</strong> <code>NO</code></p>
+<ul>
+<li>重建苹果功能键。</li>
+</ul>
+</li>
+<li><p><strong>AppleRtcRam</strong> <code>NO</code></p>
+<ul>
+<li>重装applertc协议。</li>
+</ul>
+</li>
+<li><p><strong>AppleSecureBoot</strong> <code>NO</code></p>
+<ul>
+<li>苹果安全启动协议。</li>
+</ul>
+</li>
+<li><p><strong>AppleSmcIo</strong> <code>YES</code></p>
+<ul>
+<li>代替之前的VirtualSMC.efi。</li>
+</ul>
+</li>
+<li><p><strong>AppleUserInterfaceTheme</strong> <code>NO</code></p>
+<ul>
+<li>重新安装 Apple User Interface Theme 协议。</li>
+</ul>
+</li>
+<li><p><strong>DataHub</strong> <code>NO</code></p>
+<ul>
+<li>重建Datahub。</li>
+</ul>
+</li>
+<li><p><strong>DeviceProperties</strong> <code>NO</code></p>
+<ul>
+<li>虚拟机或者老款的电脑需要选择YES才能注入device property，我们选NO。如果你发现你注入device property无效，请选择YES。</li>
+</ul>
+</li>
+<li><p><strong>FirmwareVolume</strong> <code>NO</code></p>
+<ul>
+<li>VAULT/虚拟机/老款MAC需要开启才能相关项。</li>
+</ul>
+</li>
+<li><p><strong>HashServices</strong> <code>NO</code></p>
+<ul>
+<li>VAULT相关项。</li>
+</ul>
+</li>
+<li><p><strong>OSInfo</strong> <code>NO</code></p>
+<ul>
+<li>通知主板以及一些程序关于MAC引导的信息，一般情况选择NO。</li>
+</ul>
+</li>
+<li><p><strong>UnicodeCollation</strong> <code>NO</code></p>
+<ul>
+<li>旧的主板需要，我们选NO。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-8-6-Config—–UEFI—–Quirks"><a href="#2-8-6-Config—–UEFI—–Quirks" class="headerlink" title="2.8.6 Config—–UEFI—–Quirks"></a>2.8.6 Config—–UEFI—–Quirks</h3><ul>
+<li><p><strong>DeduplicateBootOrder</strong> <code>YES</code></p>
+<ul>
+<li>当<code>RequestBootVarRouting</code>选项为开启时，一些其他的操作系统（e.g.windows)可能在某些主板(e.g.ASUS)中会找不到自己的引导而重新创建,最终导致黑果在没有清理NVRAM的情况下是无法进入系统,或者产生多个OpenCore引导项，请选择YES。</li>
+</ul>
+</li>
+<li><p><strong>ExitBootServicesDelay</strong> <code>0</code></p>
+<ul>
+<li>旧主板需要给予主板退出时间（单位为微秒），较新的主板直接填0。旧的主板比如Z87pro，填3000000-5000000。</li>
+</ul>
+</li>
+<li><p><strong>IgnoreInvalidFlexRatio</strong> <code>NO</code></p>
+<ul>
+<li>如果你没有在bios中解锁<code>MSR0x194</code>，一定要选YES。</li>
+</ul>
+</li>
+<li><p><strong>ReleaseUsbOwnership</strong> <code>NO</code></p>
+<ul>
+<li>大部分的主板都有自动释放USB所有权的功能，我们选NO。如果你开机键盘鼠标卡死了，或者USB失灵，试试选Yes。</li>
+</ul>
+</li>
+<li><p><strong>RequestBootVarRouting</strong> <code>YES</code></p>
+<ul>
+<li>增加”启动磁盘” 的可靠性。</li>
+</ul>
+</li>
+<li><p><strong>TscSyncTimeout</strong> <code>0</code></p>
+<ul>
+<li>帮助一些X99 X299的主板开启全核同步功能。此选项旨在代替<code>TSCAdjustReset.kext</code>等类似补丁，推荐的值是500000。但是此选项并不能在睡眠唤醒后生效，所以请填写默认值0，并使用<code>TSCAdjustReset.kext</code>来做全核同步。</li>
+</ul>
+</li>
+<li><p><strong>UnblockFsConnect</strong> <code>NO</code></p>
+<ul>
+<li>惠普笔记本可能会让OC无法扫描到启动项，一般选择NO，如果你是惠普笔记本，请选择YES。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-8-7-Config—–UEFI—–ReservedMemory-Properties"><a href="#2-8-7-Config—–UEFI—–ReservedMemory-Properties" class="headerlink" title="2.8.7 Config—–UEFI—–ReservedMemory Properties"></a>2.8.7 Config—–UEFI—–ReservedMemory Properties</h3><p>此项为保留内存所用。一些硬件会把硬件EFI写进内存过程中占据必要的UEFI运行空间，所以我们可以通过此项来预留内存来保证UEFI的运行。填写方式可以参考<a target="_blank" rel="noopener" href="https://blog.daliansky.net/Slide-value-acquisition-and-calculation.html">小兵的文章</a>。来寻找指定内存的起始位置，以4K为一个节点。一般情况下，此项我们并不需要理会。</p>
 
 	</div>
 
@@ -1476,7 +1737,7 @@ item 12     String      efi-boot-device-data</code></pre>
 				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
 			</button>
 		</a>
-		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://blog.xjn819.com/post/A-Chinese-OpenCore-Guide.html&text=使用 OpenCore 引导黑苹果" tooltip="分享到 Telegram">
+		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://blog.xjn819.com/post/A%20Chinese%20Guide%20of%20OpenCore.html&text=使用 OpenCore 引导黑苹果" tooltip="分享到 Telegram">
 			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
 				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
 			</button>
@@ -1497,7 +1758,7 @@ item 12     String      efi-boot-device-data</code></pre>
 	    description : '简介OpenCore(OC)是一种新的引导方式，越来越多的kexts开始放弃Clover, 我相信提...',
 	    wechatQrcodeTitle : "分享到微信",
 	    wechatQrcodeHelper : '微信扫描二维码',
-	    source : 'https://blog.xjn819.com/post/A-Chinese-OpenCore-Guide.html'
+	    source : 'https://blog.xjn819.com/post/A%20Chinese%20Guide%20of%20OpenCore.html'
 	});
 	$("#share_show")[0].onclick = function(){
 		$("#share_container").addClass("opened");
