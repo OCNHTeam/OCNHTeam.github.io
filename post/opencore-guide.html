@@ -8,7 +8,8 @@
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="/images/site/favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="/images/site/favicon.ico" type="image/x-icon">
 	<meta name="description" content="简介OpenCore(OC)是一种新的引导方式，越来越多的kexts开始放弃Clover, 我相信提早使用OC会对你未来使用黑苹果会有很大的帮助。这是一个自然的现象，就像变色龙被Clover淘汰，而现在OC代替Clover也是大势所趋。你应该需要看一些相关的文章，来帮助你理解我的正文内容，同时也需要下载我推荐的软件：  阅读Opencore Vanilla Desktop Guide Gettin">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用 OpenCore 引导黑苹果">
@@ -17,7 +18,7 @@
 <meta property="og:description" content="简介OpenCore(OC)是一种新的引导方式，越来越多的kexts开始放弃Clover, 我相信提早使用OC会对你未来使用黑苹果会有很大的帮助。这是一个自然的现象，就像变色龙被Clover淘汰，而现在OC代替Clover也是大势所趋。你应该需要看一些相关的文章，来帮助你理解我的正文内容，同时也需要下载我推荐的软件：  阅读Opencore Vanilla Desktop Guide Gettin">
 <meta property="og:locale">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2020-10-29T16:12:46.169Z">
+<meta property="article:modified_time" content="2020-10-30T09:48:09.895Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -39,7 +40,7 @@
 <link rel="stylesheet" href="/style.css">
 
 	
-<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Noto+Serif+SC:300,600&display=swap.css">
+<link rel="stylesheet" href="//fonts.loli.net/css?family=Open+Sans:300,400,600,700|Noto+Serif+SC:300,600&display=swap.css">
 
 	
 <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
@@ -52,6 +53,9 @@
 
 	
 <script src="//unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+	
+<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 	<script>
@@ -155,7 +159,8 @@
 <script src="/assets/vendor/smoothscroll/smoothscroll1.js"></script>
 
 	
-<meta name="generator" content="Hexo 5.2.0"></head>
+<meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/feed.xml" title="Xjn's Blog" type="application/atom+xml">
+</head>
 
 
 
@@ -224,6 +229,14 @@
 											<a href='/archives' class='nav-link' >
 												<i class='ni ni-book-bookmark d-lg-none'></i>
 												<span class='nav-link-inner--text'>归档</span>
+											</a>
+											
+										</li>
+									
+										<li class='nav-item'>
+											<a href='/feed.xml' class='nav-link' >
+												<i class='ni ni-book-bookmark d-lg-none'></i>
+												<span class='nav-link-inner--text'>订阅</span>
 											</a>
 											
 										</li>
@@ -584,7 +597,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-10-30 0:12:46">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-10-30 17:48:09">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -601,7 +614,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							7.1k 字
+							7.3k 字
 						</div>
 					
 						
@@ -609,7 +622,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							30 分钟
+							31 分钟
 						</div>
 					
 		</div>
@@ -1892,9 +1905,17 @@ sudo defaults write com.apple.loginwindow LogoutHook /Users/xjn/Documents/Logout
 <li>分区格式为<code>FAT32</code></li>
 </ul>
 </li>
-<li><p>格式化完成后，放入我从黑果小兵镜像包提取出来的EFI（点击下载）放进去。这是一个clover引导，但并不能引导你的系统，只能提取DSDT。</p>
+<li><p>格式化完成后，放入我从黑果小兵镜像包提取出来的<a href="/tools/EFI.zip">EFI</a>（点击下载）放进去。这是一个clover引导，但并不能引导你的系统，只能提取DSDT。</p>
+</li>
+<li><p>插上U盘，重启，通过U盘引导，看到Clover界面，我们按F4，这样原始的DSDT文件就收集好了。</p>
 </li>
 </ul>
+<ul>
+<li>重新通过OC引导进入系统，我们打开U盘，EFI/Clover/ACPI/Orgin下，有我们的原始ACPI内容，我们只需要DSDT.aml这个就行了，保存到安全的地方。</li>
+</ul>
+<h3 id="3-4-加载原生电源管理"><a href="#3-4-加载原生电源管理" class="headerlink" title="3.4 加载原生电源管理"></a>3.4 加载原生电源管理</h3><p>在提取dsdt后，我们可以得到相关里硬件名字及目录，这样我们就可以加载原生电源管理。这里非常感谢宪武大大在ssdt这块的付出成果！我们先下载一下宪武大大的OC-SSDT包。</p>
+<p>以下的内容，你需要文章开始阶段提供下载的MaciASL以及刚才提取的DSDT.aml</p>
+<p>用MaciASL打开DSDT.aml<br>搜索你cpu的名字。一般情况下，CPU的名字可能是: PR.CPU0,PR.P000,PR.PR00,SB.CPU0,SB.P000,SB.PR00, SCK0.C000, SCK0.CPU0。请依次搜索直到找到自己的CPU名字，比如我的就是SB.PR00</p>
 
 	</div>
 
@@ -1909,6 +1930,7 @@ sudo defaults write com.apple.loginwindow LogoutHook /Users/xjn/Documents/Logout
 		</div>
 	
 </article>
+
 	<div id="share_container">
 	<div id="share" data-initialized="true">
 		<a class="no-pjax icon-wechat" tooltip="分享到微信">
@@ -2020,7 +2042,7 @@ sudo defaults write com.apple.loginwindow LogoutHook /Users/xjn/Documents/Logout
 		clientID: '86a6322e810d06834891',
 		clientSecret: 'eaf77d01ffaddf2f06a2a4bbac944d8cca3d0c91',
 		repo: 'OCNHTeam.github.io',
-		owner: 'SeonMe',
+		owner: 'OCNHTeam',
 		admin: ['SeonMe'],
 		id: location.pathname,
 		distractionFreeMode: false
@@ -2047,6 +2069,9 @@ sudo defaults write com.apple.loginwindow LogoutHook /Users/xjn/Documents/Logout
 					<footer id="footer" class="site-footer card shadow-sm border-0">
 						
 						<div>Theme <a target="_blank" rel="noopener" href="https://github.com/solstice23/hexo-theme-argon"><strong>Argon</strong></a> | Powered by Hexo </div>
+						<span id="busuanzi_container_site_uv">
+							本站访客数<span id="busuanzi_value_site_uv"></span>人次
+						</span>
 					</footer>
 				</main>
 			</div>
