@@ -132,7 +132,7 @@ article .post-content u , article .post-content ins{
 article code:not([hljs-codeblock-inner]){
 	font-family: Consolas,Menlo,Monaco,'Andale Mono WT','Andale Mono','Lucida Console','Lucida Sans Typewriter','DejaVu Sans Mono','Bitstream Vera Sans Mono','Liberation Mono','Nimbus Mono L','Courier New',Courier,monospace;
 	color: #f5365c;
-	background: #eff1f5;
+	background: ##eff1f5;
 	direction: ltr;
 	border-radius: 3px;
 }
