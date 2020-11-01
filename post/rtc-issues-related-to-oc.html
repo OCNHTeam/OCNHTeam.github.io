@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://i.loli.net/2020/11/02/4SjaDbtdNivyOVA.png">
 <meta property="article:published_time" content="2020-10-01T14:27:50.000Z">
-<meta property="article:modified_time" content="2020-11-01T16:39:27.528Z">
+<meta property="article:modified_time" content="2020-11-01T19:57:43.594Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -597,7 +597,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-1 22:27:50 | 编辑于 2020-11-2 0:39:27">2020-10-1 22:27
+							<time title="发布于 2020-10-1 22:27:50 | 编辑于 2020-11-2 3:57:43">2020-10-1 22:27
 							</time>
 						</div>
 					
@@ -614,7 +614,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							892 字
+							1.6k 字
 						</div>
 					
 						
@@ -622,7 +622,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							3 分钟
+							6 分钟
 						</div>
 					
 		</div>
@@ -706,8 +706,102 @@
             &#123;8&#125;
     &#125;)</code></pre>
 <ul>
-<li>Smbus是一种可能已经被淘汰的总线方式，此部件在很多新的机型中已经不再被需要。但经证实在过往的一些mac版本中需要激活它才能进入睡眠唤醒，这是一种很奇怪的现象，但是一般来说此补丁不该被需要。请注意原文中的0x57应该根据自己的主板来决定。比如我的x299主板应该搜索x299 intel datasheet，获得自己主板的datasheet后，得知自己Smbus串口的位置为0xc6。</li>
+<li>Smbus是一种可能已经被淘汰的总线方式，此部件在很多新的机型中已经不再被需要。但经证实在过往的一些mac版本中需要激活它才能进入睡眠唤醒，这是一种很奇怪的现象，但是一般来说此补丁不该被需要。请注意原文中的<code>0x57</code>应该根据自己的主板来决定。比如我的x299主板应该搜索<code>x299 intel datasheet</code>，获得自己主板的<code>datasheet</code>后，得知自己Smbus串口的位置为<code>0xc6</code>，替换原文中的所有<code>0x57</code>为<code>0xc6</code>。此SSDT应只用于debug。</li>
 </ul>
+<pre><code class="asl">/*
+ * SMBus compatibility table.
+ */
+DefinitionBlock (&quot;&quot;, &quot;SSDT&quot;, 2, &quot;ACDT&quot;, &quot;MCHCSBUS&quot;, 0x00000000)
+&#123;
+    External (_SB_.PCI0, DeviceObj)
+    External (_SB_.PCI0.SBUS, DeviceObj)
+
+    Scope (_SB.PCI0)
+    &#123;
+        Device (MCHC)
+        &#123;
+            Name (_ADR, Zero)  // _ADR: Address
+            Method (_STA, 0, NotSerialized)  // _STA: Status
+            &#123;
+                If (_OSI (&quot;Darwin&quot;))
+                &#123;
+                    Return (0x0F)
+                &#125;
+                Else
+                &#123;
+                    Return (Zero)
+                &#125;
+            &#125;
+        &#125;
+    &#125;
+
+    Device (_SB.PCI0.SBUS.BUS0)
+    &#123;
+        Name (_CID, &quot;smbus&quot;)  // _CID: Compatible ID
+        Name (_ADR, Zero)  // _ADR: Address
+        Device (DVL0)
+        &#123;
+            Name (_ADR, 0x57)  // _ADR: Address
+            Name (_CID, &quot;diagsvault&quot;)  // _CID: Compatible ID
+            Method (_DSM, 4, NotSerialized)  // _DSM: Device-Specific Method
+            &#123;
+                If (!Arg2)
+                &#123;
+                    Return (Buffer (One)
+                    &#123;
+                         0x57                                             // W
+                    &#125;)
+                &#125;
+
+                Return (Package (0x02)
+                &#123;
+                    &quot;address&quot;, 
+                    0x57
+                &#125;)
+            &#125;
+        &#125;
+        Method (_STA, 0, NotSerialized)  // _STA: Status
+        &#123;
+            If (_OSI (&quot;Darwin&quot;))
+            &#123;
+                Return (0x0F)
+            &#125;
+            Else
+            &#123;
+                Return (Zero)
+            &#125;
+        &#125;
+    &#125;
+
+    Method (DTGP, 5, NotSerialized)
+    &#123;
+        If ((Arg0 == ToUUID (&quot;a0b5b7c6-1318-441c-b0c9-fe695eaf949b&quot;)))
+        &#123;
+            If ((Arg1 == One))
+            &#123;
+                If ((Arg2 == Zero))
+                &#123;
+                    Arg4 = Buffer (One)
+                        &#123;
+                             0x03                                             // .
+                        &#125;
+                    Return (One)
+                &#125;
+
+                If ((Arg2 == One))
+                &#123;
+                    Return (One)
+                &#125;
+            &#125;
+        &#125;
+
+        Arg4 = Buffer (One)
+            &#123;
+                 0x00                                             // .
+            &#125;
+        Return (Zero)
+    &#125;
+&#125;</code></pre>
 <hr>
 <h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
 <li><p>Dortania Team, (2020).,<Fixing RTC write issues>. available at: <a target="_blank" rel="noopener" href="https://dortania.github.io/OpenCore-Post-Install/misc/rtc.html#finding-our-bad-rtc-region">https://dortania.github.io/OpenCore-Post-Install/misc/rtc.html#finding-our-bad-rtc-region</a>, last accessed at 10 Oct 2020.</p>
