@@ -3,21 +3,28 @@
 <html class="article-header-style-default">
 <head>
 	
-	<title>标签 : Hackintosh - Xjn&#39;s Blog</title>
+	<title>内核奔溃报告解读 - Xjn&#39;s Blog</title>
 	<meta charset="utf-8">
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta name="description" content="XJN819">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Xjn&#39;s Blog">
-<meta property="og:url" content="https://blog.xjn819.com/tags/Hackintosh/">
+	<meta name="description" content="分析错误报告 首先我们确认自己的内核版本uname -a Darwin xjns-iMac-Pro.local 19.6.0 Darwin Kernel Version 19.6.0: Mon Aug 31 22:12:52 PDT 2020; root:xnu-6153.141.2~1&#x2F;RELEASE_X86_64 x86_64  确认自己的电脑已经开启了kASLR功能   错误报告（Kerne">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内核奔溃报告解读">
+<meta property="og:url" content="https://blog.xjn819.com/post/kernel-panic-report-analysis.html">
 <meta property="og:site_name" content="Xjn&#39;s Blog">
-<meta property="og:description" content="XJN819">
+<meta property="og:description" content="分析错误报告 首先我们确认自己的内核版本uname -a Darwin xjns-iMac-Pro.local 19.6.0 Darwin Kernel Version 19.6.0: Mon Aug 31 22:12:52 PDT 2020; root:xnu-6153.141.2~1&#x2F;RELEASE_X86_64 x86_64  确认自己的电脑已经开启了kASLR功能   错误报告（Kerne">
 <meta property="og:locale">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/4eIkl1Bh6ivn98S.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/X9FuhIAGMoZWOxa.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/pZivqjxuQSOrP2D.png">
+<meta property="article:published_time" content="2020-11-01T14:27:50.000Z">
+<meta property="article:modified_time" content="2020-11-01T14:28:26.253Z">
 <meta property="article:author" content="Seon">
-<meta property="article:tag" content="OpenCore,Hackintosh,黑苹果,黑苹果安装,xjn819,OC,OC引导">
+<meta property="article:tag" content="OpenCore">
+<meta property="article:tag" content="Hackintosh">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/11/01/4eIkl1Bh6ivn98S.png">
 
 	<meta name="theme-color" content="#212121">
 	<meta name="theme-color-rgb" content="33,33,33">
@@ -431,19 +438,6 @@
 
 <div class="page-information-card-container">
 	
-		
-<div class="page-information-card card bg-gradient-secondary shadow-lg border-0">
-	<div class="card-body">
-		<h3 class="text-black">标签 : Hackintosh </h3>
-		
-			<p class="text-black mt-3 mb-0 opacity-8">
-				<i class="fa fa-file-o mr-1"></i>
-				2 篇文章
-			</p>
-		
-	</div>
-</div>
-	
 </div>
 
 <div id="sidebar_mask"></div>
@@ -470,18 +464,39 @@
 		<div id="leftbar_part2" class="widget widget_search card bg-white shadow-sm border-0">
 			<div id="leftbar_part2_inner" class="card-body">
 				
-				<div class="nav-wrapper" style="padding-top: 5px; display:none; ">
+				<div class="nav-wrapper" style="padding-top: 5px;">
 	                <ul class="nav nav-pills nav-fill" role="tablist">
 						
+							<li class="nav-item sidebar-tab-switcher">
+								<a class="active show" id="leftbar_tab_catalog_btn" data-toggle="tab" href="#leftbar_tab_catalog" role="tab" aria-controls="leftbar_tab_catalog" no-pjax>文章目录</a>
+							</li>
+						
 						<li class="nav-item sidebar-tab-switcher">
-							<a class="active show" id="leftbar_tab_overview_btn" data-toggle="tab" href="#leftbar_tab_overview" role="tab" aria-controls="leftbar_tab_overview" no-pjax>站点概览</a>
+							<a class="" id="leftbar_tab_overview_btn" data-toggle="tab" href="#leftbar_tab_overview" role="tab" aria-controls="leftbar_tab_overview" no-pjax>站点概览</a>
 						</li>
 	                </ul>
 				</div>
 				<div>
 					<div class="tab-content" style="padding: 10px 10px 0 10px;">
 						
-						<div class="tab-pane fade text-center active show" id="leftbar_tab_overview" role="tabpanel" aria-labelledby="leftbar_tab_overview_btn">
+							<div class="tab-pane fade active show" id="leftbar_tab_catalog" role="tabpanel" aria-labelledby="leftbar_tab_catalog_btn">
+								<div id="leftbar_catalog"></div>
+								<script type="text/javascript">
+									$(function () {
+										$(document).headIndex({
+											articleWrapSelector: '#post_content',
+											indexBoxSelector: '#leftbar_catalog',
+											subItemBoxClass: "index-subItem-box",
+											itemClass: "index-item",
+											linkClass: "index-link",
+											offset: 80,
+										});
+									})
+								</script>
+								
+							</div>
+						
+						<div class="tab-pane fade text-center" id="leftbar_tab_overview" role="tabpanel" aria-labelledby="leftbar_tab_overview_btn">
 							<img id="leftbar_overview_author_image" src="/assets/img/auther.jpg" class="img-fluid rounded-circle shadow-sm" style="width: 100px;" alt="avatar">
 							<h6 id="leftbar_overview_author_name">xjn819</h6>
 							<nav class="site-state">
@@ -574,10 +589,8 @@
 	<main id="main" class="site-main" role="main">
 		
 		
-		
-		
 			
-	<article class="post card bg-white shadow-sm border-0 ">
+	<article class="post post-full card bg-white shadow-sm border-0 ">
 	<header class="post-header text-center">
 		
 		<a class="post-title" href="/post/kernel-panic-report-analysis.html">内核奔溃报告解读</a>
@@ -602,7 +615,7 @@
 							<div class="post-meta-devide">|</div>
 						
 						<div class="post-meta-detail post-meta-detail-words">
-							<i class="fa fa-book" aria-hidden="true"></i>
+							<i class="fa fa fa-book" aria-hidden="true"></i>
 							<span id="busuanzi_container_page_pv">
 								阅读<span id="busuanzi_value_page_pv"></span>次
 							</span>
@@ -628,100 +641,269 @@
 		
 	</header>
 
-	<div class="post-content">
-		
-			
-				分析错误报告
+	<div class="post-content" id="post_content">
+		<h1 id="分析错误报告"><a href="#分析错误报告" class="headerlink" title="分析错误报告"></a>分析错误报告</h1><ul>
+<li>首先我们确认自己的内核版本<pre><code class="bash">uname -a
+Darwin xjns-iMac-Pro.local 19.6.0 Darwin Kernel Version 19.6.0: Mon Aug 31 22:12:52 PDT 2020; root:xnu-6153.141.2~1/RELEASE_X86_64 x86_64</code></pre>
+</li>
+<li>确认自己的电脑已经开启了<code>kASLR</code>功能</li>
+</ul>
+<hr>
+<h1 id="错误报告（Kernel-panic-report）"><a href="#错误报告（Kernel-panic-report）" class="headerlink" title="错误报告（Kernel panic report）"></a>错误报告（Kernel panic report）</h1><p> 一般存放在<code>/Library/Logs/DiagnosticReports/</code> 目录下，报告以<code>.panic</code>结尾。比如<code>Kernel_2020-10-15-185538_Patricks-MacBook-Pro.panic</code>。</p>
+<p>随便网上找了一份错误报告：</p>
+<pre><code class="bash">Mon Jan 15 18:55:38 2018
+
+*** Panic Report ***
+panic(cpu 6 caller 0xffffff8008b6f2e9): Kernel trap at 0xffffff7f8c7ba8b1, type 14=page fault, registers:
+CR0: 0x000000008001003b, CR2: 0xffffff80639b8000, CR3: 0x0000000022202000, CR4: 0x00000000003627e0
+RAX: 0x0000000000000564, RBX: 0x0000000000000564, RCX: 0x0000000000000020, RDX: 0x000000000000002a
+RSP: 0xffffff92354ebc80, RBP: 0xffffff92354ebce0, RSI: 0x00000000000fbeab, RDI: 0xffffff92487b9154
+R8:  0x0000000000000000, R9:  0x0000000000000010, R10: 0x0000000000000010, R11: 0x0000000000000000
+R12: 0xffffff80639b6a70, R13: 0xffffff92354ebdc0, R14: 0xffffff92354ebdd4, R15: 0x0000000000000000
+RFL: 0x0000000000010297, RIP: 0xffffff7f8c7ba8b1, CS:  0x0000000000000008, SS:  0x0000000000000010
+Fault CR2: 0xffffff80639b8000, Error code: 0x0000000000000000, Fault CPU: 0x6, PL: 0, VF: 1
+
+Backtrace (CPU 6), Frame : Return Address
+0xffffff92354eb730 : 0xffffff8008a505f6 
+0xffffff92354eb780 : 0xffffff8008b7d604 
+0xffffff92354eb7c0 : 0xffffff8008b6f0f9 
+0xffffff92354eb840 : 0xffffff8008a02120 
+0xffffff92354eb860 : 0xffffff8008a5002c 
+0xffffff92354eb990 : 0xffffff8008a4fdac 
+0xffffff92354eb9f0 : 0xffffff8008b6f2e9 
+0xffffff92354ebb70 : 0xffffff8008a02120 
+0xffffff92354ebb90 : 0xffffff7f8c7ba8b1 
+0xffffff92354ebce0 : 0xffffff7f8c7ba40f 
+0xffffff92354ebd60 : 0xffffff7f8c7b85e8 
+0xffffff92354ebda0 : 0xffffff7f8c7b9db2 
+0xffffff92354ebe00 : 0xffffff7f8b2b3873 
+0xffffff92354ebe50 : 0xffffff7f8b2bd473 
+0xffffff92354ebe90 : 0xffffff7f8b2bcc7d 
+0xffffff92354ebed0 : 0xffffff8009091395 
+0xffffff92354ebf30 : 0xffffff800908fba2 
+0xffffff92354ebf70 : 0xffffff800908f1dc 
+0xffffff92354ebfa0 : 0xffffff8008a014f7 
+      Kernel Extensions in backtrace:
+         com.apple.iokit.IOAcceleratorFamily2(376.6)[5F8F39B4-41AB-3263-9867-D0FAF9BBD2AE]@0xffffff7f8b2b0000-&gt;0xffffff7f8b345fff
+            dependency: com.apple.driver.AppleMobileFileIntegrity(1.0.5)[58669FC2-CC90-3594-AD69-DB89B923FD20]@0xffffff7f899ff000
+            dependency: com.apple.iokit.IOSurface(209.2.2)[AE58720D-7079-388F-AD95-FD2366F98F8D]@0xffffff7f8b294000
+            dependency: com.apple.iokit.IOPCIFamily(2.9)[C08F7FC1-78A4-3A1B-BFE2-C07080CF2048]@0xffffff7f89294000
+            dependency: com.apple.iokit.IOGraphicsFamily(517.22)[2AEA02BF-2A38-3674-A187-E5F610FD65B7]@0xffffff7f89a39000
+         com.apple.kext.AMDRadeonX4150(1.6)[DF336AB9-8300-3ED2-AAD3-7D2C8F4B8DEB]@0xffffff7f8c7b4000-&gt;0xffffff7f8cf20fff
+            dependency: com.apple.iokit.IOSurface(209.2.2)[AE58720D-7079-388F-AD95-FD2366F98F8D]@0xffffff7f8b294000
+            dependency: com.apple.iokit.IOPCIFamily(2.9)[C08F7FC1-78A4-3A1B-BFE2-C07080CF2048]@0xffffff7f89294000
+            dependency: com.apple.iokit.IOGraphicsFamily(517.22)[2AEA02BF-2A38-3674-A187-E5F610FD65B7]@0xffffff7f89a39000
+            dependency: com.apple.iokit.IOAcceleratorFamily2(376.6)[5F8F39B4-41AB-3263-9867-D0FAF9BBD2AE]@0xffffff7f8b2b0000
+
+BSD process name corresponding to current thread: kernel_task
+
+Mac OS version:
+17C88
+
+Kernel version:
+Darwin Kernel Version 17.3.0: Thu Nov  9 18:09:22 PST 2017; root:xnu-4570.31.3~1/RELEASE_X86_64
+Kernel slide:     0x0000000008600000
+Kernel text base: 0xffffff8008800000
+__HIB  text base: 0xffffff8008700000
+System model name: MacBookPro14,3
+
+EOF</code></pre>
+<p>错误报告有很多无用内容，我们直接看错误发生在哪里：</p>
+<pre><code class="bash"> panic(cpu 6 caller 0xffffff8008b6f2e9): Kernel trap at 0xffffff7f8c7ba8b1, type 14=page fault</code></pre>
+<p>这段告诉我们系统奔溃是因为<code>type 14=page fault</code>。这种错误往往指出这段内容无法写入或读取一段内存页。</p>
+<p>接着，我们需要找到发生错误命令的注册的<code>地址</code>。在这之前，我们先记录一下它的’RIP’，也就是命令在哪一段死了，从报告中搜索<code>RIP</code>，我们搜到的是<code>0xffffff7f8c7ba8b1</code>。</p>
+<p>据此，根据内存注入的地址，我们得到引起错误的<code>地址</code>是<code>0xffffff80639b8000</code>。</p>
+<pre><code class="bash">Fault CR2: 0xffffff80639b8000, Error code: 0x0000000000000000, Fault CPU: 0x6 ...</code></pre>
+<p>这份错误报告同样回溯了这样的错误是通过何种功能方法注入导致的错误指令。</p>
+<pre><code class="bash">  Backtrace (CPU 6), Frame : Return Address
+  0xffffff92354eb730 : 0xffffff8008a505f6 
+  0xffffff92354eb780 : 0xffffff8008b7d604 
+  0xffffff92354eb7c0 : 0xffffff8008b6f0f9 
+  0xffffff92354eb840 : 0xffffff8008a02120 
+  0xffffff92354eb860 : 0xffffff8008a5002c 
+  0xffffff92354eb990 : 0xffffff8008a4fdac 
+  0xffffff92354eb9f0 : 0xffffff8008b6f2e9 
+  0xffffff92354ebb70 : 0xffffff8008a02120 
+  0xffffff92354ebb90 : 0xffffff7f8c7ba8b1 
+  0xffffff92354ebce0 : 0xffffff7f8c7ba40f 
+  0xffffff92354ebd60 : 0xffffff7f8c7b85e8 
+  0xffffff92354ebda0 : 0xffffff7f8c7b9db2 
+  0xffffff92354ebe00 : 0xffffff7f8b2b3873 
+  0xffffff92354ebe50 : 0xffffff7f8b2bd473 
+  0xffffff92354ebe90 : 0xffffff7f8b2bcc7d 
+  0xffffff92354ebed0 : 0xffffff8009091395 
+  0xffffff92354ebf30 : 0xffffff800908fba2 
+  0xffffff92354ebf70 : 0xffffff800908f1dc 
+  0xffffff92354ebfa0 : 0xffffff8008a014f7</code></pre>
+<p>我们需要找到这些内存地址归属于哪一个kexts才能真正去寻找这个错误的来源：</p>
+<pre><code class="bash">kext: com.apple.iokit.IOAcceleratorFamily2
+loaded at: 0xffffff7f8b2b0000
+
+kext: com.apple.kext.AMDRadeonX4150
+loaded at: 0xffffff7f8c7b4000</code></pre>
+<p>这份报告中可能缺少一些对我们非常重要的信息，但是<code>Kernel slide</code>值<code>0x0000000008600000</code>告诉了我们内核镜像如何通过<code>kASLR</code>转换到了内存中。</p>
+<p>总的来说，通过此份报告，我们得到了：</p>
+<ul>
+<li>内核在注入<code>0xffffff80639b8000</code>发生了错误。</li>
+<li>错误被禁止（RIP）的地址是<code>0xffffff7f8c7ba8b1</code>。</li>
+<li><code>com.apple.iokit.IOAcceleratorFamily2</code> 和 <code>com.apple.kext.AMDRadeonX4150</code>这两个kexts是引起错误的主要原因。</li>
+<li>内核通过<code>kASLR</code>转换进内存的地址是<code>0x0000000008600000</code>。</li>
+<li>内存地址的最后一段是<code>0xffffff8008a014f7</code></li>
+</ul>
+<hr>
+<h1 id="分析错误报告-1"><a href="#分析错误报告-1" class="headerlink" title="分析错误报告"></a>分析错误报告</h1><p>得到了主要的几个数据后，我们把<code>/System/Library/Kernels/kernel</code>拖入<a target="_blank" rel="noopener" href="https://www.hopperapp.com/">Hopper disassembler</a>软件里， 因为<code>kASLR</code>把内核注入到了内存中，我们需要<code>Hopper Disassembler</code>来重新定位镜像。按<code>Modify</code>然后点击<code>Change File Base Address</code>。输入之前得到的<code>slide地址+0x100000</code>,也就是<code>0x0000000008600000+0x100000=0xffffff8008700000</code>。</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2020/11/01/4eIkl1Bh6ivn98S.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="Screen Shot 2020-11-01 at 10.12.23 PM.png"><br>等待内核镜像被重新定位后，我们点击<code>G</code>输入内存的最后一段地址<code>0xffffff8008a014f7</code></p>
+
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2020/11/01/X9FuhIAGMoZWOxa.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="Screen Shot 2020-11-01 at 10.18.45 PM.png"></p>
+
+<p>拆开镜像后我们看到这条指令是直接被加载在一条<code>call</code>指令之前。<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2020/11/01/pZivqjxuQSOrP2D.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="callCont.png"></p>
+
+<p>一般来说，我们的CPU收到了<code>call</code>指令后，它会马上保存这个地址，这样允许我们知道如何去return这个<code>call</code>以及什么时候这个<code>call</code>完成。当内核正在准备错误报告时，它通过回溯这个被保存的地址来找到错误关键。</p>
+
+	</div>
+
+	
+
+	
+
+	
+		<div class="post-tags">
+			<i class="fa fa-tags" aria-hidden="true"></i>
+			<a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/Hackintosh/" rel="tag">Hackintosh</a><a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/OpenCore/" rel="tag">OpenCore</a>
+		</div>
+	
+</article>
+
+	<div id="share_container">
+	<div id="share" data-initialized="true">
+		<a class="no-pjax icon-wechat" tooltip="分享到微信">
+			<button class="btn btn-icon btn-success">
+				<span class="btn-inner--icon"><i class="fa fa-weixin"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-douban" tooltip="分享到豆瓣">
+			<button class="btn btn-icon btn-primary" style="background: #209261;border: none;">
+				豆
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-qq" tooltip="分享到 QQ">
+			<button class="btn btn-icon btn-primary" style="background: #2196f3;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-qq"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-qzone" tooltip="分享到 QQ 空间">
+			<button class="btn btn-icon btn-primary" style="background: #ffc107;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-star"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-weibo" tooltip="分享到微博">
+			<button class="btn btn-icon btn-warning">
+				<span class="btn-inner--icon"><i class="fa fa-weibo"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-facebook" tooltip="分享到 Facebook">
+			<button class="btn btn-icon btn-primary" style="background: #283593;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-facebook"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-twitter" tooltip="分享到 Twitter">
+			<button class="btn btn-icon btn-primary" style="background: #03a9f4;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://blog.xjn819.com/post/kernel-panic-report-analysis.html&text=内核奔溃报告解读" tooltip="分享到 Telegram">
+			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-copy-link" id="share_copy_link" tooltip="复制链接">
+			<button class="btn btn-icon btn-default">
+				<span class="btn-inner--icon"><i class="fa fa-link"></i></span>
+			</button>
+		</a>
+	</div>
+	<button id="share_show" class="btn btn-icon btn-primary" tooltip="分享">
+		<span class="btn-inner--icon"><i class="fa fa-share"></i></span>
+	</button>
+</div>
+<script type="text/javascript">
+	socialShare("#share", {
+	    title : '内核奔溃报告解读',
+	    description : '分析错误报告
 首先我们确认自己的内核版本uname -a
-Darwin xjns-iMac-Pro.local 19.6.0 Darwin Kernel Version 19.6.0: Mon Aug 31 22:12:52 PDT 2020; root:xnu-6153.141.2~1/RELEASE_X86_64 x86_64
+Darwin xjns-iMac-Pro....',
+	    wechatQrcodeTitle : "分享到微信",
+	    wechatQrcodeHelper : '微信扫描二维码',
+	    source : 'https://blog.xjn819.com/post/kernel-panic-report-analysis.html'
+	});
+	$("#share_show")[0].onclick = function(){
+		$("#share_container").addClass("opened");
+	};
+	$("#share_copy_link")[0].onclick = function(){
+		let input = document.createElement('input');
+		document.body.appendChild(input);
+		input.setAttribute("value", window.location.href);
+		input.setAttribute("readonly", "readonly");
+		input.setAttribute("style", "opacity: 0;mouse-events:none;");
+		input.select();
+		if (document.execCommand('copy')){
+			iziToast.show({
+				title: '链接已复制',
+				message: "链接已复制到剪贴板",
+				class: 'shadow',
+				position: 'topRight',
+				backgroundColor: '#2dce89',
+				titleColor: '#ffffff',
+				messageColor: '#ffffff',
+				iconColor: '#ffffff',
+				progressBarColor: '#ffffff',
+				icon: 'fa fa-check',
+				timeout: 5000
+			});
+		}else{
+			iziToast.show({
+				title: '复制失败',
+				message: "请手动复制链接",
+				class: 'shadow',
+				position: 'topRight',
+				backgroundColor: '#f5365c',
+				titleColor: '#ffffff',
+				messageColor: '#ffffff',
+				iconColor: '#ffffff',
+				progressBarColor: '#ffffff',
+				icon: 'fa fa-close',
+				timeout: 5000
+			});
+		}
+		document.body.removeChild(input);
+	};
+</script>
 
-确认自己的电脑...
-			
+
+<div id="post_comment" class="card shadow-sm">
+	<div id="gitalk-container"></div>
+<script type="text/javascript">
+	var gitalk = new Gitalk({
+		clientID: '86a6322e810d06834891',
+		clientSecret: 'eaf77d01ffaddf2f06a2a4bbac944d8cca3d0c91',
+		repo: 'OCNHTeam.github.io',
+		owner: 'OCNHTeam',
+		admin: ['SeonMe'],
+		id: location.pathname,
+		distractionFreeMode: false
+	})
+	gitalk.render('gitalk-container');
+</script>
+
+</div>
+
+
+<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/post/opencore-guide.html" rel="next"> 使用 OpenCore 引导黑苹果</a></div></div>
+
+
+
 		
-	</div>
-
-	
-		<div class="post-tags">
-			<i class="fa fa-tags" aria-hidden="true"></i>
-			<a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/Hackintosh/" rel="tag">Hackintosh</a><a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/OpenCore/" rel="tag">OpenCore</a>
-		</div>
-	
-</article>
-
-
-	<article class="post card bg-white shadow-sm border-0 ">
-	<header class="post-header text-center">
 		
-		<a class="post-title" href="/post/opencore-guide.html">使用 OpenCore 引导黑苹果</a>
-		<div class="post-meta">
-			
-						
-						<div class="post-meta-detail post-meta-detail-time">
-							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-11-1 17:50:56">2020-10-29 22:42
-							</time>
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-categories">
-							<i class="fa fa-bookmark-o" aria-hidden="true"></i>
-							<a class="post-meta-detail-catagory-link" href="/categories/Hackintosh/">Hackintosh</a>
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-words">
-							<i class="fa fa-book" aria-hidden="true"></i>
-							<span id="busuanzi_container_page_pv">
-								阅读<span id="busuanzi_value_page_pv"></span>次
-							</span>
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-words">
-							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							10.8k 字
-						</div>
-					
-						
-							<div class="post-meta-devide">|</div>
-						
-						<div class="post-meta-detail post-meta-detail-readingtime">
-							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							46 分钟
-						</div>
-					
-		</div>
-		
-	</header>
-
-	<div class="post-content">
-		
-			
-				简介OpenCore(OC)是一种新的引导方式，越来越多的kexts开始放弃Clover, 我相信提早使用OC会对你未来使用黑苹果会有很大的帮助。这是一个自然的现象，就像变色龙被Clover淘汰，而现在OC代替Clover也是大势所趋。你应该需要看一些相关的文章，来帮助你理解我的正文内容，同时也需要下载我推荐的软件：
-
-阅读Opencore Van...
-			
-		
-	</div>
-
-	
-		<div class="post-tags">
-			<i class="fa fa-tags" aria-hidden="true"></i>
-			<a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/Hackintosh/" rel="tag">Hackintosh</a><a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/OpenCore/" rel="tag">OpenCore</a>
-		</div>
-	
-</article>
-
-
-
-
-
 		
 		
 
