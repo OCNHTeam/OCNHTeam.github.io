@@ -15,15 +15,22 @@
 <meta property="og:site_name" content="Xjn&#39;s Blog">
 <meta property="og:description" content="简介OpenCore(OC)是一种新的引导方式，越来越多的kexts开始放弃Clover, 我相信提早使用OC会对你未来使用黑苹果会有很大的帮助。这是一个自然的现象，就像变色龙被Clover淘汰，而现在OC代替Clover也是大势所趋。你应该需要看一些相关的文章，来帮助你理解我的正文内容，同时也需要下载我推荐的软件：  阅读Opencore Vanilla Desktop Guide Gettin">
 <meta property="og:locale">
-<meta property="og:image" content="https://i.loli.net/2020/10/31/ImASHRBLCrQsnKU.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/31/qonmCcpUJyrk84g.png">
 <meta property="og:image" content="https://i.loli.net/2020/10/31/vhNd2tGwArqlZuk.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/31/k5jDCx9c3WdJunh.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/31/EfxazsJNZLKmgv3.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/31/SzvArXcH4OimtR9.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/fO69YhztbwBrMsd.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/gCaplW4bBY39KJs.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2020-10-30T19:12:28.033Z">
+<meta property="article:modified_time" content="2020-11-01T09:50:56.778Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.loli.net/2020/10/31/ImASHRBLCrQsnKU.png">
+<meta name="twitter:image" content="https://i.loli.net/2020/10/31/qonmCcpUJyrk84g.png">
 
 	<meta name="theme-color" content="#212121">
 	<meta name="theme-color-rgb" content="33,33,33">
@@ -598,7 +605,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-10-31 3:12:28">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-11-1 17:50:56">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -625,7 +632,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							8.5k 字
+							10.8k 字
 						</div>
 					
 						
@@ -633,7 +640,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							36 分钟
+							46 分钟
 						</div>
 					
 		</div>
@@ -1906,7 +1913,7 @@ sudo defaults write com.apple.loginwindow LogoutHook /Users/xjn/Documents/Logout
 <li>分区格式为<code>FAT32</code></li>
 </ul>
 </li>
-<li><p>格式化完成后，放入我从黑果小兵镜像包提取出来的<code>[EFI](/tools/EFI.zip)</code>放进去。这是一个clover引导，但并不能引导你的系统，只能提取DSDT。</p>
+<li><p>格式化完成后，放入我从黑果小兵镜像包提取出来的<a href="/tools/EFI.zip">EFI</a>放进去。这是一个clover引导，但并不能引导你的系统，只能提取DSDT。</p>
 </li>
 <li><p>插上U盘，重启，通过U盘引导，看到Clover界面，我们按F4，这样原始的DSDT文件就收集好了。</p>
 </li>
@@ -1959,6 +1966,7 @@ sudo defaults write com.apple.loginwindow LogoutHook /Users/xjn/Documents/Logout
 <p>11系统的解锁略麻烦：<a target="_blank" rel="noopener" href="https://www.bugprogrammer.me/2020/07/09/about-BigSur.html#%E5%88%A0%E9%99%A4%E5%BF%AB%E7%85%A7%EF%BC%8C%E9%87%8D%E8%8E%B7%E6%9D%83%E9%99%90">解锁MacOS11的系统区</a></p>
 <hr>
 <h2 id="关于EC控制器"><a href="#关于EC控制器" class="headerlink" title="关于EC控制器"></a>关于EC控制器</h2><p>EC控制器是电脑自带的一个叫embedded controller的部件。在10.15的系统环境中，笔记本电脑必须重命名原来的EC，而一些台式机主板则需要禁用。下面我会分开来讲解如何禁用EC、如何加载USB电源管理支持。</p>
+<hr>
 <h3 id="禁用EC控制器"><a href="#禁用EC控制器" class="headerlink" title="禁用EC控制器"></a>禁用EC控制器</h3><p><a href="#1.0">之前的章节</a>中提供了重命名这种方式去讲EC0更名为EC，其实这种方法是只适合笔记本的，台式机最好还是禁用EC。</p>
 <p>打开之前提取出来的DSDT.aml，搜索<code>PNP0C09</code>，这里我搜到我的EC真实名字叫做<code>H_EC</code>，你的可能叫<code>EC0</code>或者别的什么奇怪的名字。</p>
 <p>这里我可以看到我的<code>H_EC</code>已经是屏蔽掉的，怎么判定，你看下面有一个<code>Return (Zero)</code>，意味着这个部件是不生效的，即禁用。这样的情况我们不需要做任何SSDT去禁用这个真的EC。</p>
@@ -2016,6 +2024,7 @@ sudo defaults write com.apple.loginwindow LogoutHook /Users/xjn/Documents/Logout
 <blockquote>
 <p>当你的电脑没有EC后，你仍然需要仿冒EC来完成全部操作。</p>
 </blockquote>
+<hr>
 <h3 id="重命名EC控制器"><a href="#重命名EC控制器" class="headerlink" title="重命名EC控制器"></a>重命名EC控制器</h3><p>笔记本不能禁用EC，禁用EC后会直接导致笔记本没有电池。那么我们怎么去重命名EC呢？按照上面提到的方法，找到你EC的真实名字，在<a href="#1.0">之前的章节</a>中我提供了假如你的笔记本的EC叫做<code>EC0</code>时候的重命名办法，那如果你的EC叫别的乱七八糟的名字呢？</p>
 <p>EC名，比如你的EC叫做<code>H_EC</code>，我们打开在线的<a target="_blank" rel="noopener" href="https://tool.lu/hexstr/">HEX转换器</a>，输入<code>H_EC</code>，并点击下面的16进制转换，就可以看到转换出来的值是<code>485F4543</code>，把这个值替换到<code>Find</code>这个选项卡中就行了。你也会注意到，EC的hex-16进制为<code>45435F5F</code>，刚好是<code>Replace</code>的值。这就是一个非常简单实用的OC重命名。切记！OC万不得已不要用重命名！</p>
 <pre><code class="xml">Comment: H_EC to EC 
@@ -2031,7 +2040,7 @@ Skip:0
 TableLength:0 
 TableSignature:&lt;&gt;</code></pre>
 <hr>
-<h3 id="仿冒EC及USBX供电"><a href="#仿冒EC及USBX供电" class="headerlink" title="仿冒EC及USBX供电"></a>仿冒EC及USBX供电</h3><p>禁用EC后你需要创建仿冒EC来进入系统，同时开启USB的快速供电技术（需设备支持）。你可以比较下面两张图，第二张是功能正确开启的。<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2020/10/31/ImASHRBLCrQsnKU.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="Screen Shot 2020-10-31 at 2.32.21 AM.png"></p>
+<h3 id="仿冒EC及USBX供电"><a href="#仿冒EC及USBX供电" class="headerlink" title="仿冒EC及USBX供电"></a>仿冒EC及USBX供电</h3><p>禁用EC后你需要创建仿冒EC来进入系统，同时开启USB的快速供电技术（需设备支持）。你可以比较下面两张图，第二张是功能正确开启的。<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2020/10/31/qonmCcpUJyrk84g.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="Screen Shot 2020-10-31 at 3.40.07 PM.png"></p>
 
 <p>这部分内容是仿冒EC，注意不是每一个DSDT的路径都在<code>SB.PCI0.LPCB</code>，请搜索<code>0x001F0000</code>来确定实际位置和名称。比如我的主板是在<code>SB.PC00.LPC0</code>。</p>
 <pre><code class="asl">    Scope (\_SB.PCI0.LPCB)
@@ -2057,9 +2066,229 @@ TableSignature:&lt;&gt;</code></pre>
 <hr>
 <h2 id="睡眠即醒的相关问题"><a href="#睡眠即醒的相关问题" class="headerlink" title="睡眠即醒的相关问题"></a>睡眠即醒的相关问题</h2><p>睡眠即醒很大程度上跟USB的定制相关，一般一个好的USB定制就能解决睡眠即醒的问题。当然还有很多无法解决的问题，比如蓝牙不能在HUB下进行内建，等等。甚至有些时候我们都不知道为什么黑果会睡不着，那有没有一个办法让黑果强制睡眠呢？答案是有的。经过我的摸索，有几种方法能达到强制睡眠的效果，只是方法不同而已，但主要围绕的还是0d/6d的数值来做一些工作。这些方法涉及了很多OC领域的一些小技巧，我也顺便展示给大家。</p>
 <blockquote>
-<p>0d/6d补丁的本质是阻止一些部件参与唤醒工作，这其中包括了xhc部件，这意味着你无法使用鼠标键盘唤醒，只能用电源键唤醒。但若你有一组除了xhc之外的usb控制器，那把键盘鼠标插在那两个控制器上，这样可以即使用强制睡眠，也仍然可以键盘鼠标唤醒电脑。</p>
+<p>0d/6d补丁是阻止一些部件参与唤醒工作，这其中包括了xhc部件，意味着你无法使用鼠标键盘唤醒，只能用电源键唤醒。但若你有一组除了xhc之外的usb控制器，那把键盘鼠标插在那两个控制器上，可以在使用强制睡眠的情况下用键盘鼠标唤醒电脑。</p>
 </blockquote>
 <hr>
+<h3 id="分辨0D-06"><a href="#分辨0D-06" class="headerlink" title="分辨0D/06"></a>分辨0D/06</h3><p>主板一般有5个部件是直接参与唤醒工作的，这五个部件分别是XHC（USB控制器）、CNVW（CNVI网卡，如果你的主板自带的话）、GLAN（有线网卡）、XDCI（USB相关）、HDEF（音频）。旧的一些主板可能会有不同的命名，比如XHC有叫EH01，HDEF叫做HDAS等，这里不做讨论。而这些设备往往会直接影响睡眠，比如你输入：</p>
+<pre><code class="bash">log show --last 1d | grep &quot;Wake reason&quot;</code></pre>
+<p>我们会看到类似的输出结果</p>
+<pre><code class="bash">2020-10-31 03:35:45.196371+0800 0x74       Default     0x0                  0      0    kernel: (AppleACPIPlatform) AppleACPIPlatformPower Wake reason: XDCI CNVW
+2020-10-31 03:35:45.196373+0800 0x74       Default     0x0                  0      0    kernel: (AppleACPIPlatform) AppleACPIPlatformPower Wake reason: XDCI CNVW</code></pre>
+<p>那么即是<code>XDCI</code> <code>CNVW</code>导致了睡眠出现了问题。于是，我们用几种方法去屏蔽或者说修改这些部件，来达到电脑正常睡眠的效果。</p>
+<p>我们打开之前提取的SSDT，随便搜索五大部件中的一个，比如说XDCI：<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2020/10/31/k5jDCx9c3WdJunh.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="截屏2019-11-07下午11.06.02.png"></p>
+
+<p>主要是看上图中<code>XDCI</code>下的<code>_PRW</code>属性值，可以直接看到Return的值为<code>GPRW (0x6D, 0x04)</code>。其中<code>6D</code>这个数值看主板而定，有些主板叫做<code>0D</code>，而后面<code>04</code>这个值的含义为S4级别的电源管理，即休眠甚至关机情况下的唤醒；有些后面的数值是<code>03</code>，代表着S3级电源管理。这个我打一个大家比较熟悉的例子，<code>GLAN</code>这个网卡部件的<code>PRW</code>值也是<code>0x04</code>，为什么要是<code>04</code>呢？因为这样我们可以使用远程通过网络启动主机功能。</p>
+<h4 id="方法一-OC-全局重命名强制睡眠"><a href="#方法一-OC-全局重命名强制睡眠" class="headerlink" title="方法一: OC 全局重命名强制睡眠"></a>方法一: OC 全局重命名强制睡眠</h4><p>上一步中已经确认了你的主板是0D还是06，打开OC little的060D补丁，选择合适自己主板的补丁集，比如我的是<code>Name-6D更名.plist</code>。将补丁抄入自己的<code>Config.plist</code>后重启生效。</p>
+<blockquote>
+<p>全局重命名会导致其他系统无法通过OC引导开机，不建议使用。</p>
+</blockquote>
+<hr>
+<h4 id="方法二-沿用Clover版本的0D-06补丁-amp-展示TgtBridge在OC下的用法"><a href="#方法二-沿用Clover版本的0D-06补丁-amp-展示TgtBridge在OC下的用法" class="headerlink" title="方法二: 沿用Clover版本的0D/06补丁&amp;展示TgtBridge在OC下的用法"></a>方法二: 沿用Clover版本的0D/06补丁&amp;展示TgtBridge在OC下的用法</h4><p>宪武大大做的clover版本的0d/6d补丁，其实没啥必要讲，只是有留言问了tgtbridge在oc下怎么用，那我就展示一下吧。这个补丁原理是一样的，通过重命名的方式改_prw。</p>
+<p>直接下载宪武大大的<a target="_blank" rel="noopener" href="https://github.com/daliansky/P-little/tree/master/%E9%83%A8%E4%BB%B6%E8%A1%A5%E4%B8%81%E5%8C%85/11-1-%E7%9D%A1%E4%BA%86%E5%8D%B3%E9%86%92(0D:6D)%E8%A1%A5%E4%B8%81">clover hotpatch</a>补丁包，打开plist文件。那我们拿出一组数据来讲解怎么把它翻译成oc版本：</p>
+<pre><code class="xml">Comment      String       XHC:_PRW to XPRW 
+Disabled     Boolean      True//此补丁并未生效，这里要改成false才会生效 
+Find         5F505257         //hex转text的含义即是：_PRW Replace      58505257         //hex转text的含义即是：XPRW TgtBridge    5848435F         //hex转text的含义即是：XHC_</code></pre>
+<p>这组改名是对XHC下的PRW改名为xprw，这样的话，之前prw下的(0x6D, 0x04)即不生效了。而指定xhc的方法即是使用了tgtbridge，因为整张dsdt上有几十上百个_PRW，你必须通过tgtbridge来指定到底是哪一个部件的_PRW。</p>
+<p>那么OC到底怎么使用tgtbridge来特定某一部件下的内容重命名呢？我们先把上面一段clover的补丁转换成oc的版本先吧：</p>
+<pre><code class="xml">Comment           String        XHC:_PRW to XPRW
+Count             Number                      //需要重点解释 
+Enabled           Boolean       True          //表示应用此补丁，不应用选False 
+Find              Data          5F505257      //hex转text的含义即是：_PRW
+Limit             Number        0             //这个按默认即可 不去管他
+Mask              Data          &lt;&gt;            //这个按默认即可 不去管他
+OemTableId        Data          &lt;&gt;            //这个按默认即可 不去管他
+Replace           Data          58505257      //hex转text的含义即是：XPRW
+ReplaceMask       Data          &lt;&gt;            //这个按默认即可 不去管他
+Skip              Number                      //需要重点解释 
+TableLength       Number        0             //这个按默认即可 不去管他
+TableSignature    Data          44534454      //hex转text的含义即是：DSDT，这里按默认即可，代表对dsdt进行修改</code></pre>
+<p>这里就是一个还没全部翻译好的oc版改名xhc的prw。那么如何定位xhc下的_prw呢，主要是填写<code>Count</code>和<code>Skip</code>。其实oc的<code>tgtbridge</code>是通过一个个数过去来定位具体哪一个位置的。比如xhc的prw是整张dsdt里面的第55个，那<code>skip</code>填54，意味着跳过前54个，从第55个开始执行。那执行多少次呢？执行一次<code>count</code>就填1；比如你要同时改第55个和56个，那count就填2。说了这么多，我来实操一下吧：</p>
+<p>打开dsdt，在左下角直接搜索_PRW，就能把整张表的_PRW筛选出来了：<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2020/10/31/EfxazsJNZLKmgv3.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="截屏2019-11-08上午2.57.43.png"></p>
+
+<p>我总共数了一下，一共有56个_PRW。我们再在主内容栏上按command+f搜索xhc，直接找到xhc的_PRW，刚好我们看到我的xhc实在整张表的倒数第4个，也就是正数第53个：</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2020/10/31/SzvArXcH4OimtR9.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="截屏2019-11-08上午3.00.36.png"></p>
+
+<p>那么我们就可以补充完整张表了：</p>
+<pre><code class="xml">Comment          String       XHC:_PRW to XPRW 
+Count            Number       1
+Enabled          Boolean      True 
+Find             Data         5F505257
+Limit            Number       0 
+Mask             Data         &lt;&gt; 
+OemTableId       Data         &lt;&gt; 
+Replace          Data         58505257 
+ReplaceMask      Data         &lt;&gt; 
+Skip             Number       52 
+TableLength      Number       0 
+TableSignature   Data         44534454</code></pre>
+<p>如果你想第53、54、55个都改掉，那count就写3，意味着顺序执行3次。好了，就这样，有问题留言。</p>
+<h4 id="方法三：配合SSDT-重命名的强制睡眠补丁（推荐）"><a href="#方法三：配合SSDT-重命名的强制睡眠补丁（推荐）" class="headerlink" title="方法三：配合SSDT+重命名的强制睡眠补丁（推荐）"></a>方法三：配合SSDT+重命名的强制睡眠补丁（推荐）</h4><p>oc不提倡用户直接全局重命名，如果真的要用重命名，也一定是搭配ssdt去做重命名，所以这个方法也是宪武大大和我最推荐的一种方法。</p>
+<p>打开宪武大大的OC-SSDT包，找到0D/6D文件夹，打开<code>SSDT-GPRW.dsl</code>。</p>
+<pre><code class="asl">// In config ACPI, GPRW to XPRW 
+// Find: 47505257 02 
+// Replace: 58505257 02 //这里提示你要应用这个补丁，你必须在config中的ACPI-PATCH里面加入如上重命名内容 
+// 
+DefinitionBlock (&quot;&quot;, &quot;SSDT&quot;, 2, &quot;ACDT&quot;, &quot;GPRW&quot;, 0) 
+&#123; 
+  External(XPRW, MethodObj) //寻找dsdt表中叫做XPRW的内容，这是要你在config中先把gprw改名成xprw才会生效，这就是为什么这个补丁的重命名必须是这个ssdt和重命名一起用的原因，你第一个重命名不生效，这个ssdt也不会生效。 
+  Method (GPRW, 2, NotSerialized) 
+  &#123; 
+    If (_OSI (&quot;Darwin&quot;)) //为了不破坏dsdt完整性，这里做了系统判断，当你运行windows的时候，此ssdt不生效
+     &#123; 
+       If ((0x6D == Arg0)) //如果你的dsdt中是6D进行判断 
+       &#123; 
+         Return (Package () 
+         &#123; 0x6D, 
+           Zero
+          &#125;) 
+       &#125; 
+
+       If ((0x0D == Arg0)) //如果你的dsdt中是0D进行判断 
+       &#123; 
+         Return (Package () 
+         &#123; 0x0D, 
+           Zero 
+          &#125;) 
+        &#125; 
+      &#125; 
+  Return (XPRW (Arg0, Arg1)) //当运行mac系统时，如果你的dsdt中XPRW为6d，或者0d时返回为0，即屏蔽。 
+  &#125;
+&#125;</code></pre>
+<p>这个ssdt不需要你改任何内容，打开后左上角另存为（save as), 其中文件格式(file format)必须选择ACPI Machine Language Binary，文件名字就叫，记住后缀为aml。记得将ssdt-gprw.aml放入EFI/OC/ACPI下，并在config.plist中加载此aml文件。</p>
+<p>同时，我们需要在ACPI—Patch下增加一条全局重命名来配合此SSDT。</p>
+<pre><code class="xml">Comment: GPRW to XPRW 
+Count:0 
+Enabled:YES 
+Find:&lt;4750525702&gt; 
+Limit:0 
+Mask:&lt;&gt; 
+OemTable:&lt;&gt; 
+Replace:&lt;5850525702&gt; 
+ReplaceMask:&lt;&gt; 
+Skip:0 
+TableLength:0 
+TableSignature:&lt;&gt;</code></pre>
+<hr>
+<h2 id="OC官方内核补丁集介绍"><a href="#OC官方内核补丁集介绍" class="headerlink" title="OC官方内核补丁集介绍"></a>OC官方内核补丁集介绍</h2><p>这里会长期更新OC官方提供的Kernel Patch。</p>
+<hr>
+<h3 id="华硕等机型开机卡F1"><a href="#华硕等机型开机卡F1" class="headerlink" title="华硕等机型开机卡F1"></a>华硕等机型开机卡F1</h3><p>注意此kp补丁只对10.14.4以上系统版本生效，旧的我懒得提供了，需要留言。更好的解决卡f1的方案请参照《rtc综述》</p>
+<pre><code class="xml">Kernel 
+  Patch 
+     Item 0 
+     Base         String 
+     Comment      String    f1 patch （随便填，好记就行） 
+     Count        Number    1 
+     Enabled      Boolean   Yes 
+     Find         Data      75330fb7 
+     Identifier   String    com.apple.driver.AppleRTC 
+     Limit        Number    0 
+     Mask         Data      
+     MaxKernel    String 
+     MinKernel    String 
+     Replace      Data      eb330fb7
+     ReplaceMask  Data 
+     Skip         Number    0</code></pre>
+<hr>
+<h3 id="关机卡RTC"><a href="#关机卡RTC" class="headerlink" title="关机卡RTC"></a>关机卡RTC</h3><pre><code class="xml">Kernel 
+    Patch 
+      Item 2 
+       Base         String      __ZN8AppleRTC14updateChecksumEv 
+       Comment      String      Disable RTC ck poweroff（随便填，好记就行） 
+       Count        Number      1 
+       Enabled      Boolean     Yes
+       Find         Data 
+       Identifier   String      com.apple.driver.AppleRTC 
+       Limit        Number      0 
+       Mask         Data 
+       MaxKernel    String 
+       MinKernel    String 
+       Replace      Data        c3 
+       ReplaceMask  Data 
+       Skip         Number      0</code></pre>
+<hr>
+<h2 id="300系列主板开启原生NVRAM"><a href="#300系列主板开启原生NVRAM" class="headerlink" title="300系列主板开启原生NVRAM"></a>300系列主板开启原生NVRAM</h2><p>打开你的DSDT，搜索<code>001F0000</code>，确定自己的</p>
+<ul>
+<li>lpc部件名字，如图示，我的lpc部件名叫做<code>LPC0</code>, 别的主板可能叫做<code>LPCB</code>，请根据实际情况记录</li>
+<li>lpc的路径，如图左下角红线提示，我的LPC路径在<code>_SB_.PC00.LPC0</code></li>
+</ul>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2020/11/01/fO69YhztbwBrMsd.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="Screenshot-2020-02-05-at-10.47.54-AM.png"></p>
+
+<ul>
+<li>下载<a href="/tools/SSDT-EC-USBX.dsl.zip">SSDT-PMC.dsl</a>，根据自己的dsdt编辑相关内容：</li>
+</ul>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2020/11/01/gCaplW4bBY39KJs.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="Screenshot-2020-02-05-at-10.53.33-AM.png"></p>
+
+<p>左上角另存为（save as), 其中文件格式(file format)必须选择ACPI Machine Language Binary，文件名字随便写吧，我就叫ssdt-pmc.aml，记住后缀为aml。记得将ssdt-pmc.aml放入EFI/OC/ACPI下，并在config.plist中添加加载此aml文件。</p>
+<ul>
+<li><p>如果你之前模拟过nvram，请执行以下命令删除相关模拟内容：</p>
+</li>
+<li><pre><code class="bash"># 删除文件 LogoutHook.command 
+sudo rm -rf $(sudo defaults read com.apple.loginwindow LogoutHook) 
+# 清空 LogoutHook 的触发设置 
+sudo defaults delete com.apple.loginwindow LogoutHook</code></pre>
+</li>
+<li><p>删除EFI下的nvram.plist。</p>
+</li>
+<li><p>同时你需要对config.plist进行设置：</p>
+<ul>
+<li>NVRAM—LegacyEnable 选择No</li>
+<li>NVRAM—LegacyOverwrite 选择No</li>
+<li>Booter—Quirks—-DisableVariableWrite 选择no</li>
+<li>你也许要打开NVRAM—WriteFlash 选择YES（请尽可能不要选！）</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="OpenCore-进阶"><a href="#OpenCore-进阶" class="headerlink" title="OpenCore 进阶"></a>OpenCore 进阶</h1><p>以下内容对你正常使用黑苹果已经无关了，如果你追求更好的黑果表现，可以看下去，但这部分内容也需要你自己有更好的能力与耐心。如果你不具备足够的条件，我不建议你看下去；如果你的失误导致硬件的损坏，我也不会、也没能力负责。</p>
+<hr>
+<h2 id="CPU的变频优化"><a href="#CPU的变频优化" class="headerlink" title="CPU的变频优化"></a>CPU的变频优化</h2><p>此章节对你的要求会相对高一点，并且请你具备如下条件：</p>
+<ul>
+<li>有耐心</li>
+<li>CFG已经解锁（这也许不是必要条件）</li>
+<li>已经打开原生电源管理。</li>
+<li>此章节只适用于4代之后的CPU。</li>
+<li>在调整CPU变频时，出现失误导致CPU温度过高，能有正确的处理能力保证CPU不烧毁，我对极端的后果不负责任。</li>
+<li>此教程对无核显用户不友好，需要自己更多的领悟。</li>
+<li>如果你不同意第五条，请不要看下去。</li>
+</ul>
+<p>在Intel四代之后，苹果引入了新的内核级电源管理方式：<code>XCPM</code>（XNU CPU Power Management），这种新的管理方式可以高效地管理电源及变频。同时，苹果也推出了<code>HWP</code> (HardWare controlled Performance states)，这种技术可以快速根据特定程序的需求，作出变频转换。我们这个章节，本质上就是在加载<code>XCPM</code>的情况下，调整<code>HWP</code>来优化CPU的变频。</p>
+<p>同时我要说的是，我在论坛上看到很多所谓的“变频”，有的甚至加载了50多个档位的变频，其实这种是完全没有意义的。我认为，变频是能在你需要的高频的时候快速进入高频状态，在关闭程序后又能很快回到低档位，换句话说，其实只需要三个档位就高了：睿频档，正常频率，以及低频档。</p>
+<ul>
+<li><p>你需要搞清楚自己的cpu型号，并找到、换成与自己cpu型号最接近或者一样的白苹果型号，并且此型号必须带有<code>HWP</code>。一般新的笔记本机型都具有，台式机的话推荐iMac19.1以及Macmini8.1。可查询<a target="_blank" rel="noopener" href="https://blog.daliansky.net/A-command-to-teach-you-how-to-confirm-their-own-models-and-how-to-open-the-HWP.html">此帖</a>选取适合的机型。</p>
+</li>
+<li><p>执行如下命令：</p>
+<pre><code class="bash">cd ~/desktop 
+mkdir cpu 
+cd cpu 
+git clone https://github.com/corpnewt/CPUFriendFriend.git 
+git clone https://github.com/acidanthera/CPUFriend.git cp ~/desktop/cpu/CPUFriend/tools/ResourceConverter.sh ~/desktop/cpu/ 
+CpuFriendFriend/CPUFriendFriend.command</code></pre>
+</li>
+<li><p>你会看到如图的命令行，这里1 of 4代表第一段睿频的设置，以此类推，数值越大睿频越高，下面要求你填写的是最低的频率值，你想要低一点的800MHZ就填08，高一点的1300MHZ就填0D（注意大小写）<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="Screen-Shot-2019-12-09-at-11.28.30-AM.png"></p>
+
+</li>
+<li><p>填完前两段后，它会要求你填写EPP值，EPP值越低，性能表现越强。我们是填的前两段的低频率部分，我们可以选择节能型的，比如0x80，如果你想极致性能，可以填0x00。<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="Screen-Shot-2019-12-09-at-11.32.38-AM.png"></p>
+
+</li>
+<li><p>直至你填完所有4段变频需求后，便会生成你的变频plist。我们执行以下命令:</p>
+<pre><code class="bash">cp ~/Desktop/cpu/CpuFriendFriend/Results/*.* ~/Desktop/cpu</code></pre>
+</li>
+<li><p>我们会在桌面的CPU文件夹中找到你所需要的<code>ResourceConverter.sh</code>以及Mac-xxxxxxx.plist两个文件</p>
+</li>
+<li><p>执行以下命令生成你最终需要的<code>CPUFriendDataProvider.kext</code>,注意命令行中<code>Mac-AA95B1DDAB278B95.plist</code>，请替换成你自己的文件名，这样我们就可以在桌面的CPU文件夹下拿到<code>CPUFriendDataProvider.kext</code>。</p>
+<pre><code class="bash">cd ~/Desktop/cpu 
+./ResourceConverter.sh --kext ~/Desktop/cpu/Mac-AA95B1DDAB278B95.plist</code></pre>
+</li>
+<li><p>我们再到CPUFriend的<a target="_blank" rel="noopener" href="https://github.com/acidanthera/CPUFriend/releases">release</a>页面下，下载最新的release版本，得到里面的CPUFriend.kext</p>
+</li>
+</ul>
+<ul>
+<li><p>将<code>CPUFriendDataProvider.kext</code>与<code>CPUFriend.kext</code>一起放到oc/kexts下,并在config中加载，注意：<code>CPUFriend.kext</code>应该放在<code>CPUFriendDataProvider.kext</code>的前面。</p>
+</li>
+<li><p>感谢@请叫我官人 的帮助。完成，自行测试。</p>
+</li>
+</ul>
+<h2 id="5700-XT-Redeon-VII显卡的性能优化"><a href="#5700-XT-Redeon-VII显卡的性能优化" class="headerlink" title="5700/XT/Redeon VII显卡的性能优化"></a>5700/XT/Redeon VII显卡的性能优化</h2><p>此教程已经发于pcbeta:<a target="_blank" rel="noopener" href="http://bbs.pcbeta.com/viewthread-1836920-1-1.html">点此直达</a></p>
 
 	</div>
 
