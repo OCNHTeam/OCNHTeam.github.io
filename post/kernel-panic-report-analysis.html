@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/pZivqjxuQSOrP2D.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/7iXtwuvsdCRYKoQ.png">
 <meta property="article:published_time" content="2020-11-01T14:27:50.000Z">
-<meta property="article:modified_time" content="2020-11-01T16:36:46.431Z">
+<meta property="article:modified_time" content="2020-11-01T19:36:31.702Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -600,7 +600,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-11-1 22:27:50 | 编辑于 2020-11-2 0:36:46">2020-11-1 22:27
+							<time title="发布于 2020-11-1 22:27:50 | 编辑于 2020-11-2 3:36:31">2020-11-1 22:27
 							</time>
 						</div>
 					
@@ -617,7 +617,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							3.8k 字
+							3.9k 字
 						</div>
 					
 						
@@ -625,7 +625,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							14 分钟
+							15 分钟
 						</div>
 					
 		</div>
@@ -859,6 +859,8 @@ R12 + RAX*4 = 0xffffff80639b6a70 + (0x564 * 4) = 0xffffff80639b8000</code></pre>
 <p>关于这个会话，macOS确认了<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/X86_calling_conventions#System_V_AMD64_ABI">ystem V AMD64 ABI</a>。这意味着<code>R8</code>是第五条arg去引入<code>snprintf</code>。</p>
 <pre><code class="bash">int snprintf(char *str, size_t size, const char *format, ...);</code></pre>
 <p>这样的话，<code>snprintf</code>被加入到了<code>%c%08x</code>，第五个指令就会被寻址到<code>%08x</code>。这样，<code>R8</code>就能被注册进寻址过的页面中去了。<br>因为这个代码被加入到了<code>writeDiagnosisReport</code>，我们可以猜测带有<code>R8</code>的<code>snprintf</code>被写到了user mode之外。</p>
+<hr>
+<h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><p>Objective-See., (2018). An Unpatched Kernel Bug., avaliable at <a target="_blank" rel="noopener" href="https://objective-see.com/index.html">https://objective-see.com/index.html</a>. last accessed at 1st Nov.2020.</p>
 
 	</div>
 
