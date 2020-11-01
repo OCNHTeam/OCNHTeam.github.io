@@ -70,4 +70,32 @@ Da</summary>
     
   </entry>
   
+  <entry>
+    <title>RTC综述</title>
+    <link href="https://blog.xjn819.com/post/rtc-issues-related-to-oc.html"/>
+    <id>https://blog.xjn819.com/post/rtc-issues-related-to-oc.html</id>
+    <published>2020-10-01T14:27:50.000Z</published>
+    <updated>2020-11-01T16:27:15.191Z</updated>
+    
+    <content type="html"><![CDATA[<p>这篇文章试图教育用户解决RTC(CMOS)记忆体相关的错误导致无法开机，卡F1，无法关机，时钟停止，无法唤醒等问题。此文章为《使用OpenCore引导黑苹果》的补充内容，因原文中RTC相关内容较为散乱，而特意补充。</p><blockquote><h2 id="特别提醒：在使用以下方式修复rtc的过程之前，强烈建议先短接主板CMOS以及清除NVRAM后再进行操作！NVRAM和CMOS存储位置不同，请确定两件事都做了！！"><a href="#特别提醒：在使用以下方式修复rtc的过程之前，强烈建议先短接主板CMOS以及清除NVRAM后再进行操作！NVRAM和CMOS存储位置不同，请确定两件事都做了！！" class="headerlink" title="特别提醒：在使用以下方式修复rtc的过程之前，强烈建议先短接主板CMOS以及清除NVRAM后再进行操作！NVRAM和CMOS存储位置不同，请确定两件事都做了！！"></a>特别提醒：在使用以下方式修复rtc的过程之前，强烈建议先短接主板CMOS以及清除NVRAM后再进行操作！NVRAM和CMOS存储位置不同，请确定两件事都做了！！</h2></blockquote><hr><h1 id="RTC的问题表现"><a href="#RTC的问题表现" class="headerlink" title="RTC的问题表现"></a>RTC的问题表现</h1><ul><li>华硕等主板开机卡F1</li><li>开机卡在PCI Configuration代码处</li><li>睡眠后唤醒奔溃，得到的错误报告为：Sleep Wake Failure in EFI</li><li>无法关机</li><li>电脑时钟不走，或者睡眠唤醒后时钟不走</li></ul><h1 id="RTC如何工作"><a href="#RTC如何工作" class="headerlink" title="RTC如何工作"></a>RTC如何工作</h1><p>RTC为l2c下的从设备，rtc为系统提供时间，电源，硬件信息等指示数据，l2c主动联系从设备rtc获取信息，反馈给系统。这些信息都被注册在rtc的各个内存位置上，这些内存地址对应的数据可通过OC-liilte或者搜索自己主板型号的intel datasheet获得。</p><blockquote><p>举例：<br>系统设定一个自动关机的时间，比如22:20分，此信息通过系统trigger到rtc，l2c扫到rtc信息，则自动关机。</p></blockquote><hr><h1 id="苹果系统下RTC的问题如何产生？"><a href="#苹果系统下RTC的问题如何产生？" class="headerlink" title="苹果系统下RTC的问题如何产生？"></a>苹果系统下RTC的问题如何产生？</h1><p>问题主要是因为Apple。</p><ul><li>Apple公司使用自己定义的Apple RTC，而普通主板可能引用了最新的AWAC装置来代替传统RTC而导致无法开机。</li><li>Apple公司使用自己定义的Apple RTC，Apple RTC记录的内存范围可能不被我们普通的主板所支持，超出了我们普通主板0x70-0x78范围而导致了错误。</li></ul><h1 id="如何解决上述问题"><a href="#如何解决上述问题" class="headerlink" title="如何解决上述问题"></a>如何解决上述问题</h1><p>对于《苹果系统下RTC的问题如何产生？》，第一个问题是这样的：一些具有AWAC的设备我们可能需要禁用AWAC来启用Legacy RTC。这里可通过<a href="https://github.com/daliansky/OC-little/tree/master/03-%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%9B%B4%E5%90%8D%E4%B8%8E%E9%A2%84%E7%BD%AE%E5%8F%98%E9%87%8F/%E8%A1%A5%E4%B8%81%E5%BA%93">OC-Little</a>包中的禁用AWAC来实现。其中SSDT-AWAC.dsl更适用于主板DSDT代码特别多的主板，请根据情况二选一并转换成aml后使用。</p><hr><p>对于第二个问题，它可能带来的影响包括时钟不走，关机不断电，开机卡f1，无法唤醒，唤醒崩溃等。这种问题就像我之前说的，是因为apple rtc写入到了普通主板rtc不支持的范围而导致的。</p><p>我之前在主文章有写到通过<a href="https://github.com/RehabMan/HP-ProBook-4x30s-DSDT-Patch/blob/master/config_parts/config_master.plist#L291L296">二进制补丁</a>来解决开机卡F1，但这种方式其实是不妥当的，这是因为：</p><ul><li>这种补丁会因为系统版本的更新而失效</li><li>并不能控制Efiboot来写入RTC</li><li>卡F1的因素过多，而二进制补丁不可能具有通用性</li></ul></br><p>因此，OC团队提供了三种方式来更好的解决RTC引起的各种问题。</p><ul><li><p>提供DisableRtcChecksum选项来忽略RTC地址中的0x58-0x59范围。但遗憾的是此quirk只适用于0x58-0x59地址损坏的rtc情况，并不具备通用性。</p></li><li><p>ACDT团队提供了<a href="https://github.com/acidanthera/RTCMemoryFixup/releases">RTCMemoryFixup.kext</a>让用户可以自主选择所有你想屏蔽的地址。此kext需要用二分法来使用。</p><ul><li><p>将此kext放入OC/Kexts下面，并在config中加载它。</p></li><li><p>一般来说，我们CMOS的总内存池是从00-FF（这个是16进制，换算成10进制就是从0-255)，我们可以通过增加boot-args:rtcfx_exclude=00-FF来完全屏蔽cmos（当然这样写你完全失去了cmos记忆的功能了）</p></li><li><p>我们需要通过二分法来定位你出错的cmos位置。把00-FF分成两部分，也就是00-7F以及80-FF。我们分别填一次rtcfx_exclude=00-7F以及rtcfx_exclude=80-FF，试试看问题有没有解决。比如说我使用的rtcfx_exclude=80-FF是解决了，那我们继续对80-FF进行拆分为：0x80-0xBF 和 0xC0-0xFF。以此类推，直到你拆分到最后的那一段位置为止。</p></li></ul></li></ul><ul><li>ACDT团队提供了写入NVRAM的方式来屏蔽RTC地址。如图，RTC-blacklist中 8586878889 代表屏蔽85 86 87 89的RTC地址，如果屏蔽85以及86则填写8586。注16进制。      </li></ul><hr></br><h1 id="特殊情况"><a href="#特殊情况" class="headerlink" title="特殊情况"></a>特殊情况</h1><p>有两个非常特殊的情况：</p><ul><li>一些主板本身的DSDT就把RTC的地址写错了，我们需要更正。比如，华硕299的主板没有对rtc的0x72以及0x73进行映射，源dsdt中的资源分配如下代码。0x70只加到了0x72之前，从0x74位开始加到了0x78之前，也就是0x72以及0x73被忽略。因此需要官方的ssdt对rtc的资源进行重新分配<pre><code class="asl">Device (RTC)&#123;  Name (_HID, EisaId (&quot;PNP0B00&quot;) /* AT Real-Time Clock */)  // _HID: Hardware ID  Name (_CRS, ResourceTemplate ()  // _CRS: Current Resource Settings  &#123;      IO (Decode16,          0x0070,             // Range Minimum          0x0070,             // Range Maximum          0x01,               // Alignment          0x02,               // Length          )      IO (Decode16,          0x0074,             // Range Minimum          0x0074,             // Range Maximum          0x01,               // Alignment          0x04,               // Length          )      IRQNoFlags ()          &#123;8&#125;  &#125;)</code></pre></li></ul><ul><li>Smbus是一种可能已经被淘汰的总线方式，此部件在很多新的机型中已经不再被需要。但经证实在过往的一些mac版本中需要激活它才能进入睡眠唤醒，这是一种很奇怪的现象，但是一般来说此补丁不该被需要。请注意原文中的0x57应该根据自己的主板来决定。比如我的x299主板应该搜索x299 intel datasheet，获得自己主板的datasheet后，得知自己Smbus串口的位置为0xc6。</li></ul><hr><h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><p>Dortania Team, (2020).,<Fixing RTC write issues>. available at: <a href="https://dortania.github.io/OpenCore-Post-Install/misc/rtc.html#finding-our-bad-rtc-region">https://dortania.github.io/OpenCore-Post-Install/misc/rtc.html#finding-our-bad-rtc-region</a>, last accessed at 10 Oct 2020.</p><p>OC little, (2020)., &lt;03-二进制更名与预置变量&gt;. available at:<a href="https://github.com/daliansky/OC-little/tree/master/03-%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%9B%B4%E5%90%8D%E4%B8%8E%E9%A2%84%E7%BD%AE%E5%8F%98%E9%87%8F">https://github.com/daliansky/OC-little/tree/master/03-二进制更名与预置变量</a>, last accessed at 10 Oct 2020.</p><p>Acidanthera (2020)., <AcpiSamples> available at: <a href="https://github.com/acidanthera/OpenCorePkg/tree/master/Docs/AcpiSamples">https://github.com/acidanthera/OpenCorePkg/tree/master/Docs/AcpiSamples</a> , last accessed at 10 Oct 2020.</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;这篇文章试图教育用户解决RTC(CMOS)记忆体相关的错误导致无法开机，卡F1，无法关机，时钟停止，无法唤醒等问题。此文章为《使用OpenCore引导黑苹果》的补充内容，因原文中RTC相关内容较为散乱，而特意补充。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;h2 id=&quot;特别提醒</summary>
+      
+    
+    
+    
+    <category term="Hackintosh" scheme="https://blog.xjn819.com/categories/Hackintosh/"/>
+    
+    
+    <category term="OpenCore" scheme="https://blog.xjn819.com/tags/OpenCore/"/>
+    
+    <category term="Hackintosh" scheme="https://blog.xjn819.com/tags/Hackintosh/"/>
+    
+  </entry>
+  
 </feed>
