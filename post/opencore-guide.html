@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2020-11-01T15:00:10.850Z">
+<meta property="article:modified_time" content="2020-11-01T16:05:03.741Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -605,7 +605,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-11-1 23:00:10">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-11-2 0:05:03">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -771,24 +771,24 @@
 <hr>
 <h2 id="1-0-整理OPENCORE目录"><a href="#1-0-整理OPENCORE目录" class="headerlink" title="1.0 整理OPENCORE目录"></a>1.0 整理OPENCORE目录</h2><p>打开下载好的最新版 OC，把 Doc 文件夹下面的 <code>Sample.plist</code> 改名为 <code>config.plist</code>，并把此文件移动到 EFI 目录下面。<br>打开 <code>EFI--Kexts</code>，我们把常用的一些 kexts 先放进去，一般情况下你需要放如下 Kexts:</p>
 <ul>
-<li><p>Lilu.kext    Acidanthera驱动全家桶的SDK</p>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/acidanthera/Lilu/releases">Lilu.kext</a>  Acidanthera驱动全家桶的SDK</p>
 </li>
-<li><p>Applealc.kext   声卡驱动/下载地址</p>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/acidanthera/AppleALC/releases">Applealc.kext</a>   声卡驱动</p>
 </li>
-<li><p>VirtualSMC.kext    传感器驱动依赖</p>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/acidanthera/virtualsmc/releases">VirtualSMC.kext</a>    传感器驱动依赖</p>
 </li>
 <li><p>SMCProcessor.kext   CPU核传感器</p>
 </li>
 <li><p>SMCSuperIO.kext    IO传感器         </p>
 </li>
-<li><p>WhateverGreen.kext 显卡驱动</p>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/acidanthera/whatevergreen/releases">WhateverGreen.kext</a> 显卡驱动</p>
 </li>
-<li><p>IntelMausi.kext  Intel类千兆网卡驱动</p>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/acidanthera/IntelMausi/releases">IntelMausi.kext</a>  Intel类千兆网卡驱动</p>
 </li>
-<li><p>Usbinjectall.kext  USB驱动 （你也可以定制自己的USB补丁）
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Sniki/OS-X-USB-Inject-All/releases">Usbinjectall.kext</a>  USB驱动 （你也可以定制自己的USB补丁）
                </p>
 </li>
-<li><p>NVMeFix.kext      为NVME硬盘增加ASPT属性来保证节电，虽然对台式机没啥用，但是官方推荐所有NVME用户都使用此补丁</p>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/acidanthera/NVMeFix/releases">NVMeFix.kext</a>      为NVME硬盘增加ASPT属性来保证节电，虽然对台式机没啥用，但是官方推荐所有NVME用户都使用此补丁</p>
 </li>
 </ul>
 <blockquote>
