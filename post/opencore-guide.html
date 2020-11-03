@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2020-11-01T19:52:28.685Z">
+<meta property="article:modified_time" content="2020-11-03T08:31:04.914Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -605,7 +605,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-11-2 3:52:28">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-11-3 16:31:04">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -630,7 +630,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							48 分钟
+							49 分钟
 						</div>
 					
 		</div>
@@ -1100,6 +1100,11 @@ Item 7
 <li>修复苹果系统把内部硬盘识别为外置硬盘时（黄色图标的硬盘）开启。</li>
 </ul>
 </li>
+<li><p><strong>ForceSecureBootScheme</strong> <code>NO</code></p>
+<ul>
+<li>只在MacOS安装在虚拟机并开启<code>SecurebootModel</code>时考虑开启。</li>
+</ul>
+</li>
 <li><p><strong>IncreasePciBarSize</strong> <code>NO</code></p>
 <ul>
 <li>解决卡 PCI configuration，一般卡 pci configuration 都是因为自己错误的设置和硬件问题。</li>
@@ -1389,7 +1394,9 @@ item 12     String      efi-boot-device-data</code></pre>
 <hr>
 <h3 id="2-7-1-Config–PlatformInfo–Automatic"><a href="#2-7-1-Config–PlatformInfo–Automatic" class="headerlink" title="2.7.1 Config–PlatformInfo–Automatic"></a>2.7.1 Config–PlatformInfo–Automatic</h3><p>是否自动补全系统信息。这里我选 <code>YES</code>，不重要的信息让它自动填。</p>
 <hr>
-<h3 id="2-7-2-Config–PlatformInfo–Generic"><a href="#2-7-2-Config–PlatformInfo–Generic" class="headerlink" title="2.7.2 Config–PlatformInfo–Generic"></a>2.7.2 Config–PlatformInfo–Generic</h3><p>这里是我们需要填写的三码部分。</p>
+<h3 id="2-7-2-Config–PlatformInfo–CustomMemory"><a href="#2-7-2-Config–PlatformInfo–CustomMemory" class="headerlink" title="2.7.2 Config–PlatformInfo–CustomMemory"></a>2.7.2 Config–PlatformInfo–CustomMemory</h3><p>自定义内存选项，请选择<code>NO</code></p>
+<hr>
+<h3 id="2-7-3-Config–PlatformInfo–Generic"><a href="#2-7-3-Config–PlatformInfo–Generic" class="headerlink" title="2.7.3 Config–PlatformInfo–Generic"></a>2.7.3 Config–PlatformInfo–Generic</h3><p>这里是我们需要填写的三码部分。</p>
 <p>将 <code>OpenCore</code> 包下 <code>Utilities/macserial</code> 程序放到桌面，在终端下输入以下命令</p>
 <pre><code class="bash">~/desktop/macserial --model iMacPro1,1 //你也可以换成你想要的机型比如iMac 19.1</code></pre>
 <p>输入后你回获得一些序列号以及主板主板序列号，请自己选用一组，填写到 <code>MLB</code> 以及 <code>SystemSerialNumber</code> 后重启。</p>
@@ -1537,6 +1544,11 @@ item0                      String
 <li><p><strong>DirectGopRendering</strong> <code>NO</code></p>
 <ul>
 <li>是否使用内置显卡直接渲染开机画面。</li>
+</ul>
+</li>
+<li><p><strong>ForceResolution</strong> <code>NO</code></p>
+<ul>
+<li>Intel <code>Ironlake/Arrandale</code> 及之前的核心显卡需要开启此功能来自定义分辨率。</li>
 </ul>
 </li>
 <li><p><strong>IgnoreTextInGraphics</strong> <code>NO</code></p>
