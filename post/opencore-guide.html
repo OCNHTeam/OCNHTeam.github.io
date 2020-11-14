@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2020-11-06T07:35:01.486Z">
+<meta property="article:modified_time" content="2020-11-14T13:34:38.490Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -605,7 +605,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-11-6 15:35:01">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-11-14 21:34:38">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -1018,7 +1018,7 @@ TableSignature:        &lt;&gt;</code></pre>
 <p>这里我们找到的声卡 PCI 路径为 <code>PciRoot(0x0)/Pci(0x1f,0x3)</code>。我们把预先填写在那里的 <code>PciRoot(0x0)/Pci(0x1b,0x0)</code> 项替换成我们真正的声卡路径。</p>
 <p>后面一段我们看到预先填写的声卡ID为 <code>&lt;01000000&gt;</code>，这里我们需要把它换成合适自己声卡的 ID，输入以下命令得到自己声卡的 CodecID。</p>
 <pre><code class="bash">ioreg -l|grep IOHDACodecVendorID</code></pre>
-<p>点击<a target="_blank" rel="noopener" href="https://github.com/acidanthera/gfxutil/releases">此页面</a>搜索刚得到的CodecID就可查询到自己声卡的型号名称，以及可用的 <code>LayoutID</code>。</p>
+<p>点击<a target="_blank" rel="noopener" href="https://github.com/headkaze/Hackintool/blob/master/Resources/Audio/Codecs.plist">此页面</a>搜索刚得到的CodecID就可查询到自己声卡的型号名称，以及可用的 <code>LayoutID</code>。</p>
 <p>比如我的 CodecID 为 <code>283906408</code>，声卡型号 <code>ALCS1220A</code>，对应 1, 2, 3, 5, 7, 11, 13, 15, 16, 27, 28, 29, 34 的 <code>layout ID</code>。我们需要一个个测试过去，选定自己能用的。这里我们选择 7 这个 ID 进行测试，将 7 转化成 16 进制格式为 07，后面为了满足格式要求添加 6 个 0，则为 <code>07000000</code>，将这个值替换刚才预先填的<code> 01000000</code> 中；如果我们测试 ID 为 27，27 的 16 进制为 1b，补上 6 个 0 则为 <code>1b000000</code>。</p>
 <pre><code class="xml">PciRoot(0x0)/Pci(0x1f,0x3)
         device-id       data      &lt;70a10000&gt; //一般情况下这段是不需要填写的，除非你的声卡需要仿冒
