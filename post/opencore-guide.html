@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2020-11-14T13:34:38.490Z">
+<meta property="article:modified_time" content="2020-11-16T10:09:04.817Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -605,7 +605,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-11-14 21:34:38">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-11-16 18:09:04">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -622,7 +622,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							11.5k 字
+							11.8k 字
 						</div>
 					
 						
@@ -630,7 +630,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							50 分钟
+							51 分钟
 						</div>
 					
 		</div>
@@ -2286,6 +2286,46 @@ sudo defaults delete com.apple.loginwindow LogoutHook</code></pre>
 </li>
 </ul>
 <hr>
+<h3 id="3-12-Acidanthera-Debug-错误调试"><a href="#3-12-Acidanthera-Debug-错误调试" class="headerlink" title="3.12 Acidanthera Debug 错误调试"></a>3.12 Acidanthera Debug 错误调试</h3><p>此博客有很多疏漏，你可能会碰到很多奇怪的问题而无法解决。一般来说，一张开机-v的截图只能解决一些很简单的问题，一些帮助者可能通过经验判断你的错误所在，但这样的图无法定位错误，而Acidanthera提供了非常非常强大的排错功能，我们可以利用它收集错误报告，在网络上获得帮助。</p>
+<p>如果我们需要debug报告，我们需要将所有的Acidanthera的kext以及OC bootloader替换成debug版本，所有的debug版本都会在github中提供。我们下载debug版本的Opencore，替换：</p>
+<ul>
+<li>EFI/BOOT/<ul>
+<li>BOOTx64.efi</li>
+</ul>
+</li>
+<li>EFI/OC/Bootstrap/<ul>
+<li> Bootstrap.efi</li>
+</ul>
+</li>
+<li>EFI/OC/Drivers/<ul>
+<li>OpenRuntime.efi</li>
+</ul>
+</li>
+<li>EFI/OC/<ul>
+<li>OpenCore.efi</li>
+</ul>
+</li>
+<li>下载所有Acidanthera的debug版本kexts，并替换到EFI/OC/kexts</li>
+</ul>
+<p>修改config.plist中的如下内容：</p>
+<ul>
+<li><strong>AppleDebug</strong> <code>YES</code></li>
+<li><strong>ApplePanic</strong> <code>YES</code></li>
+<li><strong>DisableWatchdog</strong> <code>YES</code></li>
+<li><strong>Target</strong> <code>67</code></li>
+<li><strong>DisplayLevel</strong> <code>2147483714</code></li>
+<li><strong>PickerMode</strong> <code>Builtin</code></li>
+</ul>
+<p>在Config.plist/NVRAM/7C436110-AB2A-4BBB-A880-FE41995C9F82/boot-args栏目中增加</p>
+<ul>
+<li><code>-liludbgall liludump=30</code></li>
+</ul>
+<p>保存后重启，你会得到：</p>
+<ul>
+<li>/EFI/下找到开机启动日志 (e.g. opencore-2020-11-16-083514.txt)</li>
+<li>/var/log下得到所有Acidanthera的kext的日志(e.g.Lilu_1.5.0_20.1.txt)</li>
+</ul>
+<p>你可以通过这两份日志快速定位错误，或者在网路上寻求帮助。</p>
 <h2 id="4-0-OpenCore-进阶"><a href="#4-0-OpenCore-进阶" class="headerlink" title="4.0 OpenCore 进阶"></a>4.0 OpenCore 进阶</h2><p>以下内容对你正常使用黑苹果已经无关了，如果你追求更好的黑果表现，可以看下去，但这部分内容也需要你自己有更好的能力与耐心。如果你不具备足够的条件，我不建议你看下去；如果你的失误导致硬件的损坏，我也不会、也没能力负责。</p>
 <hr>
 <h3 id="4-1-CPU的变频优化"><a href="#4-1-CPU的变频优化" class="headerlink" title="4.1 CPU的变频优化"></a>4.1 CPU的变频优化</h3><p>此章节对你的要求会相对高一点，并且请你具备如下条件：</p>
