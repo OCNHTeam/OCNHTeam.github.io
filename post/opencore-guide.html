@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2020-11-16T10:09:04.817Z">
+<meta property="article:modified_time" content="2020-11-18T12:08:17.025Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -605,7 +605,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-11-16 18:09:04">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2020-11-18 20:08:17">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -2218,7 +2218,7 @@ TableSignature:&lt;&gt;</code></pre>
 <hr>
 <h3 id="3-8-OC官方内核补丁集介绍"><a href="#3-8-OC官方内核补丁集介绍" class="headerlink" title="3.8 OC官方内核补丁集介绍"></a>3.8 OC官方内核补丁集介绍</h3><p>这里会长期更新OC官方提供的Kernel Patch。</p>
 <hr>
-<h3 id="3-9-华硕等机型开机卡F1"><a href="#3-9-华硕等机型开机卡F1" class="headerlink" title="3.9 华硕等机型开机卡F1"></a>3.9 华硕等机型开机卡F1</h3><p>注意此kp补丁只对10.14.4以上系统版本生效，旧的我懒得提供了，需要留言。更好的解决卡f1的方案请参照<a href="https://blog.xjn819.com/post/rtc-issues-related-to-oc.html">rtc综述</a></p>
+<h4 id="3-8-1-华硕等机型开机卡F1"><a href="#3-8-1-华硕等机型开机卡F1" class="headerlink" title="3.8.1 华硕等机型开机卡F1"></a>3.8.1 华硕等机型开机卡F1</h4><p>注意此kp补丁只对10.14.4以上系统版本生效，旧的我懒得提供了，需要留言。更好的解决卡f1的方案请参照<a href="https://blog.xjn819.com/post/rtc-issues-related-to-oc.html">rtc综述</a></p>
 <pre><code class="xml">Kernel
   Patch
      Item 0
@@ -2236,7 +2236,7 @@ TableSignature:&lt;&gt;</code></pre>
      ReplaceMask  Data
      Skip         Number    0</code></pre>
 <hr>
-<h3 id="3-10-关机卡RTC"><a href="#3-10-关机卡RTC" class="headerlink" title="3.10 关机卡RTC"></a>3.10 关机卡RTC</h3><pre><code class="xml">Kernel
+<h4 id="3-8-2-关机卡RTC"><a href="#3-8-2-关机卡RTC" class="headerlink" title="3.8.2 关机卡RTC"></a>3.8.2 关机卡RTC</h4><pre><code class="xml">Kernel
     Patch
       Item 2
        Base         String      __ZN8AppleRTC14updateChecksumEv
@@ -2253,7 +2253,7 @@ TableSignature:&lt;&gt;</code></pre>
        ReplaceMask  Data
        Skip         Number      0</code></pre>
 <hr>
-<h3 id="3-11-300系列主板开启原生NVRAM"><a href="#3-11-300系列主板开启原生NVRAM" class="headerlink" title="3.11 300系列主板开启原生NVRAM"></a>3.11 300系列主板开启原生NVRAM</h3><p>打开你的DSDT，搜索 <code>001F0000</code>，确定自己的</p>
+<h3 id="3-9-300系列主板开启原生NVRAM"><a href="#3-9-300系列主板开启原生NVRAM" class="headerlink" title="3.9 300系列主板开启原生NVRAM"></a>3.9 300系列主板开启原生NVRAM</h3><p>打开你的DSDT，搜索 <code>001F0000</code>，确定自己的</p>
 <ul>
 <li>lpc部件名字，如图示，我的lpc部件名叫做<code>LPC0</code>, 别的主板可能叫做<code>LPCB</code>，请根据实际情况记录</li>
 <li>lpc的路径，如图左下角红线提示，我的LPC路径在<code>_SB_.PC00.LPC0</code></li>
@@ -2286,7 +2286,7 @@ sudo defaults delete com.apple.loginwindow LogoutHook</code></pre>
 </li>
 </ul>
 <hr>
-<h3 id="3-12-Acidanthera-Debug-错误调试"><a href="#3-12-Acidanthera-Debug-错误调试" class="headerlink" title="3.12 Acidanthera Debug 错误调试"></a>3.12 Acidanthera Debug 错误调试</h3><p>此博客有很多疏漏，你可能会碰到很多奇怪的问题而无法解决。一般来说，一张开机-v的截图只能解决一些很简单的问题，一些帮助者可能通过经验判断你的错误所在，但这样的图无法定位错误，而Acidanthera提供了非常非常强大的排错功能，我们可以利用它收集错误报告，在网络上获得帮助。</p>
+<h3 id="3-10-Acidanthera-Debug-错误调试"><a href="#3-10-Acidanthera-Debug-错误调试" class="headerlink" title="3.10 Acidanthera Debug 错误调试"></a>3.10 Acidanthera Debug 错误调试</h3><p>此博客有很多疏漏，你可能会碰到很多奇怪的问题而无法解决。一般来说，一张开机-v的截图只能解决一些很简单的问题，一些帮助者可能通过经验判断你的错误所在，但这样的图无法定位错误，而Acidanthera提供了非常非常强大的排错功能，我们可以利用它收集错误报告，在网络上获得帮助。</p>
 <p>如果我们需要debug报告，我们需要将所有的Acidanthera的kext以及OC bootloader替换成debug版本，所有的debug版本都会在github中提供。我们下载debug版本的Opencore，替换：</p>
 <ul>
 <li>EFI/BOOT/<ul>
@@ -2325,7 +2325,9 @@ sudo defaults delete com.apple.loginwindow LogoutHook</code></pre>
 <li>/EFI/下找到开机启动日志 (e.g. opencore-2020-11-16-083514.txt)</li>
 <li>/var/log下得到所有Acidanthera的kext的日志(e.g.Lilu_1.5.0_20.1.txt)</li>
 </ul>
+<p>如果无法进入系统，则只需要第一份日志。</p>
 <p>你可以通过这两份日志快速定位错误，或者在网路上寻求帮助。</p>
+<hr>
 <h2 id="4-0-OpenCore-进阶"><a href="#4-0-OpenCore-进阶" class="headerlink" title="4.0 OpenCore 进阶"></a>4.0 OpenCore 进阶</h2><p>以下内容对你正常使用黑苹果已经无关了，如果你追求更好的黑果表现，可以看下去，但这部分内容也需要你自己有更好的能力与耐心。如果你不具备足够的条件，我不建议你看下去；如果你的失误导致硬件的损坏，我也不会、也没能力负责。</p>
 <hr>
 <h3 id="4-1-CPU的变频优化"><a href="#4-1-CPU的变频优化" class="headerlink" title="4.1 CPU的变频优化"></a>4.1 CPU的变频优化</h3><p>此章节对你的要求会相对高一点，并且请你具备如下条件：</p>
