@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2021-01-18T15:20:23.275Z">
+<meta property="article:modified_time" content="2021-02-05T17:11:26.076Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -609,7 +609,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-1-18 23:20:23">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-2-6 1:11:26">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							12.1k 字
+							12.4k 字
 						</div>
 					
 						
@@ -634,7 +634,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							52 分钟
+							53 分钟
 						</div>
 					
 		</div>
@@ -676,6 +676,17 @@
 <h2 id="更新日记"><a href="#更新日记" class="headerlink" title="更新日记"></a>更新日记</h2><details>
   <summary><font color=red>点击查询帖子最近更新</font></summary>
 
+<h3 id="2020-02-06"><a href="#2020-02-06" class="headerlink" title="2020-02-06"></a>2020-02-06</h3><p>适配OpenCore 0.6.6</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/acidanthera/OcBinaryData">请同步更新OcBinaryData!</a></li>
+<li>增加Kernel/quirks/SetApfsTrimTimeout</li>
+<li>增加Misc/boot/LauncherOption</li>
+<li>增加Misc/boot/LauncherPath</li>
+<li>删除Misc/Security/BootProtect</li>
+<li>增加Config/PlatformInfo/Generic/UseRawUuidEncoding</li>
+<li>增加UEFI/Quirks/DisableSecurityPolicy</li>
+<li>删除DeduplicateBootOrder</li>
+</ul>
 <h3 id="2020-01-18"><a href="#2020-01-18" class="headerlink" title="2020-01-18"></a>2020-01-18</h3><ul>
 <li>增加Misc/Boot/PickerVariant <a target="_blank" rel="noopener" href="https://github.com/acidanthera/OcBinaryData">请同步更新OcBinaryData!</a></li>
 <li>增加UEFI/Audio/SetupDelay</li>
@@ -1190,6 +1201,13 @@ Item 7
 <li>一些设备自身的电源管理无法让系统进入睡眠而超时，导致内核奔溃，如果有这个问题请选择 <code>YES</code>。</li>
 </ul>
 </li>
+<li><p><strong>SetApfsTrimTimeout</strong> <code>-1</code></p>
+<ul>
+<li>APFS文件系统根据空间是否<code>被使用</code>或者是<code>空的</code>来设计的，这种设计跟其他文件系统是不同的，一般被设计成<code>被使用</code>，<code>空的</code>或者<code>未映射</code>三种情况。这种不同可能带来在启动时系统需要更多的时间来做trim，甚至导致无法进入系统。这个选项是为了设计一个时间节点来终止trim进入系统。一般来说填入<code>-1</code>是不阻止这个trim过程，但如果你有这个问题，你可以设置一个时间，单位为微秒。</li>
+</ul>
+</li>
+</ul>
+<ul>
 <li><p><strong>ThirdPartyDrives</strong> <code>NO</code></p>
 <ul>
 <li>开启 SATA 类 SSD 的 <code>trim</code> 功能，我没有 SATA 类的 ssd，我选择 <code>NO</code>。自行根据情况选择。</li>
@@ -1276,6 +1294,26 @@ Item 7
 </li>
 <li><p><code>RTC</code>: RTC 模式</p>
 </li>
+</ul>
+</li>
+<li><p><strong>HideAuxiliary</strong> <code>NO</code></p>
+<ul>
+<li>在tool下等具有Auxiliary并被开启的插件，补丁等是否需要被隐藏起来。</li>
+</ul>
+</li>
+<li><p><strong>LauncherOption</strong> <code>Disabled</code></p>
+<ul>
+<li><code>Disabled</code>:对启动项不做任何事</li>
+<li><code>Full</code>:把OC的启动项永远置顶在uefi启动顺序中，填入此项后，你必须同时打开<code>RequestBootVarRouting</code></li>
+<li><code>Short</code>:主要给<code>Insyde</code>cpu来使用并创建OC启动项。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>LauncherPath</strong> <code>Default</code></p>
+<ul>
+<li><code>Default</code>: 自动加载默认的OpenCore.efi</li>
+<li><code>路径+xxx.efi</code>:给出指定路径来加载OC。比如我们把OpenCore.efi更名为qq.efi并放在\EFI\qq.efi，你就可以填写<code>\EFI\qq.efi</code></li>
 </ul>
 </li>
 <li><p><strong>PickerAttributes</strong> <code>17</code></p>
@@ -1380,11 +1418,8 @@ Item 7
 <li>如果使用MacOS 11，请开启它，因为在NVRAM中设置run-efi-updater并不能阻止苹果对固件的控制升级。</li>
 </ul>
 </li>
-<li><p><strong>BootProtect</strong> <code>None</code></p>
-<ul>
-<li>如果你的开机顺序总是改变，你需要填写为<code>Bootstrap</code>来保证 <code>OPENCORE.EFI</code> 的永久性而免遭到其他操作系统对开机顺位的破坏。在填写此项为<code>Bootstrap</code>后，你同样需要保证 <code>RequestBootVarRouting</code> 是开启的。你可能需要阅读<a target="_blank" rel="noopener" href="https://github.com/acidanthera/bugtracker/issues/1222#issuecomment-739241310">此答案</a>来确保<code>Bootstrap</code>被正确设置了。</li>
 </ul>
-</li>
+<ul>
 <li><p><strong>DmgLoading</strong> <code>Any</code></p>
 <ul>
 <li>如果你没有开启安全启动，请填写 <code>Any</code>；如果使用安全启动，请填写 <code>Signed</code>（注意大小写）。</li>
@@ -1541,6 +1576,12 @@ item 12     String      efi-boot-device-data</code></pre>
 <li><p><strong>UpdateSMBIOSMode</strong> <code>Create</code></p>
 <ul>
 <li>用新分配的 <code>EfiReservedMemoryType</code> 替换原有的表, 戴尔笔记本需要使用 <code>Custom</code> 并开启 <code>CustomSMBIOSGuid</code></li>
+</ul>
+</li>
+<li><p><strong>UseRawUuidEncoding</strong> <code>NO</code></p>
+<ul>
+<li>一般来说我们都选<code>NO</code></li>
+<li>除非你的UUID，比如：<code>AABBCCDD-EEFF-GGHH-IIJJ-KKLLMMNNOOPP</code>。解码后即是<code>AA BB CC DD EE FF GG HH II JJ KK LL MM NN OO PP</code>，但在实际系统中显示<code>DD CC BB AA FF EE HH GG II JJ KK LL MM NN OO PP</code>。你需要开启这个选项。</li>
 </ul>
 </li>
 </ul>
@@ -1796,9 +1837,9 @@ item0                      String
 </ul>
 <hr>
 <h3 id="2-8-8-Config–UEFI–Quirks"><a href="#2-8-8-Config–UEFI–Quirks" class="headerlink" title="2.8.8 Config–UEFI–Quirks"></a>2.8.8 Config–UEFI–Quirks</h3><ul>
-<li><p><strong>DeduplicateBootOrder</strong> <code>YES</code></p>
+<li><p><strong>DisableSecurityPolicy</strong> <code>NO</code></p>
 <ul>
-<li>当 <code>RequestBootVarRouting</code> 选项为开启时，一些其他的操作系统（e.g.windows)可能在某些主板(e.g.ASUS)中会找不到自己的引导而重新创建,最终导致黑果在没有清理 <code>NVRAM</code> 的情况下是无法进入系统,或者产生多个 <code>OpenCore</code> 引导项，请选择 <code>YES</code>。</li>
+<li>关闭主板的UEFI上的Secure Boot。请<code>不要</code>在BIOS中开启<code>Secure Boot</code>并同时开启这个！</li>
 </ul>
 </li>
 <li><p><strong>ExitBootServicesDelay</strong> <code>0</code></p>
@@ -2192,7 +2233,7 @@ TableSignature:            &lt;&gt;</code></pre>
 <p><code>0d/6d</code> 补丁是阻止一些部件参与唤醒工作，这其中包括了xhc部件，意味着你无法使用鼠标键盘唤醒，只能用电源键唤醒。但若你有一组除了xhc之外的usb控制器，那把键盘鼠标插在那两个控制器上，可以在使用强制睡眠的情况下用键盘鼠标唤醒电脑。</p>
 </blockquote>
 <hr>
-<h4 id="3-7-1-分辨0D-06"><a href="#3-7-1-分辨0D-06" class="headerlink" title="3.7.1 分辨0D/06"></a>3.7.1 分辨0D/06</h4><p>主板一般有5个部件是直接参与唤醒工作的，这五个部件分别是 XHC（USB控制器）、CNVW（CNVI网卡，如果你的主板自带的话）、GLAN（有线网卡）、XDCI（USB相关）、HDEF（音频）。旧的一些主板可能会有不同的命名，比如 XHC 有叫 EH01，HDEF 叫做 HDAS 等，这里不做讨论。而这些设备往往会直接影响睡眠，比如你输入：</p>
+<h4 id="3-7-1-分辨0D-06"><a href="#3-7-1-分辨0D-06" class="headerlink" title="3.7.1 分辨0D/06"></a>3.7.1 分辨0D/06</h4><p>主板一般有5个部件是直接参与唤醒工作的，这五个部件分别是 XHC（USB控制器）、CNVW（CNVI网卡，如果你的主板自带的话）、GLAN（有��网卡）、XDCI（USB相关）、HDEF（音频）。旧的一些主板可能会有不同的命名，比如 XHC 有叫 EH01，HDEF 叫做 HDAS 等，这里不做讨论。而这些设备往往会直接影响睡眠，比如你输入：</p>
 <pre><code class="bash">log show --last 1d | grep &quot;Wake reason&quot;</code></pre>
 <p>我们会看到类似的输出结果</p>
 <pre><code class="bash">2020-10-31 03:35:45.196371+0800 0x74       Default     0x0                  0      0    kernel: (AppleACPIPlatform) AppleACPIPlatformPower Wake reason: XDCI CNVW
