@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2021-02-16T07:37:43.927Z">
+<meta property="article:modified_time" content="2021-03-03T11:14:17.372Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -609,7 +609,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-2-16 15:37:43">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-3-3 19:14:17">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -634,7 +634,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							53 分钟
+							54 分钟
 						</div>
 					
 		</div>
@@ -1080,8 +1080,11 @@ framebuffer-unifiedmem     data        &lt;00000080&gt;      //核显显存相�
 <hr>
 <h4 id="2-3-2-2-没核心显卡的用户"><a href="#2-3-2-2-没核心显卡的用户" class="headerlink" title="2.3.2.2 没核心显卡的用户"></a>2.3.2.2 没核心显卡的用户</h4><p>带f的cpu (e.g. 9100f 9900kf), Xeon 等不带核心显卡的用户不需要管这项，直接把 <code>AAPL,ig-platform-id</code>选项卡删了。</p>
 <hr>
-<h4 id="2-3-2-3-有核心显卡并用独显做主力的用户"><a href="#2-3-2-3-有核心显卡并用独显做主力的用户" class="headerlink" title="2.3.2.3 有核心显卡并用独显做主力的用户"></a>2.3.2.3 有核心显卡并用独显做主力的用户</h4><p>这种情况我们一般把核心显卡作为加速用，而显示则用独立显卡。这样，我们填一个作为加速用的核显ID即可了，8代9代10代除外的 cpu 请搜索黑果小兵的博客：</p>
+<h4 id="2-3-2-3-有核心显卡并用独显做主力的用户"><a href="#2-3-2-3-有核心显卡并用独显做主力的用户" class="headerlink" title="2.3.2.3 有核心显卡并用独显做主力的用户"></a>2.3.2.3 有核心显卡并用独显做主力的用户</h4><p>这种情况我们一般把核心显卡作为加速用，而显示则用独立显卡。这样，我们填一个作为加速用的核显ID即可了，8代9代除外的 cpu 请搜索黑果小兵的博客：</p>
 <pre><code class="xml">AAPL,ig-platform-id        data        &lt;0300983e&gt;</code></pre>
+<blockquote>
+<p>注意，10代cpu虽然使用同样的UHD 630，但具体加速代码在iMac 20.1机型下不同，请自行查询</p>
+</blockquote>
 <hr>
 <h3 id="2-3-3-Delete"><a href="#2-3-3-Delete" class="headerlink" title="2.3.3 Delete"></a>2.3.3 Delete</h3><p>这里是禁用一些设备的，我们按默认就行了，不需要任何修改。</p>
 <hr>
