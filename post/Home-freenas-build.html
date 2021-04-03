@@ -8,18 +8,18 @@
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta name="description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。 为什么选择FreeNas 硬盘池的可拓展性 数据的安全性 ZFS格式 独特的缓存机制     什么样的用户适合Freenas?首先刚开始玩的小白并不适合用FreeNas，上手比较难，但当然一开始就选择FreeNas，花费多一点的学习成本，肯定也是一个不错的选">
+	<meta name="description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。 为什么选择FreeNas 硬盘池的可拓展性 数据的安全性 ZFS格式 独特的缓存机制     什么样的用户适合FreeNas?首先刚开始玩的小白并不适合用FreeNas，上手比较难，但当然一开始就选择FreeNas，花费多一点的学习成本，肯定也是一个不错的选">
 <meta property="og:type" content="article">
 <meta property="og:title" content="家用万兆FreeNAS组建">
 <meta property="og:url" content="https://blog.xjn819.com/post/Home-freenas-build.html">
 <meta property="og:site_name" content="Xjn&#39;s Blog">
-<meta property="og:description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。 为什么选择FreeNas 硬盘池的可拓展性 数据的安全性 ZFS格式 独特的缓存机制     什么样的用户适合Freenas?首先刚开始玩的小白并不适合用FreeNas，上手比较难，但当然一开始就选择FreeNas，花费多一点的学习成本，肯定也是一个不错的选">
+<meta property="og:description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。 为什么选择FreeNas 硬盘池的可拓展性 数据的安全性 ZFS格式 独特的缓存机制     什么样的用户适合FreeNas?首先刚开始玩的小白并不适合用FreeNas，上手比较难，但当然一开始就选择FreeNas，花费多一点的学习成本，肯定也是一个不错的选">
 <meta property="og:locale">
 <meta property="og:image" content="https://i.loli.net/2021/04/03/5bFZNyDv2M4p83I.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/03/uZEYmk21iphe8N3.jpg">
 <meta property="og:image" content="https://i.loli.net/2021/04/03/DYcZOzgfPHJQS3h.png">
 <meta property="article:published_time" content="2021-04-03T14:27:50.000Z">
-<meta property="article:modified_time" content="2021-04-03T11:46:07.119Z">
+<meta property="article:modified_time" content="2021-04-03T12:09:44.744Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -508,7 +508,7 @@
 								</div>
 								<div class="site-state-item site-state-categories">
 									<a data-toggle="modal" data-target="#blog_categories">
-										<span class="site-state-item-count">1</span>
+										<span class="site-state-item-count">2</span>
 										<span class="site-state-item-name">分类</span>
 									</a>
 								</div>      
@@ -568,7 +568,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<a class="badge badge-secondary tag" href="/categories/Hackintosh/" rel="tag">Hackintosh <span class="tag-num">4</span></a>
+				<a class="badge badge-secondary tag" href="/categories/Hackintosh/" rel="tag">Hackintosh <span class="tag-num">3</span></a><a class="badge badge-secondary tag" href="/categories/Hardware/" rel="tag">Hardware <span class="tag-num">1</span></a>
 			</div>
 		</div>
 	</div>
@@ -603,7 +603,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2021-4-3 19:46:07">2021-4-3 22:27
+							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2021-4-3 20:09:44">2021-4-3 22:27
 							</time>
 						</div>
 					
@@ -612,7 +612,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-categories">
 							<i class="fa fa-bookmark-o" aria-hidden="true"></i>
-							<a class="post-meta-detail-catagory-link" href="/categories/Hackintosh/">Hackintosh</a>
+							<a class="post-meta-detail-catagory-link" href="/categories/Hardware/">Hardware</a>
 						</div>
 					
 						
@@ -646,7 +646,7 @@
 </br>
 </br>
 
-<h1 id="什么样的用户适合Freenas"><a href="#什么样的用户适合Freenas" class="headerlink" title="什么样的用户适合Freenas?"></a>什么样的用户适合Freenas?</h1><p>首先刚开始玩的小白并不适合用FreeNas，上手比较难，但当然一开始就选择FreeNas，花费多一点的学习成本，肯定也是一个不错的选择。FreeNas有很多缺点，比如上手比较难（相比群晖什么的），入门条件也比较高，但你一但会用了，是一件很棒的事情。我罗列了一下条件：</p>
+<h1 id="什么样的用户适合FreeNas"><a href="#什么样的用户适合FreeNas" class="headerlink" title="什么样的用户适合FreeNas?"></a>什么样的用户适合FreeNas?</h1><p>首先刚开始玩的小白并不适合用FreeNas，上手比较难，但当然一开始就选择FreeNas，花费多一点的学习成本，肯定也是一个不错的选择。FreeNas有很多缺点，比如上手比较难（相比群晖什么的），入门条件也比较高，但你一但会用了，是一件很棒的事情。我罗列了一下条件：</p>
 <ul>
 <li><p>你并不打算用FreeNas来做一个All in One(AIO)的服务器。FreeNas更适合单独使用作为存储使用，它的虚拟化真的不怎么样，我有另外一台PVE来专门做别的服务。</p>
 </li>
@@ -754,7 +754,7 @@
 
 
 
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>安装包括硬件和系统，首先是把SAS卡LSI SAS 9217-8i刷成it模式，再讲FreeNas的安装。<br></br><br></br><br></br></p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>安装包括硬件和系统，首先是把SAS卡LSI SAS 9217-8i刷成it模式，再讲FreeNas的安装。<br></br></p>
 <h2 id="LSI-SAS-9217-8i-刷成it模式"><a href="#LSI-SAS-9217-8i-刷成it模式" class="headerlink" title="LSI SAS 9217-8i 刷成it模式"></a>LSI SAS 9217-8i 刷成it模式</h2><p>在家用FreeNas环境我没有推荐用阵列模式，一来是这个是家用而已，二来ZFS已经足够健壮了，把卡刷成直通的it模式就行了。</p>
 <ul>
 <li><p>下载如下软件</p>
