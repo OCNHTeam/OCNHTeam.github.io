@@ -15,12 +15,16 @@
 <meta property="og:site_name" content="Xjn&#39;s Blog">
 <meta property="og:description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。 为什么选择FreeNas 硬盘池的可拓展性 数据的安全性 ZFS格式 独特的缓存机制     什么样的用户适合Freenas?首先刚开始玩的小白并不适合用FreeNas，上手比较难，但当然一开始就选择FreeNas，花费多一点的学习成本，肯定也是一个不错的选">
 <meta property="og:locale">
+<meta property="og:image" content="https://i.loli.net/2021/04/03/5bFZNyDv2M4p83I.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/03/uZEYmk21iphe8N3.jpg">
+<meta property="og:image" content="https://i.loli.net/2021/04/03/DYcZOzgfPHJQS3h.png">
 <meta property="article:published_time" content="2021-04-03T14:27:50.000Z">
-<meta property="article:modified_time" content="2021-04-03T09:28:07.000Z">
+<meta property="article:modified_time" content="2021-04-03T11:35:06.812Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/04/03/5bFZNyDv2M4p83I.png">
 
 	<meta name="theme-color" content="#212121">
 	<meta name="theme-color-rgb" content="33,33,33">
@@ -599,7 +603,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2021-4-3 17:28:07">2021-4-3 22:27
+							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2021-4-3 19:35:06">2021-4-3 22:27
 							</time>
 						</div>
 					
@@ -616,7 +620,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							832 字
+							1.3k 字
 						</div>
 					
 						
@@ -624,7 +628,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							3 分钟
+							5 分钟
 						</div>
 					
 		</div>
@@ -679,7 +683,7 @@
 </li>
 <li><p>电源：PWS-920P-SQ 机箱自带的电源非常吵，不喜欢的话买这个，SQ结尾的是静音系列，这个机箱其实可以插两个电源，一个做冗余接在UPS，我买的是80块一个的成色非常差的（成色新的估计也只是抛光了一下），80元。</p>
 </li>
-<li><p>机箱背板：BPN-SAS2-846EL1 如果能买到超微846机箱自带SAS2+的最好不过了，如果不行，请购买这款，当然你要SAS3的就购买BPN-SAS3-846EL1(这款海外EBAY上很多，淘宝上就见到过一两次) 960元</p>
+<li><p>机箱背板：BPN-SAS2-846EL1 如果能买到超微846机箱自带SAS2+的最好不过了，如果不行，请购买这款。当然你要SAS3的就购买BPN-SAS3-846EL1(这款海外EBAY上很多，淘宝上就见到过一两次) 960元</p>
 </li>
 <li><p>机箱配件：机箱风扇，机箱开机键跳针 共200元</p>
 <ul>
@@ -752,6 +756,71 @@
 
 <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>安装包括硬件和系统，首先是把SAS卡LSI SAS 9217-8i刷成it模式，再讲FreeNas的安装。<br></br><br></br><br></br></p>
 <h2 id="LSI-SAS-9217-8i-刷成it模式"><a href="#LSI-SAS-9217-8i-刷成it模式" class="headerlink" title="LSI SAS 9217-8i 刷成it模式"></a>LSI SAS 9217-8i 刷成it模式</h2><p>在家用FreeNas环境我没有推荐用阵列模式，一来是这个是家用而已，二来ZFS已经足够健壮了，把卡刷成直通的it模式就行了。</p>
+<ul>
+<li><p>下载如下软件</p>
+<ul>
+<li> <a target="_blank" rel="noopener" href="https://docs.broadcom.com/docs/12350820">UEFI Flashing Utility</a> </li>
+<li> <a target="_blank" rel="noopener" href="https://docs.broadcom.com/docs/12348628">UEFI ROM Image</a> </li>
+<li> <a target="_blank" rel="noopener" href="https://docs.broadcom.com/docs/12350493">SAS2308 Firmware 9217ir改9207it固件</a> <blockquote>
+<p>等会儿需要去uefi shell里刷，超微主板一般都自带了uefi shell，选择开机启动项进入uefi shell。如果你的主板没有，可以在Github中下载。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>准备一个U盘</p>
+<ul>
+<li>4G的U盘都够用了，不需要太大，但不要超过32G。</li>
+<li>把U盘格式化成Fat32格式，注意不要带任何ESP分区。</li>
+</ul>
+</li>
+<li><p>把文件放入U盘</p>
+<ul>
+<li>解压Installer_P20_for_UEFI.zip，复制Installer_P20_for_UEFI\sas2flash_efi_ebc_rel\sas2flash.efi 至U盘根目录。</li>
+<li>解压UEFI_BSD_P20.zip，复制UEFI_BSD_P20\uefi_bsd_rel\Signed\x64sas2.rom 至U盘根目录。</li>
+<li>解压9207_8i_Package_P20_IR_IT_FW_BIOS_for_MSDOS_Windows.zip。复制Firmware\HBA_9207_8i_IT\9207-8.bin 至U盘根目录。当然如果你是9300-8i的SAS卡，到官网下载一下it固件，一样的。</li>
+<li>在同上一个目录复制sasbios_rel\mptsas2.rom 至U盘根目录。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>制作UEFI Shell启动项<ul>
+<li>如果是超微主板，一般在开启选择启动画面是可以直接使用自带的UEFI Shell，那你就可以跳过此步骤。</li>
+<li>在U盘根目录创建一个名叫efi文件夹，进入此文件夹，再创建一个叫boot的文件夹，即efi/boot/。同此也创建一组boot/efi/的文件夹。因为老一点的主板路径对UEFI的识别路径不同，以防万一，做两个。</li>
+<li>下载 <a target="_blank" rel="noopener" href="https://github.com/tianocore/edk/raw/master/Other/Maintained/Application/UefiShell/bin/x64/Shell_Full.efi">Shell_full.efi</a> </li>
+<li>准备两份shell_full.efi，分别重命名为Shell_full.efi和BootX64.efi。</li>
+<li>把Shell_full.efi和BootX64.efi放入efi/boot/下，同样的，把这两个文件放到boot/efi/</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>进入UEFI Shell</p>
+<ul>
+<li><p>开机按启动选择键，以U盘作为启动，进入UEFI shell，应该是一个类似如下的界面：<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2021/04/03/5bFZNyDv2M4p83I.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="e41a0684dd51574fd1cc6fed6c3d08fd55226f34.png"></p>
+
+</li>
+<li><p>如果你无法进入，提示错误，考虑一下升级主板bios以及确认主板是否支持UEFI启动，以及关闭主板的secure boot。</p>
+</li>
+<li><p>在界面上你会看到检测出来的硬盘，比如图上的BLK0等位置。确认哪个是你的U盘，进入那个U盘则输入<code>BLK0:</code></p>
+</li>
+<li><p>接着输入<code>dir</code>，看看目录下的文件是否是U盘里之前放的，不是的话退出去，再找别的路径进来。</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>刷入固件<ul>
+<li>进入U盘根目录后，输入sas2flash.efi -listall，确保你的卡被识别出来（图片我随便找的，跟你的卡数值可能不同）。<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2021/04/03/uZEYmk21iphe8N3.jpg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="5a719c1baa02ba545539f89c3c77696dba3a1e60.jpg"></li>
+
+<li>如果找不到这张卡，请确认这张卡是完好的，在bios设置界面中也能看到。</li>
+<li>输入<code>sas2flash.efi -list</code>，记录下16位SAS Address (红色框内的所有东西都记下来！！！！！！！).<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2021/04/03/DYcZOzgfPHJQS3h.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="afae920ac73b9b7a6fa5b201efa5cf09dc4ddc00.png"></li>
+
+<li>输入<code>sas2flash.efi -o -e 7</code>来删除当前固件。</li>
+<li>输入<code>sas2flash.efi -o -f xxxxx.bin -b x64sas2.rom -b mptsas2.rom</code> 写入新的固件。xxxxx.bin应该是你之前放入的固件名字，比如9207-8.bin。</li>
+<li>输入<code>sas2flash.efi -o -sasaddhi XXXXXXX</code> 写入SAS地址，其中XXXXXXX为刚才记录的SAS地址的前7位，一般是500开头。</li>
+<li>搞定，输入一下<code>sas2flash.efi -list</code>看看新的固件有没有刷进去。重启就可以用了。</li>
+</ul>
+</li>
+</ul>
 
 	</div>
 
