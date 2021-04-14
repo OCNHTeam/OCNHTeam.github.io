@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://i.loli.net/2021/04/03/DYcZOzgfPHJQS3h.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/14/GrqjvK2TtW93gnC.png">
 <meta property="article:published_time" content="2021-04-03T14:27:50.000Z">
-<meta property="article:modified_time" content="2021-04-14T14:24:17.154Z">
+<meta property="article:modified_time" content="2021-04-14T16:43:44.350Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -604,7 +604,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2021-4-14 22:24:17">2021-4-3 22:27
+							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2021-4-15 0:43:44">2021-4-3 22:27
 							</time>
 						</div>
 					
@@ -776,8 +776,8 @@
 <li>如果是超微主板，一般在开启选择启动画面是可以直接使用自带的UEFI Shell，那你就可以跳过此步骤。</li>
 <li>在U盘根目录创建一个名叫efi文件夹，进入此文件夹，再创建一个叫boot的文件夹，即efi/boot/。同此也创建一组boot/efi/的文件夹。因为老一点的主板路径对UEFI的识别路径不同，以防万一，做两个。</li>
 <li>下载 <a target="_blank" rel="noopener" href="https://github.com/tianocore/edk/raw/master/Other/Maintained/Application/UefiShell/bin/x64/Shell_Full.efi">Shell_full.efi</a> </li>
-<li>准备两份shell_full.efi，分别重命名为Shell_full.efi和BootX64.efi。</li>
-<li>把Shell_full.efi和BootX64.efi放入efi/boot/下，同样的，把这两个文件放到boot/efi/</li>
+<li>准备两份shell_full.efi，分别重命名为ShellX64.efi和BootX64.efi。</li>
+<li>把ShellX64.efi和BootX64.efi放入efi/boot/下，同样的，把这两个文件放到boot/efi/</li>
 </ul>
 </li>
 </ul>
@@ -889,7 +889,7 @@ exit</code></pre>
 <ul>
 <li>vfs.zfs.dirty_data_max  </li>
 </ul>
-<p>这个值是脏数据，默认是4GB，但是我的单个文件很多都是超过8G的，这样在写到4G后马上降速了，我就把这个值调整到了8589932492，按照你的需求和物理限制更改。</p>
+<p>这个值是脏数据，默认是4GB，但是我一般拷贝单个文件到NAS上，很多都是超过8G的，这样在写到4G后马上降速了，我就把这个值调整到了8589932492，按照你的需求和物理限制更改。</p>
 <ul>
 <li>vfs.zfs.arc_max </li>
 </ul>
