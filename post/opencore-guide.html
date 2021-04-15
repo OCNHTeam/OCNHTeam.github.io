@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2021-03-16T13:12:49.000Z">
+<meta property="article:modified_time" content="2021-04-15T15:25:36.060Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -609,7 +609,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-3-16 21:12:49">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-4-15 23:25:36">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							12.5k 字
+							12.7k 字
 						</div>
 					
 						
@@ -634,7 +634,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							54 分钟
+							55 分钟
 						</div>
 					
 		</div>
@@ -674,6 +674,13 @@
 <h2 id="更新日记"><a href="#更新日记" class="headerlink" title="更新日记"></a>更新日记</h2><details>
   <summary><font color=red>点击查询帖子最近更新</font></summary>
 
+<h3 id="2021-04-15"><a href="#2021-04-15" class="headerlink" title="2021-04-15"></a>2021-04-15</h3><p>适配OpenCore 0.6.8</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/acidanthera/OcBinaryData">请同步更新OcBinaryData!</a></li>
+<li>增加boot/quirks/ForceBooterSignature</li>
+<li>增加UEFI/AppleInput</li>
+<li>删除UEFI/ProtocolOverrides/AppleEvent</li>
+</ul>
 <h3 id="2021-03-17"><a href="#2021-03-17" class="headerlink" title="2021-03-17"></a>2021-03-17</h3><p>适配OpenCore 0.6.7</p>
 <ul>
 <li><a target="_blank" rel="noopener" href="https://github.com/acidanthera/OcBinaryData">请同步更新OcBinaryData!</a></li>
@@ -995,6 +1002,11 @@ TableSignature:        &lt;&gt;</code></pre>
 <li><p><strong>EnableWriteUnprotector:</strong> <code>YES</code></p>
 <ul>
 <li>保证 <code>nvram</code> 能正常写入而不受到 <code>CR0</code> 寄存器的写入保护影响。</li>
+</ul>
+</li>
+<li><p><strong>ForceBooterSignature:</strong> <code>NO</code></p>
+<ul>
+<li>休眠（hibernation）中唤醒使用OpenCore的SHA-1加密验证，我们不适用休眠功能就关闭。休眠不是睡眠！</li>
 </ul>
 </li>
 <li><p><strong>ForceExitBootServices:</strong> <code>NO</code></p>
@@ -1628,7 +1640,50 @@ item 12     String      efi-boot-device-data</code></pre>
 </li>
 </ul>
 <hr>
-<h3 id="2-8-2-Config–UEFI–Audio"><a href="#2-8-2-Config–UEFI–Audio" class="headerlink" title="2.8.2 Config–UEFI–Audio"></a>2.8.2 Config–UEFI–Audio</h3><p>此项的内容是帮助你在开机阶段驱动板载音频，此项对DP等数字音频无效。</p>
+<h3 id="2-8-2-Config–UEFI–AppleInput"><a href="#2-8-2-Config–UEFI–AppleInput" class="headerlink" title="2.8.2 Config–UEFI–AppleInput"></a>2.8.2 Config–UEFI–AppleInput</h3><ul>
+<li><p><strong>AppleEvent</strong> <code>OEM</code></p>
+<ul>
+<li>在UEFI界面中使用APPLE自带的键鼠控制还是用OC制作的。<ul>
+<li>填写<code>Builtin</code>：使用OpenCore的控制</li>
+<li>填写<code>OEM</code>：使用Apple自带的控制</li>
+<li>填写<code>Auto</code>：自动选择</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>CustomDelays</strong> <code>Disable</code></p>
+<ul>
+<li>在UEFI界面中控制键盘连击的延迟。<ul>
+<li>填写<code>Auto</code>：默认打开并根据<code>KeySupportMode</code>调整</li>
+<li>填写<code>Enabled</code>：根据后面的<code>KeyInitialDelay</code>&amp; <code>KeySubsequentDelay</code>来设置。</li>
+<li>填写<code>Disable</code>：根据Apple的默认设置。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>KeyInitialDelay</strong> <code>50</code></p>
+<ul>
+<li>设置UEFI界面第一次延迟时间，50是500ms。根据自己情况设置。</li>
+</ul>
+</li>
+<li><p><strong>KeySubsequentDelay</strong> <code>5</code></p>
+<ul>
+<li>设置UEFI界面键与键之间的延迟时间，5是50ms。根据自己情况设置。</li>
+</ul>
+</li>
+<li><p><strong>PointerSpeedDiv</strong> <code>1</code></p>
+<ul>
+<li>设置UEFI界面中，光标的跟踪速度版本，一般填1。</li>
+</ul>
+</li>
+<li><p><strong>PointerSpeedMul</strong> <code>1</code></p>
+<ul>
+<li>设置UEFI界面中，光标的灵敏度版本，一般填1。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-8-3-Config–UEFI–Audio"><a href="#2-8-3-Config–UEFI–Audio" class="headerlink" title="2.8.3 Config–UEFI–Audio"></a>2.8.3 Config–UEFI–Audio</h3><p>此项的内容是帮助你在开机阶段驱动板载音频，此项对DP等数字音频无效。</p>
 <ul>
 <li><p><strong>AudioCodec</strong> <code>0</code></p>
 <ul>
@@ -1680,20 +1735,20 @@ item 12     String      efi-boot-device-data</code></pre>
 <p>开启UEFI加载阶段的音频你必须下载<a target="_blank" rel="noopener" href="https://github.com/acidanthera/OcBinaryData/tree/master/Resources">Audio文件夹</a>,并把 Audio 文件夹放到 <code>ESP/EFI/OC/Resources</code> 下。另外你必须注意 <code>AppleAudio</code> 选项。</p>
 </blockquote>
 <hr>
-<h3 id="2-8-3-Config–UEFI–ConnectDrivers"><a href="#2-8-3-Config–UEFI–ConnectDrivers" class="headerlink" title="2.8.3 Config–UEFI–ConnectDrivers"></a>2.8.3 Config–UEFI–ConnectDrivers</h3><p>是否加载补丁，我们选择 <code>YES</code>。</p>
+<h3 id="2-8-4-Config–UEFI–ConnectDrivers"><a href="#2-8-4-Config–UEFI–ConnectDrivers" class="headerlink" title="2.8.4 Config–UEFI–ConnectDrivers"></a>2.8.4 Config–UEFI–ConnectDrivers</h3><p>是否加载补丁，我们选择 <code>YES</code>。</p>
 <hr>
-<h3 id="2-8-4-Config–UEFI–Drivers"><a href="#2-8-4-Config–UEFI–Drivers" class="headerlink" title="2.8.4 Config–UEFI–Drivers"></a>2.8.4 Config–UEFI–Drivers</h3><pre><code class="bash">Drivers
+<h3 id="2-8-5-Config–UEFI–Drivers"><a href="#2-8-5-Config–UEFI–Drivers" class="headerlink" title="2.8.5 Config–UEFI–Drivers"></a>2.8.5 Config–UEFI–Drivers</h3><pre><code class="bash">Drivers
 item0                      String
 0 .................... MemoryAllocation.efi
 1 .................... OpenRuntime.efi
 2 .................... HFSPlus.efi
 3 .................... OpenCanopy.efi</code></pre>
-<h3 id="2-8-5-Config–UEFI–Input"><a href="#2-8-5-Config–UEFI–Input" class="headerlink" title="2.8.5 Config–UEFI–Input"></a>2.8.5 Config–UEFI–Input</h3><p>此选项是原生 Apple 开机热键的选项，需要配合我们之前设置的 <code>PollAppleHotKeys = yes</code> 一起用。下面的设置完全按照默认情况就行了。</p>
+<h3 id="2-8-6-Config–UEFI–Input"><a href="#2-8-6-Config–UEFI–Input" class="headerlink" title="2.8.6 Config–UEFI–Input"></a>2.8.6 Config–UEFI–Input</h3><p>此选项是原生 Apple 开机热键的选项，需要配合我们之前设置的 <code>PollAppleHotKeys = yes</code> 一起用。下面的设置完全按照默认情况就行了。</p>
 <blockquote>
 <p>如果你是华硕的z87或者z97，你需要打开PointerSupport这个选项。</p>
 </blockquote>
 <hr>
-<h3 id="2-8-6-Config–UEFI–Output"><a href="#2-8-6-Config–UEFI–Output" class="headerlink" title="2.8.6 Config–UEFI–Output"></a>2.8.6 Config–UEFI–Output</h3><ul>
+<h3 id="2-8-7-Config–UEFI–Output"><a href="#2-8-7-Config–UEFI–Output" class="headerlink" title="2.8.7 Config–UEFI–Output"></a>2.8.7 Config–UEFI–Output</h3><ul>
 <li><p><strong>ClearScreenOnModeSwitch</strong> <code>NO</code></p>
 <ul>
 <li>消除开机时从图形模式转换到文本时出现残影的问题，如果没有这个问题我们选择 <code>NO</code>。</li>
@@ -1763,7 +1818,7 @@ item0                      String
 </li>
 </ul>
 <hr>
-<h3 id="2-8-7-Config–UEFI–ProtocolOverrides"><a href="#2-8-7-Config–UEFI–ProtocolOverrides" class="headerlink" title="2.8.7 Config–UEFI–ProtocolOverrides"></a>2.8.7 Config–UEFI–ProtocolOverrides</h3><ul>
+<h3 id="2-8-8-Config–UEFI–ProtocolOverrides"><a href="#2-8-8-Config–UEFI–ProtocolOverrides" class="headerlink" title="2.8.8 Config–UEFI–ProtocolOverrides"></a>2.8.8 Config–UEFI–ProtocolOverrides</h3><ul>
 <li><p><strong>AppleAudio</strong> <code>NO</code></p>
 <ul>
 <li>如果你想要开启如同白苹果一样的开机音效，请开启它，并且还需要配合 <code>UEFI--Audio</code> 的正确设置。</li>
@@ -1777,11 +1832,6 @@ item0                      String
 <li><p><strong>AppleDebugLog</strong> <code>NO</code></p>
 <ul>
 <li>重新安装苹果错误日志界面。</li>
-</ul>
-</li>
-<li><p><strong>AppleEvent</strong> <code>NO</code></p>
-<ul>
-<li>虚拟机并具有 <code>Vault</code> 的 Mac 需要用的。</li>
 </ul>
 </li>
 <li><p><strong>AppleFramebufferInfo</strong> <code>NO</code></p>
@@ -1856,7 +1906,7 @@ item0                      String
 </li>
 </ul>
 <hr>
-<h3 id="2-8-8-Config–UEFI–Quirks"><a href="#2-8-8-Config–UEFI–Quirks" class="headerlink" title="2.8.8 Config–UEFI–Quirks"></a>2.8.8 Config–UEFI–Quirks</h3><ul>
+<h3 id="2-8-9-Config–UEFI–Quirks"><a href="#2-8-9-Config–UEFI–Quirks" class="headerlink" title="2.8.9 Config–UEFI–Quirks"></a>2.8.9 Config–UEFI–Quirks</h3><ul>
 <li><strong>ActivateHpetSupport</strong> <code>NO</code><ul>
 <li>老主板比如ICH6芯片组不具备相关的HPET设置，老的主板你可能需要开启它。</li>
 </ul>
@@ -1900,7 +1950,7 @@ item0                      String
 </li>
 </ul>
 <hr>
-<h3 id="2-8-9-Config—-UEFI—-ReservedMemory-Properties"><a href="#2-8-9-Config—-UEFI—-ReservedMemory-Properties" class="headerlink" title="2.8.9 Config—-UEFI—-ReservedMemory Properties"></a>2.8.9 Config—-UEFI—-ReservedMemory Properties</h3><p>此项为保留内存所用。一些硬件会把硬件 EFI 写进内存过程中占据必要的 UEFI 运行空间，所以我们可以通过此项来预留内存来保证 UEFI 的运行。填写方式可以参考<a target="_blank" rel="noopener" href="https://blog.daliansky.net/Slide-value-acquisition-and-calculation.html">小兵的文章</a>。来寻找指定内存的起始位置，以 4K 为一个节点。一般情况下，此项我们并不需要理会。</p>
+<h3 id="2-8-10-Config—-UEFI—-ReservedMemory-Properties"><a href="#2-8-10-Config—-UEFI—-ReservedMemory-Properties" class="headerlink" title="2.8.10 Config—-UEFI—-ReservedMemory Properties"></a>2.8.10 Config—-UEFI—-ReservedMemory Properties</h3><p>此项为保留内存所用。一些硬件会把硬件 EFI 写进内存过程中占据必要的 UEFI 运行空间，所以我们可以通过此项来预留内存来保证 UEFI 的运行。填写方式可以参考<a target="_blank" rel="noopener" href="https://blog.daliansky.net/Slide-value-acquisition-and-calculation.html">小兵的文章</a>。来寻找指定内存的起始位置，以 4K 为一个节点。一般情况下，此项我们并不需要理会。</p>
 <hr>
 <h2 id="3-0-OpenCore-完善"><a href="#3-0-OpenCore-完善" class="headerlink" title="3.0 OpenCore 完善"></a>3.0 OpenCore 完善</h2><h3 id="3-1-模拟NVRAM"><a href="#3-1-模拟NVRAM" class="headerlink" title="3.1 模拟NVRAM "></a>3.1 模拟NVRAM <a id=3.1></a></h3><p>对 OC 而言，<code>NVRAM</code> 是非常核心的一环，不管是原生还是模拟的。<span style="color:red;">如果你是原生nvram的主板，请不必理会这章节</span>。</p>
 <p>这章节的主要内容为非原生 NVRAM 模拟生成 <code>nvram.plist</code>。</p>
