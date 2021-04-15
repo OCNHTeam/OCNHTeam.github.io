@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://i.loli.net/2021/04/03/DYcZOzgfPHJQS3h.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/14/GrqjvK2TtW93gnC.png">
 <meta property="article:published_time" content="2021-04-03T14:27:50.000Z">
-<meta property="article:modified_time" content="2021-04-14T17:00:15.084Z">
+<meta property="article:modified_time" content="2021-04-15T14:00:19.363Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -604,7 +604,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2021-4-15 1:00:15">2021-4-3 22:27
+							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2021-4-15 22:00:19">2021-4-3 22:27
 							</time>
 						</div>
 					
@@ -847,11 +847,13 @@ pkg install -y nano wget transmission    #安装一下这三个常用软件</cod
 <li>修改安装好的transmission的权限，保持与主系统一致。</li>
 </ul>
 <p>第一步里，记录下来我的常用用户为xjn (uid=1000)，那么我们在这个jail里创建一个一模一样的用户：</p>
-<pre><code class="bash">pw useradd -n xjn -w none -u 1000 -G xjn -c &quot;xjn&quot;
+<pre><code class="bash">pw useradd -n xjn -w none -u 1000 -c &quot;xjn&quot;
 #创建好之后，输入：
 id xjn
 #看一下jail里这个xjn的ID是否跟主系统中的一致</code></pre>
-<p>我们把transmission的权限交给jail里xjn这个用户：</p>
+<blockquote>
+<p>如果你的主系统NAS有多个用户要用，你可以把所用的用户归类到同一个组里去。<br>我们把transmission的权限交给jail里xjn这个用户：</p>
+</blockquote>
 <pre><code class="bash">cd /usr/local/etc
 chown -R xjn:xjn transmission
 sysrc transmission_enable=YES
@@ -884,7 +886,7 @@ service transmission start
 exit</code></pre>
 <p>至此，完成。</p>
 <blockquote>
-<p><font color="#660000">强烈建议使用trnasmission的incomplete-dir那个选项，把下载的东西先放到一个MLC的硬盘中，全下载完后，再自动移到主机械硬盘池。</font><br /></p>
+<p><font color="#660000">强烈建议使用transmission的incomplete-dir那个选项，把下载的东西先放到一个MLC的硬盘中，全下载完后，再自动移到主机械硬盘池。</font><br /></p>
 </blockquote>
 <br>
 
