@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2021-04-16T17:13:51.796Z">
+<meta property="article:modified_time" content="2021-05-05T21:33:59.447Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -609,7 +609,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-4-17 1:13:51">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-5-6 5:33:59">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							12.7k 字
+							12.9k 字
 						</div>
 					
 						
@@ -634,7 +634,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							55 分钟
+							56 分钟
 						</div>
 					
 		</div>
@@ -674,6 +674,15 @@
 <h2 id="更新日记"><a href="#更新日记" class="headerlink" title="更新日记"></a>更新日记</h2><details>
   <summary><font color=red>点击查询帖子最近更新</font></summary>
 
+<h3 id="2021-05-06"><a href="#2021-05-06" class="headerlink" title="2021-05-06"></a>2021-05-06</h3><p>适配OpenCore 0.6.9</p>
+<ul>
+<li>修改Config/UEFI/AppleInput/CustomDelays</li>
+<li>修改Config/UEFI/AppleInput/KeyInitialDelay</li>
+<li>修改Config/UEFI/AppleInput/KeySubsequentDelay</li>
+<li>增加Config/UEFI/Quirks/EnableVectorAcceleration</li>
+<li>增加Config/UEFI/Quirks/ForgeUefiSupport</li>
+<li>增加Config/UEFI/Quirks/ReloadOptionRoms</li>
+</ul>
 <h3 id="2021-04-15"><a href="#2021-04-15" class="headerlink" title="2021-04-15"></a>2021-04-15</h3><p>适配OpenCore 0.6.8</p>
 <ul>
 <li><a target="_blank" rel="noopener" href="https://github.com/acidanthera/OcBinaryData">请同步更新OcBinaryData!</a></li>
@@ -1641,7 +1650,7 @@ item 12     String      efi-boot-device-data</code></pre>
 </ul>
 <hr>
 <h3 id="2-8-2-Config–UEFI–AppleInput"><a href="#2-8-2-Config–UEFI–AppleInput" class="headerlink" title="2.8.2 Config–UEFI–AppleInput"></a>2.8.2 Config–UEFI–AppleInput</h3><ul>
-<li><p><strong>AppleEvent</strong> <code>OEM</code></p>
+<li><p><strong>AppleEvent</strong> <code>Auto</code></p>
 <ul>
 <li>在UEFI界面中使用APPLE自带的键鼠控制还是用OC制作的。<ul>
 <li>填写<code>Builtin</code>：使用OpenCore的控制</li>
@@ -1651,24 +1660,23 @@ item 12     String      efi-boot-device-data</code></pre>
 </li>
 </ul>
 </li>
-<li><p><strong>CustomDelays</strong> <code>Disable</code></p>
+<li><p><strong>CustomDelays</strong> <code>NO</code></p>
 <ul>
-<li>在UEFI界面中控制键盘连击的延迟。<ul>
-<li>填写<code>Auto</code>：默认打开并根据<code>KeySupportMode</code>调整</li>
-<li>填写<code>Enabled</code>：根据后面的<code>KeyInitialDelay</code>&amp; <code>KeySubsequentDelay</code>来设置。</li>
-<li>填写<code>Disable</code>：根据Apple的默认设置。</li>
+<li>在UEFI界面中控制键盘连击的延迟。当<code>AppleEvent</code>=OEM 时此选项无效。<ul>
+<li><code>NO</code>：使用Apple默认的500ms首次延迟和50ms的随后延迟。</li>
+<li><code>YES</code>：根据<code>KeyInitialDelay</code> <code>KeySubsequentDelay</code>来设置延迟。</li>
 </ul>
 </li>
 </ul>
 </li>
 <li><p><strong>KeyInitialDelay</strong> <code>50</code></p>
 <ul>
-<li>设置UEFI界面第一次延迟时间，50是500ms。根据自己情况设置。</li>
+<li>设置UEFI界面第一次延迟时间，50是500ms，此选项必须在<code>CustomDelays</code>=True时生效。</li>
 </ul>
 </li>
 <li><p><strong>KeySubsequentDelay</strong> <code>5</code></p>
 <ul>
-<li>设置UEFI界面键与键之间的延迟时间，5是50ms。根据自己情况设置。</li>
+<li>设置UEFI界面键与键之间的延迟时间，5是50ms，此选项必须在<code>CustomDelays</code>=True时生效。</li>
 </ul>
 </li>
 <li><p><strong>PointerSpeedDiv</strong> <code>1</code></p>
@@ -1907,12 +1915,17 @@ item0                      String
 </ul>
 <hr>
 <h3 id="2-8-9-Config–UEFI–Quirks"><a href="#2-8-9-Config–UEFI–Quirks" class="headerlink" title="2.8.9 Config–UEFI–Quirks"></a>2.8.9 Config–UEFI–Quirks</h3><ul>
-<li><strong>ActivateHpetSupport</strong> <code>NO</code><ul>
+<li><p><strong>ActivateHpetSupport</strong> <code>NO</code></p>
+<ul>
 <li>老主板比如ICH6芯片组不具备相关的HPET设置，老的主板你可能需要开启它。</li>
 </ul>
 </li>
-</ul>
+<li><p><strong>EnableVectorAcceleration</strong> <code>YES</code></p>
 <ul>
+<li>在CPU支持avx512或者avx的情况下，在UEFI界面中开启avx加速。</li>
+<li></li>
+</ul>
+</li>
 <li><p><strong>DisableSecurityPolicy</strong> <code>NO</code></p>
 <ul>
 <li>关闭主板的UEFI上的Secure Boot。请<code>不要</code>在BIOS中开启<code>Secure Boot</code>并同时开启这个！</li>
@@ -1923,6 +1936,11 @@ item0                      String
 <li>旧主板需要给予主板退出时间（单位为微秒），较新的主板直接填 <code>0</code>。旧的主板比如 Z87pro，填 <code>3000000-5000000</code>。</li>
 </ul>
 </li>
+<li><p><strong>ForgeUefiSupport</strong> <code>NO</code></p>
+<ul>
+<li>旧的NVIDIA显卡使用UEFI 2.0的gop，但在一些老的MAC中只支持UEFI 1.X。这个开关帮助旧的MAC使用NVDIA2.0的GOP。</li>
+</ul>
+</li>
 <li><p><strong>IgnoreInvalidFlexRatio</strong> <code>NO</code></p>
 <ul>
 <li>如果你没有在 BIOS 中解锁 <code>MSR0x194</code>，一定要选YES。</li>
@@ -1931,6 +1949,11 @@ item0                      String
 <li><p><strong>ReleaseUsbOwnership</strong> <code>NO</code></p>
 <ul>
 <li>大部分的主板都有自动释放 USB 所有权的功能，我们选 <code>NO</code>。如果你开机键盘鼠标卡死了，或者 USB 失灵，试试选 <code>YES</code>。</li>
+</ul>
+</li>
+<li><p><strong>ReloadOptionRoms</strong> <code>NO</code></p>
+<ul>
+<li>配合<code>ForgeUefiSupport</code>使用。</li>
 </ul>
 </li>
 <li><p><strong>RequestBootVarRouting</strong> <code>YES</code></p>
