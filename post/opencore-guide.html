@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2021-05-05T21:49:02.689Z">
+<meta property="article:modified_time" content="2021-05-21T10:55:23.175Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -609,7 +609,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-5-6 5:49:02">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-5-21 18:55:23">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							13k 字
+							12.9k 字
 						</div>
 					
 						
@@ -834,8 +834,6 @@
 <li><p><a target="_blank" rel="noopener" href="https://github.com/Sniki/OS-X-USB-Inject-All/releases">Usbinjectall.kext</a>  USB驱动 （你也可以定制自己的USB补丁）
                </p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/acidanthera/NVMeFix/releases">NVMeFix.kext</a>      为NVME硬盘增加ASPT属性来保证节电，虽然对台式机没啥用，但是官方推荐所有NVME用户都使用此补丁</p>
-</li>
 </ul>
 <blockquote>
 <p>一些机型用了 <code>1820A,1560,1830</code> 等网卡，需要自己放对应驱动；有线螃蟹卡也自己放一下驱动；笔记本类需要更多传感器的，请自行补齐 <code>VirtualSMC</code> 的那些传感器补丁</p>
@@ -993,9 +991,9 @@ TableSignature:        &lt;&gt;</code></pre>
 <li>这里关乎主机是否能开启单用户模式。什么是单用户模式，请看<a target="_blank" rel="noopener" href="https://support.apple.com/zh-cn/HT201573">此文章</a>。</li>
 </ul>
 </li>
-<li><p><strong>DisableVariableWrite:</strong> <code>YES</code></p>
+<li><p><strong>DisableVariableWrite:</strong> <code>NO</code></p>
 <ul>
-<li>非原生NVRAM主板需要模拟 <code>nvram.plist</code> 进而写入 <code>variable</code> 值，因此我们要禁止此项来防止其他程序对 <code>nvram</code> 进行写入，我们这里选 <code>YES</code>。需要注意一点，如果你的主板支持原生 <code>nvram</code>，请选择 <code>NO</code>！</li>
+<li>主板支持原生 <code>nvram</code>，请选择 <code>NO</code>。非原生NVRAM主板需要模拟 <code>nvram.plist</code> 进而写入 <code>variable</code> 值，因此我们要禁止此项来防止其他程序对 <code>nvram</code> 进行写入，我们这里选 <code>YES</code></li>
 </ul>
 </li>
 <li><p><strong>DiscardHibernateMap:</strong> <code>NO</code></p>
