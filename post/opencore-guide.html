@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2021-06-06T23:11:09.732Z">
+<meta property="article:modified_time" content="2021-06-11T16:29:52.328Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -609,7 +609,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-6-7 7:11:09">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-6-12 0:29:52">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							13.2k 字
+							13.5k 字
 						</div>
 					
 						
@@ -634,7 +634,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							57 分钟
+							58 分钟
 						</div>
 					
 		</div>
@@ -674,6 +674,18 @@
 <h2 id="更新日记"><a href="#更新日记" class="headerlink" title="更新日记"></a>更新日记</h2><details>
   <summary><font color=red>点击查询帖子最近更新</font></summary>
 
+<h3 id="2021-06-12"><a href="#2021-06-12" class="headerlink" title="2021-06-12"></a>2021-06-12</h3><ul>
+<li>增加Config/Kernel/Quirks/ProvideCurrentCpuInfo</li>
+<li>增加Config/Misc/Security/AllowToggleSip</li>
+<li>增加Config/Misc/Tools/Flavour</li>
+<li>增加Config/Misc/Tools/RealPath</li>
+<li>增加Config/Misc/Tools/TextMode</li>
+<li>增加Config/NVRAM/Add/ForceDisplayRotationInEFI</li>
+<li>增加Config/PlatformInfo/Generic/AdviseFeatures</li>
+<li>删除Config/PlatformInfo/Generic/AdviseWindows</li>
+<li>修改Config/UEFI/Output/GopPassThrough</li>
+<li>增加Config/UEFI/ProtocolOverrides/AppleEg2Info</li>
+</ul>
 <h3 id="2021-06-07"><a href="#2021-06-07" class="headerlink" title="2021-06-07"></a>2021-06-07</h3><ul>
 <li>因问题比较严重，更新Kernel/quirks/SetApfsTrimTimeout的说明。</li>
 </ul>
@@ -1231,6 +1243,12 @@ Item 7
 <li>一些设备自身的电源管理无法让系统进入睡眠而超时，导致内核奔溃，如果有这个问题请选择 <code>YES</code>。</li>
 </ul>
 </li>
+<li><p><strong>ProvideCurrentCpuInfo</strong> <code>NO</code></p>
+<ul>
+<li>给hyper-V虚拟化MacOS时提供cpu的信息，保证全核同步。</li>
+<li></li>
+</ul>
+</li>
 <li><p><strong>SetApfsTrimTimeout</strong> <code>-1</code></p>
 <ul>
 <li><p>APFS文件系统根据空间是否<code>被使用</code>或者是<code>空的</code>来设计的，这种设计跟其他文件系统是不同的，一般被设计成<code>被使用</code>，<code>空的</code>或者<code>未映射</code>三种情况。这种不同可能带来在启动时系统需要更多的时间来做trim，甚至导致无法进入系统。这个选项是为了设计一个时间节点来终止trim进入系统。一般来说填入<code>-1</code>是不阻止这个trim过程，但如果你有这个问题，你可以设置一个时间，单位为微秒。</p>
@@ -1454,6 +1472,12 @@ Item 7
 <li>选择 <code>yes</code> 后即可在开机选择系统页面中通过 <kbd>Ctrl</kbd>+<kbd>Enter</kbd> 键设置默认启动盘。</li>
 </ul>
 </li>
+<li><p><strong>AllowToggleSip</strong> <code>NO</code></p>
+<ul>
+<li>在开机界面中增加一个关闭或开启sip的选项。</li>
+<li></li>
+</ul>
+</li>
 <li><p><strong>ApECID</strong> <code>0</code></p>
 <ul>
 <li>一般按默认的 0 填写，如果要开启安全启动的身份认证，请随便填写一串数字，比如手机号。</li>
@@ -1528,31 +1552,47 @@ Item 7
 <li><code>NO</code> 默认不隐藏</li>
 </ul>
 </li>
-<li><strong>Name</strong> <code>名称（如 openshell ）</code><ul>
-<li>OpenCore 启动项中显示的名称</li>
+<li><strong>Comment:</strong> <code>随便填</code><ul>
+<li>随便填</li>
 </ul>
 </li>
 <li><strong>Enabled</strong> <code>YES/NO</code><ul>
 <li>启用或禁用</li>
 </ul>
 </li>
+<li><strong>Flavour</strong> <code>Auto</code><ul>
+<li>当<code>PickerAttributes</code>设置成<code>0x0080</code>时适应主题需求</li>
+</ul>
+</li>
+<li><strong>Name</strong> <code>名称（如 openshell ）</code><ul>
+<li>OpenCore 启动项中显示的名称</li>
+</ul>
+</li>
 <li><strong>Path</strong> <code>文件名称（如 openshell.efi）</code><ul>
 <li><code>Tools</code> 文件夹下的文件名</li>
+</ul>
+</li>
+<li><strong>RealPath</strong> <code>NO</code><ul>
+<li>一般不启用</li>
+</ul>
+</li>
+<li><strong>TextMode</strong> <code>NO</code><ul>
+<li>一般不启用</li>
 </ul>
 </li>
 </ul>
 <hr>
 <h2 id="2-6-Config–NVRAM"><a href="#2-6-Config–NVRAM" class="headerlink" title="2.6 Config–NVRAM"></a>2.6 Config–NVRAM</h2><hr>
 <h3 id="2-6-1-Config–NVRAM–Add"><a href="#2-6-1-Config–NVRAM–Add" class="headerlink" title="2.6.1 Config–NVRAM–Add "></a>2.6.1 Config–NVRAM–Add <a id=2.6.1></a></h3><pre><code class="xml">4D1EDE05-38C7-4A6A-9CC6-4BCCA8B38C14
-    UIScale                 Data       &lt;02&gt; //这里填写01为普通的UI显示模式，02为开启HIDPI的UI显示模式，我选择02
-    DefaultBackgroundColor  Data       &lt;00000000&gt; //默认开机背景色为黑色
+    UIScale                     Data       &lt;02&gt; //这里填写01为普通的UI显示模式，02为开启HIDPI的UI显示模式，我选择02
+    DefaultBackgroundColor      Data       &lt;00000000&gt; //默认开机背景色为黑色
 
 7C436110-AB2A-4BBB-A880-FE41995C9F82
-    boot-args               String     Slide=1 darkwake=0 -v //slide=1 表示从第一组内存开始连续注入；darkwake=0 代表一键唤醒机器并偏好设置中节能选项的小憩功能。如果你要用小憩功能请填8； -v 是跑代码，在没装好稳定的黑果前我建议加上，方便定位错误，弄完后再删除 -v
-    csr-active-config       Data       &lt;e7030000&gt; //关闭 SIP 保护
-    nvda_drv                Data       &lt;31&gt; //对 10.13 系统之前的N卡的相关设置，我们不做讨论。
-    prev-lang:kbd           Data       &lt;7a682d48616e733a323532&gt; //语言设置相关，记得改成这个，这个是中文
-
+    boot-args                   String     Slide=1 darkwake=0 -v //slide=1 表示从第一组内存开始连续注入；darkwake=0 代表一键唤醒机器并偏好设置中节能选项的小憩功能。如果你要用小憩功能请填8； -v 是跑代码，在没装好稳定的黑果前我建议加上，方便定位错误，弄完后再删除 -v
+    csr-active-config           Data       &lt;e7030000&gt; //关闭 SIP 保护
+    nvda_drv                    Data       &lt;31&gt; //对 10.13 系统之前的N卡的相关设置，我们不做讨论。
+    prev-lang:kbd               Data       &lt;7a682d48616e733a323532&gt; //语言设置相关，记得改成这个，这个是中文
+    ForceDisplayRotationInEFI   Number     0   开机的UEFI界面是否需要调整，比如你是竖屏的，可以填0,90,180,270。请同时开启AppleEg2Info
     7C436110-AB2A-4BBB-A880-FE41995C9F82 //默认就行，如果需要使用 RTC 屏蔽选项，具体参考RTC综述</code></pre>
 <hr>
 <h3 id="2-6-2-Config–NVRAM–Delete"><a href="#2-6-2-Config–NVRAM–Delete" class="headerlink" title="2.6.2 Config–NVRAM–Delete"></a>2.6.2 Config–NVRAM–Delete</h3><p>NVRAM的数据不可被覆盖，必须先被删除再添加，我们这里按默认设置不必理会。</p>
@@ -1582,9 +1622,13 @@ item 12     String      efi-boot-device-data</code></pre>
 <pre><code class="bash">ioreg -d2 -c IOPlatformExpertDevice | awk -F\&quot; &#39;/IOPlatformUUID/&#123;print $(NF-1)&#125;&#39;</code></pre>
 <p>得到你的主板 UUID，填入 <code>Generic</code> 的 <code>SystemUUID</code> （此操作可以帮助你的 win 不丢失激活）</p>
 <ul>
-<li><p><strong>AdviseWindows</strong> <code>YES</code></p>
+<li><p><strong>AdviseFeatures</strong> <code>YES</code></p>
 <ul>
-<li>如果你的 <code>windows的efi</code> 不在 <code>showpicker</code> 的第一个，必须选择 <code>YES</code>。</li>
+<li>旧的主板不开启这项会让：<ul>
+<li>当WINDOWS的EFI引导不在第一个分区时，将无法引导。</li>
+<li>MacOS无法安装在APFS硬盘上。</li>
+</ul>
+</li>
 </ul>
 </li>
 <li><p><strong>MaxBIOSVersion</strong> <code>0</code></p>
@@ -1799,7 +1843,7 @@ item0                      String
 <li>Intel <code>Ironlake/Arrandale</code> 及之前的核心显卡需要开启此功能来自定义分辨率。</li>
 </ul>
 </li>
-<li><p><strong>GopPassThrough</strong> <code>NO</code></p>
+<li><p><strong>GopPassThrough</strong> <code>Disabled</code></p>
 <ul>
 <li>在UGA环境中调用显卡GOP。若要开启它，你必须同时开启<code>ProvideConsoleGop</code>。</li>
 </ul>
@@ -1864,6 +1908,13 @@ item0                      String
 <li>重新安装苹果错误日志界面。</li>
 </ul>
 </li>
+<li><p><strong>AppleEg2Info</strong> <code>NO</code></p>
+<ul>
+<li>配合<code>ForceDisplayRotationInEFI</code>调整开机时画面的显示角度，当你要用竖屏的时候不仅要在nvram中设置<code>ForceDisplayRotationInEFI</code>的角度，这个也要开启。</li>
+</ul>
+</li>
+</ul>
+<ul>
 <li><p><strong>AppleFramebufferInfo</strong> <code>NO</code></p>
 <ul>
 <li>为虚拟机使用，不是虚拟机选择 <code>NO</code>。</li>
