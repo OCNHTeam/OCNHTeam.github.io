@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2021-06-11T16:29:52.328Z">
+<meta property="article:modified_time" content="2021-06-12T17:13:41.495Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -609,7 +609,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-6-12 0:29:52">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-6-13 1:13:41">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -674,6 +674,11 @@
 <h2 id="更新日记"><a href="#更新日记" class="headerlink" title="更新日记"></a>更新日记</h2><details>
   <summary><font color=red>点击查询帖子最近更新</font></summary>
 
+
+<h3 id="2021-06-13"><a href="#2021-06-13" class="headerlink" title="2021-06-13"></a>2021-06-13</h3><ul>
+<li>补充修改Config/Misc/Boot/PickerMode</li>
+<li>补充修改Config/Misc/Boot/PickerVariant</li>
+</ul>
 <h3 id="2021-06-12"><a href="#2021-06-12" class="headerlink" title="2021-06-12"></a>2021-06-12</h3><ul>
 <li>增加Config/Kernel/Quirks/ProvideCurrentCpuInfo</li>
 <li>增加Config/Misc/Security/AllowToggleSip</li>
@@ -1413,22 +1418,20 @@ Item 7
 </li>
 <li><p><strong>PickerMode</strong> <code>Builtin</code></p>
 <ul>
-<li>是否使用OC的开机启动盘选项，如果我们填 <code>Builtin</code> 就是不使用任何主题；如果我们填 <code>External</code> 就会调用第三方主题。</li>
+<li><code>Builtin</code>: 不使用任何主题</li>
+<li><code>External</code>: 调用第三方主题</li>
+<li><code>Apple</code>: 给白果用的</li>
 </ul>
 </li>
 <li><p><strong>PickerVariant</strong> <code>Auto</code></p>
 <ul>
 <li><p>在<code>PickerMode</code>定义为<code>External</code>后，调用开机主题中的图标样式。</p>
 </li>
-<li><p><code>Auto</code>: 自动选择，根据<code>DefaultBackgroundColour</code>来自动选择。</p>
+<li><p><code>Auto</code>: 自动选择，根据<code>DefaultBackgroundColour</code>来自动选择并具有时间控制的黑夜或白天的模式。</p>
 </li>
-<li><p><code>Default</code>: 标准样式。</p>
+<li><p><code>Default</code>: 使用Resource/Images/GoldenGate/ 这个主题</p>
 </li>
-<li><p><code>Modern</code>: 使用Resource/Images/下以Modern为开头的图标。</p>
-</li>
-<li><p><code>Old</code>: 使用Resource/Images/下以Old为开头的图标。</p>
-</li>
-<li><p><code>Other value</code>: 亦可自主定义一个value来设置自定义图。</p>
+<li><p><code>填路径</code>:使用自己的主题，主题文件夹该放在Resource/Images/下，比如Resource/Images/customised/xjn，则在这个选项中填customised/xjn</p>
 </li>
 </ul>
 <blockquote>
