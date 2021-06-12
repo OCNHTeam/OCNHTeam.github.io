@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+
+<html class="article-header-style-default">
+<head>
+	
+	<title>内核崩溃报告解读 - Xjn&#39;s Blog</title>
+	<meta charset="utf-8">
+	
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	
+	<meta name="description" content="准备 首先我们确认自己的内核版本uname -a Darwin xjns-iMac-Pro.local 19.6.0 Darwin Kernel Version 19.6.0: Mon Aug 31 22:12:52 PDT 2020; root:xnu-6153.141.2~1&#x2F;RELEASE_X86_64 x86_64  确认自己的电脑已经开启了kASLR功能   错误报告（Kernel pa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内核崩溃报告解读">
+<meta property="og:url" content="https://blog.xjn819.com/post/kernel-panic-report-analysis.html">
+<meta property="og:site_name" content="Xjn&#39;s Blog">
+<meta property="og:description" content="准备 首先我们确认自己的内核版本uname -a Darwin xjns-iMac-Pro.local 19.6.0 Darwin Kernel Version 19.6.0: Mon Aug 31 22:12:52 PDT 2020; root:xnu-6153.141.2~1&#x2F;RELEASE_X86_64 x86_64  确认自己的电脑已经开启了kASLR功能   错误报告（Kernel pa">
+<meta property="og:locale">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/4eIkl1Bh6ivn98S.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/X9FuhIAGMoZWOxa.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/pZivqjxuQSOrP2D.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/7iXtwuvsdCRYKoQ.png">
+<meta property="article:published_time" content="2020-11-01T14:27:50.000Z">
+<meta property="article:modified_time" content="2020-11-19T09:09:24.000Z">
+<meta property="article:author" content="Seon">
+<meta property="article:tag" content="OpenCore">
+<meta property="article:tag" content="Hackintosh">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/11/01/4eIkl1Bh6ivn98S.png">
+
+	<meta name="theme-color" content="#212121">
+	<meta name="theme-color-rgb" content="33,33,33">
+	<meta name="theme-color-origin" content="#212121">
+	<meta name="argon-enable-custom-theme-color" content="false">
+	<meta name="theme-card-radius" content="4">
+	<meta name="theme-version" content="1.0.1">
+	<link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="/assets/img/favicon.ico" type="image/x-icon">
+
+	
+<link rel="stylesheet" href="/assets/argon_css_merged.css">
+
+	
+<link rel="stylesheet" href="/style.css">
+
+	
+<link rel="stylesheet" href="//fonts.loli.net/css?family=Open+Sans:300,400,600,700|Noto+Serif+SC:300,600&display=swap.css">
+
+	
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+	
+<script src="/assets/argon_js_merged.js"></script>
+
+	
+<script src="/assets/js/argon.min.js"></script>
+
+	
+<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+	
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+	<script>
+		var argonConfig = {
+			language: "zh_CN",
+			
+				zoomify: {
+					duration: 200,
+					easing: "cubic-bezier(0.4,0,0,1)",
+					scale: 0.9
+				},
+			
+			pangu: "true",
+			
+				lazyload: {
+					threshold: 800,
+					effect: "fadeIn"
+				},
+			
+			disable_pjax: false,
+			headroom: true
+		}
+	</script>
+	<script>
+		var darkmodeAutoSwitch = "false";
+		function setDarkmode(enable){
+			if (enable == true){
+				$("html").addClass("darkmode");
+			}else{
+				$("html").removeClass("darkmode");
+			}
+			$(window).trigger("scroll");
+		}
+		function toggleDarkmode(){
+			if ($("html").hasClass("darkmode")){
+				setDarkmode(false);
+				sessionStorage.setItem("Argon_Enable_Dark_Mode", "false");
+			}else{
+				setDarkmode(true);
+				sessionStorage.setItem("Argon_Enable_Dark_Mode", "true");
+			}
+		}
+		if (sessionStorage.getItem("Argon_Enable_Dark_Mode") == "true"){
+			setDarkmode(true);
+		}
+		function toggleDarkmodeByPrefersColorScheme(media){
+			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
+				return;
+			}
+			if (media.matches){
+				setDarkmode(true);
+			}else{
+				setDarkmode(false);
+			}
+		}
+		function toggleDarkmodeByTime(){
+			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
+				return;
+			}
+			let hour = new Date().getHours();
+			if (hour < 7 || hour >= 22){
+				setDarkmode(true);
+			}else{
+				setDarkmode(false);
+			}
+		}
+		if (darkmodeAutoSwitch == 'system'){
+			var darkmodeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+			darkmodeMediaQuery.addListener(toggleDarkmodeByPrefersColorScheme);
+			toggleDarkmodeByPrefersColorScheme(darkmodeMediaQuery);
+		}
+		if (darkmodeAutoSwitch == 'time'){
+			toggleDarkmodeByTime();
+		}
+		if (darkmodeAutoSwitch == 'alwayson'){
+			setDarkmode(true);
+		}
+
+		function toggleAmoledDarkMode(){
+			$("html").toggleClass("amoled-dark");
+			if ($("html").hasClass("amoled-dark")){
+				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "true");
+			}else{
+				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "false");
+			}
+		}
+		if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "true"){
+			$("html").addClass("amoled-dark");
+		}else if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "false"){
+			$("html").removeClass("amoled-dark");
+		}
+	</script>
+	<script>
+		if (navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("Chrome") === -1){
+			$("html").addClass("using-safari");
+		}
+	</script>
+
+	
+		
+<script src="/assets/vendor/smoothscroll/smoothscroll1.js"></script>
+
+	
+<meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/feed.xml" title="Xjn's Blog" type="application/atom+xml">
+</head>
+
+
+
+<style id="themecolor_css">
+	
+	:root{
+		--themecolor: #212121;
+		--themecolor-dark0: #1B1B1B;
+		--themecolor-dark: #141414;
+		--themecolor-dark2: #080808;
+		--themecolor-dark3: #000000;
+		--themecolor-light: #3B3B3B;
+		--themecolor-rgbstr: 33,33,33;
+		--themecolor-gradient: linear-gradient(150deg,var(--themecolor-light) 15%, var(--themecolor) 70%, var(--themecolor-dark0) 94%);
+
+	}
+</style>
+<style id="theme_cardradius_css">
+	:root{
+		--card-radius: 4px;
+	}
+</style>
+
+<body>
+<div id="toolbar">
+	<header class="header-global">
+		<nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light bg-primary headroom--not-bottom headroom--not-top headroom--pinned">
+			<div class="container">
+				
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<a class="navbar-brand" href="/">Xjn&#39;s Blog</a>
+				<div class="navbar-collapse collapse" id="navbar_global">
+					<div class="navbar-collapse-header">
+						<div class="row">
+							<div class="col-6 collapse-brand"></div>
+							<div class="col-6 collapse-close">
+								<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
+									<span></span>
+									<span></span>
+								</button>
+							</div>
+						</div>
+					</div>
+					<ul id="navbar_search_btn_mobile" class="navbar-nav align-items-lg-center ml-lg-auto">
+						<li class="nav-item" data-toggle="modal" data-target="#argon_search_modal" style="padding-left: 5px;">
+							<a class="nav-link nav-link-icon">
+								<i class="fa fa-search"></i>
+								<span class="nav-link-inner--text d-lg-none">搜索</span>
+							</a>
+						</li>
+					</ul>
+					
+							<ul class='navbar-nav navbar-nav-hover align-items-lg-center'>
+								
+										<li class='nav-item'>
+											<a href='/' class='nav-link' >
+												<i class='ni ni-book-bookmark d-lg-none'></i>
+												<span class='nav-link-inner--text'>首页</span>
+											</a>
+											
+										</li>
+									
+										<li class='nav-item'>
+											<a href='/archives' class='nav-link' >
+												<i class='ni ni-book-bookmark d-lg-none'></i>
+												<span class='nav-link-inner--text'>归档</span>
+											</a>
+											
+										</li>
+									
+										<li class='nav-item'>
+											<a href='/feed.xml' class='nav-link' >
+												<i class='ni ni-book-bookmark d-lg-none'></i>
+												<span class='nav-link-inner--text'>订阅</span>
+											</a>
+											
+										</li>
+									
+							</ul>
+						
+					<ul class="navbar-nav align-items-lg-center ml-lg-auto">
+						<li class="nav-item" data-toggle="modal" data-target="#argon_search_modal" id="navbar_search_btn_pc">
+							<a class="nav-link nav-link-icon">
+								<i class="fa fa-search"></i>
+								<span class="nav-link-inner--text d-lg-none">搜索</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+				
+				<div id="navbar_menu_mask" data-toggle="collapse" data-target="#navbar_global"></div>
+			</div>
+		</nav>
+	</header>
+</div>
+<div class="modal fade" id="argon_search_modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">搜索</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<!-- TODO -->
+<div class="form-group mb-3">
+	<div class="input-group input-group-alternative">
+		<div class="input-group-prepend">
+			<span class="input-group-text"><i class="fa fa-search"></i></span>
+		</div>
+		<input id="local-search-input" class="form-control" placeholder="搜索什么..." type="text"  autocomplete="off" data-search.path="search.xml" data-config.root="/">
+	</div>
+	<div id="local-search-result"></div>
+</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--Banner-->
+<section id="banner" class="banner section section-lg section-shaped">
+	<div class="shape  shape-primary">
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+	</div>
+
+	
+	<div id="banner_container" class="banner-container container text-center">
+		
+			<div class="banner-title text-white"><span class="banner-title-inner">Xjn´s Blog</span>
+		
+		</div>
+	</div>
+	
+		<style>
+			section.banner{
+				background-image: url(/assets/img/banner.jpg) !important;
+			}
+		</style>
+	
+</section>
+
+
+	<style>
+		#content:before {
+			content: '';
+			display: block;
+			position: fixed;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			z-index: -2;
+			background: url(/assets/img/banner.jpg);
+			background-position: center;
+			background-size: cover;
+			background-repeat: no-repeat;
+			opacity: 1;
+			transition: opacity .5s ease;
+		}
+		html.darkmode #content:before{
+			filter: brightness(0.65);
+		}
+		
+			#content:after {
+				content: '';
+				display: block;
+				position: fixed;
+				left: 0;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				z-index: -2;
+				background: url(/assets/img/banner.jpg);
+				background-position: center;
+				background-size: cover;
+				background-repeat: no-repeat;
+				opacity: 0;
+				transition: opacity .5s ease;
+			}
+			html.darkmode #content:after {
+				opacity: 1;
+			}
+			html.darkmode #content:before {
+				opacity: 0;
+			}
+		
+		
+			#banner, #banner .shape {
+				background: transparent !important;
+			}
+		
+	</style>
+
+
+
+
+<div id="float_action_buttons" class="float-action-buttons fabtns-unloaded">
+	<button id="fabtn_toggle_sides" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip-move-to-left="移至左侧" tooltip-move-to-right="移至右侧">
+		<span class="btn-inner--icon fabtn-show-on-right"><i class="fa fa-caret-left"></i></span>
+		<span class="btn-inner--icon fabtn-show-on-left"><i class="fa fa-caret-right"></i></span>
+	</button>
+	<button id="fabtn_back_to_top" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Back To Top" tooltip="回到顶部">
+		<span class="btn-inner--icon"><i class="fa fa-angle-up"></i></span>
+	</button>
+	<button id="fabtn_go_to_comment" class="btn btn-icon btn-neutral fabtn shadow-sm d-none" type="button" <-% theme.fab_show_gotocomment_button ? "" : "style='display: none;'"  aria-label="Comment" tooltip="评论">
+		<span class="btn-inner--icon"><i class="fa fa-comment-o"></i></span>
+	</button>
+	<button id="fabtn_toggle_darkmode" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" <-% theme.fab_show_darkmode_button ? "" : "style='display: none;'"  aria-label="Toggle Darkmode" tooltip-darkmode="夜间模式" tooltip-blackmode="暗黑模式" tooltip-lightmode="日间模式">
+		<span class="btn-inner--icon"><i class="fa fa-moon-o"></i><i class='fa fa-lightbulb-o'></i></span>
+	</button>
+	<button id="fabtn_toggle_blog_settings_popup" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" <-% theme.fab_show_settings_button ? "" : "style='display: none;'"  aria-label="Open Blog Settings Menu" tooltip="设置">
+		<span class="btn-inner--icon"><i class="fa fa-cog"></i></span>
+	</button>
+	<div id="fabtn_blog_settings_popup" class="card shadow-sm" style="opacity: 0;" aria-hidden="true">
+		<div id="close_blog_settings"><i class="fa fa-close"></i></div>
+		<div class="blog-setting-item mt-3">
+			<div style="transform: translateY(-4px);"><div id="blog_setting_toggle_darkmode_and_amoledarkmode" tooltip-switch-to-darkmode="切换到夜间模式" tooltip-switch-to-blackmode="切换到暗黑模式"><span>夜间模式</span><span>暗黑模式</span></div></div>
+			<div style="flex: 1;"></div>
+			<label id="blog_setting_darkmode_switch" class="custom-toggle">
+				<span class="custom-toggle-slider rounded-circle"></span>
+			</label>
+		</div>
+		<div class="blog-setting-item mt-3">
+			<div style="flex: 1;">字体</div>
+			<div>
+				<button id="blog_setting_font_sans_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-left">Sans Serif</button><button id="blog_setting_font_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-right">Serif</button>
+			</div>
+		</div>
+		<div class="blog-setting-item mt-3">
+			<div style="flex: 1;">阴影</div>
+			<div>
+				<button id="blog_setting_shadow_small" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-left">浅阴影</button><button id="blog_setting_shadow_big" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-right">深阴影</button>
+			</div>
+		</div>
+		<div class="blog-setting-item mt-3 mb-3">
+			<div style="flex: 1;">滤镜</div>
+			<div id="blog_setting_filters" class="ml-3">
+				<button id="blog_setting_filter_off" type="button" class="blog-setting-filter-btn ml-0" filter-name="off">关闭</button>
+				<button id="blog_setting_filter_sunset" type="button" class="blog-setting-filter-btn" filter-name="sunset">日落</button>
+				<button id="blog_setting_filter_darkness" type="button" class="blog-setting-filter-btn" filter-name="darkness">暗化</button>
+				<button id="blog_setting_filter_grayscale" type="button" class="blog-setting-filter-btn" filter-name="grayscale">灰度</button>
+			</div>
+		</div>
+		<div class="blog-setting-item mb-3">
+			<div id="blog_setting_card_radius_to_default" style="cursor: pointer;" tooltip="恢复默认">圆角</div>
+			<div style="flex: 1;margin-left: 20px;margin-right: 8px;transform: translateY(2px);">
+				<div id="blog_setting_card_radius"></div>
+			</div>
+		</div>
+		
+	</div>
+	<button id="fabtn_open_sidebar" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Open Sidebar Menu" tooltip="菜单">
+		<span class="btn-inner--icon"><i class="fa fa-bars"></i></span>
+	</button>
+	<button id="fabtn_reading_progress" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip="阅读进度">
+		<div id="fabtn_reading_progress_bar" style="width: 0%;"></div>
+		<span id="fabtn_reading_progress_details">0%</span>
+	</button>
+</div>
+
+<div id="content" class="site-content">
+
+
+<div class="page-information-card-container">
+	
+</div>
+
+<div id="sidebar_mask"></div>
+<aside id="leftbar" class="leftbar widget-area" role="complementary">
+		
+		<div id="leftbar_part1" class="widget widget_search card bg-white shadow-sm border-0">
+			<div class="leftbar-banner card-body">
+				<span class="leftbar-banner-title text-white">Xjn´s Blog</span>
+				
+				
+			</div>
+			
+			
+				<ul id='leftbar_part1_menu' class='leftbar-menu'>
+					
+				</ul>
+			
+			<div class="card-body text-center leftbar-search-button">
+				<button id="leftbar_search" class="btn btn-secondary btn-lg active btn-sm btn-block border-0" role="button" data-toggle="modal" data-target="#argon_search_modal" >
+					<i class="menu-item-icon fa fa-search mr-0"></i> 搜索
+				</button>
+			</div>
+		</div>
+		<div id="leftbar_part2" class="widget widget_search card bg-white shadow-sm border-0">
+			<div id="leftbar_part2_inner" class="card-body">
+				
+				<div class="nav-wrapper" style="padding-top: 5px;">
+	                <ul class="nav nav-pills nav-fill" role="tablist">
+						
+							<li class="nav-item sidebar-tab-switcher">
+								<a class="active show" id="leftbar_tab_catalog_btn" data-toggle="tab" href="#leftbar_tab_catalog" role="tab" aria-controls="leftbar_tab_catalog" no-pjax>文章目录</a>
+							</li>
+						
+						<li class="nav-item sidebar-tab-switcher">
+							<a class="" id="leftbar_tab_overview_btn" data-toggle="tab" href="#leftbar_tab_overview" role="tab" aria-controls="leftbar_tab_overview" no-pjax>站点概览</a>
+						</li>
+	                </ul>
+				</div>
+				<div>
+					<div class="tab-content" style="padding: 10px 10px 0 10px;">
+						
+							<div class="tab-pane fade active show" id="leftbar_tab_catalog" role="tabpanel" aria-labelledby="leftbar_tab_catalog_btn">
+								<div id="leftbar_catalog"></div>
+								<script type="text/javascript">
+									$(function () {
+										$(document).headIndex({
+											articleWrapSelector: '#post_content',
+											indexBoxSelector: '#leftbar_catalog',
+											subItemBoxClass: "index-subItem-box",
+											itemClass: "index-item",
+											linkClass: "index-link",
+											offset: 80,
+										});
+									})
+								</script>
+								
+							</div>
+						
+						<div class="tab-pane fade text-center" id="leftbar_tab_overview" role="tabpanel" aria-labelledby="leftbar_tab_overview_btn">
+							<img id="leftbar_overview_author_image" src="/assets/img/auther.jpg" class="img-fluid rounded-circle shadow-sm" style="width: 100px;" alt="avatar">
+							<h6 id="leftbar_overview_author_name">xjn819</h6>
+							<nav class="site-state">
+								<div class="site-state-item site-state-posts">
+									<a href="/archives">
+										<span class="site-state-item-count">4</span>
+										<span class="site-state-item-name">文章</span>
+									</a>
+								</div>
+								<div class="site-state-item site-state-categories">
+									<a data-toggle="modal" data-target="#blog_categories">
+										<span class="site-state-item-count">2</span>
+										<span class="site-state-item-name">分类</span>
+									</a>
+								</div>      
+								<div class="site-state-item site-state-tags">
+									<a data-toggle="modal" data-target="#blog_tags">
+										<span class="site-state-item-count">4</span>
+										<span class="site-state-item-name">标签</span>
+									</a>
+								</div>
+							</nav>
+							
+									<div class="site-author-links">
+										
+									</div>
+								
+							
+									<div class='site-friend-links'>
+										<div class='site-friend-links-title'><i class='fa fa-fw fa-link'></i> Links</div>
+										<ul class='site-friend-links-ul'>
+											
+												<li class='site-friend-links-item'>
+													<a href='https://blog.daliansky.net' rel='noopener' target='_blank'>黑果小兵的部落阁</a>
+												</li>
+											
+												<li class='site-friend-links-item'>
+													<a href='https://blog.tlhub.cn/' rel='noopener' target='_blank'>套陆的部落阁</a>
+												</li>
+											
+												<li class='site-friend-links-item'>
+													<a href='https://www.bugprogrammer.me/' rel='noopener' target='_blank'>Bugprogrammer的博客</a>
+												</li>
+											
+												<li class='site-friend-links-item'>
+													<a href='https://www.insanelymac.com/' rel='noopener' target='_blank'>InsanelyMac</a>
+												</li>
+											
+												<li class='site-friend-links-item'>
+													<a href='https://hyejeong.cn/' rel='noopener' target='_blank'>针针小站</a>
+												</li>
+											
+										</ul>
+									</div>
+								
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+</aside>
+<div class="modal fade" id="blog_categories" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">分类</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<a class="badge badge-secondary tag" href="/categories/Hackintosh/" rel="tag">Hackintosh <span class="tag-num">3</span></a><a class="badge badge-secondary tag" href="/categories/Hardware/" rel="tag">Hardware <span class="tag-num">1</span></a>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="blog_tags" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">标签</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<a class="badge badge-secondary tag" href="/tags/Hackintosh/" rel="tag">Hackintosh <span class="tag-num">3</span></a><a class="badge badge-secondary tag" href="/tags/Hardware/" rel="tag">Hardware <span class="tag-num">1</span></a><a class="badge badge-secondary tag" href="/tags/NAS/" rel="tag">NAS <span class="tag-num">1</span></a><a class="badge badge-secondary tag" href="/tags/OpenCore/" rel="tag">OpenCore <span class="tag-num">3</span></a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="primary" class="content-area">
+	<main id="main" class="site-main" role="main">
+		
+		
+			
+	<article class="post post-full card bg-white shadow-sm border-0 ">
+	<header class="post-header text-center">
+		
+		<a class="post-title" href="/post/kernel-panic-report-analysis.html">内核崩溃报告解读</a>
+		<div class="post-meta">
+			
+						
+						<div class="post-meta-detail post-meta-detail-time">
+							<i class="fa fa-clock-o" aria-hidden="true"></i>
+							<time title="发布于 2020-11-1 22:27:50 | 编辑于 2020-11-19 17:09:24">2020-11-1 22:27
+							</time>
+						</div>
+					
+						
+							<div class="post-meta-devide">|</div>
+						
+						<div class="post-meta-detail post-meta-detail-categories">
+							<i class="fa fa-bookmark-o" aria-hidden="true"></i>
+							<a class="post-meta-detail-catagory-link" href="/categories/Hackintosh/">Hackintosh</a>
+						</div>
+					
+						
+							<div class="post-meta-devide">|</div>
+						
+						<div class="post-meta-detail post-meta-detail-words">
+							<i class="fa fa-file-word-o" aria-hidden="true"></i>
+							3.9k 字
+						</div>
+					
+						
+							<div class="post-meta-devide">|</div>
+						
+						<div class="post-meta-detail post-meta-detail-readingtime">
+							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
+							15 分钟
+						</div>
+					
+		</div>
+		
+	</header>
+
+	<div class="post-content" id="post_content">
+		<h1 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h1><ul>
+<li>首先我们确认自己的内核版本<pre><code class="bash">uname -a
+Darwin xjns-iMac-Pro.local 19.6.0 Darwin Kernel Version 19.6.0: Mon Aug 31 22:12:52 PDT 2020; root:xnu-6153.141.2~1/RELEASE_X86_64 x86_64</code></pre>
+</li>
+<li>确认自己的电脑已经开启了<code>kASLR</code>功能</li>
+</ul>
+<hr>
+<h1 id="错误报告（Kernel-panic-report）"><a href="#错误报告（Kernel-panic-report）" class="headerlink" title="错误报告（Kernel panic report）"></a>错误报告（Kernel panic report）</h1><p> 一般存放在<code>/Library/Logs/DiagnosticReports/</code> 目录下，报告以<code>.panic</code>结尾。比如<code>Kernel_2020-10-15-185538_Patricks-MacBook-Pro.panic</code>。</p>
+<p>随便网上找了一份错误报告：</p>
+<pre><code class="bash">
+*** Panic Report ***
+panic(cpu 6 caller 0xffffff8008b6f2e9): Kernel trap at 0xffffff7f8c7ba8b1, type 14=page fault, registers:
+CR0: 0x000000008001003b, CR2: 0xffffff80639b8000, CR3: 0x0000000022202000, CR4: 0x00000000003627e0
+RAX: 0x0000000000000564, RBX: 0x0000000000000564, RCX: 0x0000000000000020, RDX: 0x000000000000002a
+RSP: 0xffffff92354ebc80, RBP: 0xffffff92354ebce0, RSI: 0x00000000000fbeab, RDI: 0xffffff92487b9154
+R8:  0x0000000000000000, R9:  0x0000000000000010, R10: 0x0000000000000010, R11: 0x0000000000000000
+R12: 0xffffff80639b6a70, R13: 0xffffff92354ebdc0, R14: 0xffffff92354ebdd4, R15: 0x0000000000000000
+RFL: 0x0000000000010297, RIP: 0xffffff7f8c7ba8b1, CS:  0x0000000000000008, SS:  0x0000000000000010
+Fault CR2: 0xffffff80639b8000, Error code: 0x0000000000000000, Fault CPU: 0x6, PL: 0, VF: 1
+
+Backtrace (CPU 6), Frame : Return Address
+0xffffff92354eb730 : 0xffffff8008a505f6 
+0xffffff92354eb780 : 0xffffff8008b7d604 
+0xffffff92354eb7c0 : 0xffffff8008b6f0f9 
+0xffffff92354eb840 : 0xffffff8008a02120 
+0xffffff92354eb860 : 0xffffff8008a5002c 
+0xffffff92354eb990 : 0xffffff8008a4fdac 
+0xffffff92354eb9f0 : 0xffffff8008b6f2e9 
+0xffffff92354ebb70 : 0xffffff8008a02120 
+0xffffff92354ebb90 : 0xffffff7f8c7ba8b1 
+0xffffff92354ebce0 : 0xffffff7f8c7ba40f 
+0xffffff92354ebd60 : 0xffffff7f8c7b85e8 
+0xffffff92354ebda0 : 0xffffff7f8c7b9db2 
+0xffffff92354ebe00 : 0xffffff7f8b2b3873 
+0xffffff92354ebe50 : 0xffffff7f8b2bd473 
+0xffffff92354ebe90 : 0xffffff7f8b2bcc7d 
+0xffffff92354ebed0 : 0xffffff8009091395 
+0xffffff92354ebf30 : 0xffffff800908fba2 
+0xffffff92354ebf70 : 0xffffff800908f1dc 
+0xffffff92354ebfa0 : 0xffffff8008a014f7 
+      Kernel Extensions in backtrace:
+         com.apple.iokit.IOAcceleratorFamily2(376.6)[5F8F39B4-41AB-3263-9867-D0FAF9BBD2AE]@0xffffff7f8b2b0000-&gt;0xffffff7f8b345fff
+            dependency: com.apple.driver.AppleMobileFileIntegrity(1.0.5)[58669FC2-CC90-3594-AD69-DB89B923FD20]@0xffffff7f899ff000
+            dependency: com.apple.iokit.IOSurface(209.2.2)[AE58720D-7079-388F-AD95-FD2366F98F8D]@0xffffff7f8b294000
+            dependency: com.apple.iokit.IOPCIFamily(2.9)[C08F7FC1-78A4-3A1B-BFE2-C07080CF2048]@0xffffff7f89294000
+            dependency: com.apple.iokit.IOGraphicsFamily(517.22)[2AEA02BF-2A38-3674-A187-E5F610FD65B7]@0xffffff7f89a39000
+         com.apple.kext.AMDRadeonX4150(1.6)[DF336AB9-8300-3ED2-AAD3-7D2C8F4B8DEB]@0xffffff7f8c7b4000-&gt;0xffffff7f8cf20fff
+            dependency: com.apple.iokit.IOSurface(209.2.2)[AE58720D-7079-388F-AD95-FD2366F98F8D]@0xffffff7f8b294000
+            dependency: com.apple.iokit.IOPCIFamily(2.9)[C08F7FC1-78A4-3A1B-BFE2-C07080CF2048]@0xffffff7f89294000
+            dependency: com.apple.iokit.IOGraphicsFamily(517.22)[2AEA02BF-2A38-3674-A187-E5F610FD65B7]@0xffffff7f89a39000
+            dependency: com.apple.iokit.IOAcceleratorFamily2(376.6)[5F8F39B4-41AB-3263-9867-D0FAF9BBD2AE]@0xffffff7f8b2b0000
+
+BSD process name corresponding to current thread: kernel_task
+
+Mac OS version:
+17C88
+
+Kernel version:
+Darwin Kernel Version 17.3.0: Thu Sep 9 18:09:22 PST 2020; root:xnu-4570.31.3~1/RELEASE_X86_64
+Kernel slide:     0x0000000008600000
+Kernel text base: 0xffffff8008800000
+__HIB  text base: 0xffffff8008700000
+System model name: MacBookPro14,3
+
+EOF</code></pre>
+<p>错误报告有很多无用内容，我们直接看错误发生在哪里：</p>
+<pre><code class="bash"> panic(cpu 6 caller 0xffffff8008b6f2e9): Kernel trap at 0xffffff7f8c7ba8b1, type 14=page fault</code></pre>
+<p>这段告诉我们系统奔溃是因为<code>type 14=page fault</code>。这种错误往往指出这段内容无法写入或读取一段内存页。</p>
+<p>接着，我们需要找到发生错误命令的注册的<code>地址</code>。在这之前，我们先记录一下它的<code>RIP</code>，也就是命令在哪一段死了，从报告中搜索<code>RIP</code>，我们搜到的是<code>0xffffff7f8c7ba8b1</code>。</p>
+<p>据此，根据内存注入的地址，我们得到引起错误的<code>地址</code>是<code>0xffffff80639b8000</code>。</p>
+<pre><code class="bash">Fault CR2: 0xffffff80639b8000, Error code: 0x0000000000000000, Fault CPU: 0x6 ...</code></pre>
+<p>这份错误报告同样回溯了这样的错误是通过何种功能方法注入导致的错误指令。</p>
+<pre><code class="bash">  Backtrace (CPU 6), Frame : Return Address
+  0xffffff92354eb730 : 0xffffff8008a505f6 
+  0xffffff92354eb780 : 0xffffff8008b7d604 
+  0xffffff92354eb7c0 : 0xffffff8008b6f0f9 
+  0xffffff92354eb840 : 0xffffff8008a02120 
+  0xffffff92354eb860 : 0xffffff8008a5002c 
+  0xffffff92354eb990 : 0xffffff8008a4fdac 
+  0xffffff92354eb9f0 : 0xffffff8008b6f2e9 
+  0xffffff92354ebb70 : 0xffffff8008a02120 
+  0xffffff92354ebb90 : 0xffffff7f8c7ba8b1 
+  0xffffff92354ebce0 : 0xffffff7f8c7ba40f 
+  0xffffff92354ebd60 : 0xffffff7f8c7b85e8 
+  0xffffff92354ebda0 : 0xffffff7f8c7b9db2 
+  0xffffff92354ebe00 : 0xffffff7f8b2b3873 
+  0xffffff92354ebe50 : 0xffffff7f8b2bd473 
+  0xffffff92354ebe90 : 0xffffff7f8b2bcc7d 
+  0xffffff92354ebed0 : 0xffffff8009091395 
+  0xffffff92354ebf30 : 0xffffff800908fba2 
+  0xffffff92354ebf70 : 0xffffff800908f1dc 
+  0xffffff92354ebfa0 : 0xffffff8008a014f7</code></pre>
+<p>我们需要找到这些内存地址归属于哪一个kexts才能真正去寻找这个错误的来源：</p>
+<pre><code class="bash">kext: com.apple.iokit.IOAcceleratorFamily2
+loaded at: 0xffffff7f8b2b0000
+
+kext: com.apple.kext.AMDRadeonX4150
+loaded at: 0xffffff7f8c7b4000</code></pre>
+<p>这份报告中可能缺少一些对我们非常重要的信息，但是<code>Kernel slide</code>值<code>0x0000000008600000</code>告诉了我们内核镜像如何通过<code>kASLR</code>转换到了内存中。</p>
+<p>总的来说，通过此份报告，我们得到了：</p>
+<ul>
+<li>内核在注入<code>0xffffff80639b8000</code>发生了错误。</li>
+<li>错误被禁止（RIP）的地址是<code>0xffffff7f8c7ba8b1</code>。</li>
+<li><code>com.apple.iokit.IOAcceleratorFamily2</code> 和 <code>com.apple.kext.AMDRadeonX4150</code>这两个kexts是引起错误的主要原因。</li>
+<li>内核通过<code>kASLR</code>转换进内存的地址是<code>0x0000000008600000</code>。</li>
+<li>内存地址的最后一段是<code>0xffffff8008a014f7</code></li>
+</ul>
+<hr>
+<h1 id="分析错误报告"><a href="#分析错误报告" class="headerlink" title="分析错误报告"></a>分析错误报告</h1><p>得到了主要的几个数据后，我们把<code>/System/Library/Kernels/kernel</code>拖入<a target="_blank" rel="noopener" href="https://www.hopperapp.com/">Hopper disassembler</a>软件里， 因为<code>kASLR</code>把内核注入到了内存中，我们需要<code>Hopper Disassembler</code>来重新定位镜像。按<code>Modify</code>然后点击<code>Change File Base Address</code>。输入之前得到的<code>slide地址+0x100000</code>,也就是<code>0x0000000008600000+0x100000=0xffffff8008700000</code>。</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2020/11/01/4eIkl1Bh6ivn98S.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="Screen Shot 2020-11-01 at 10.12.23 PM.png"><br>等待内核镜像被重新定位后，我们点击<code>G</code>输入内存的最后一段地址<code>0xffffff8008a014f7</code></p>
+
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2020/11/01/X9FuhIAGMoZWOxa.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="Screen Shot 2020-11-01 at 10.18.45 PM.png"></p>
+
+<p>拆开镜像后我们看到这条指令是直接被加载在一条<code>call</code>指令之前。<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2020/11/01/pZivqjxuQSOrP2D.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="callCont.png"></p>
+
+<p>一般来说，我们的CPU收到了<code>call</code>指令后，它会马上保存这个地址，这样允许我们知道如何去return这个<code>call</code>以及什么时候这个<code>call</code>完成。当内核正在准备错误报告时，它通过回溯这个被保存的地址来找到错误关键。因此，当我们遇到一个回溯的地址比如<code>0xffffff8008a014f7</code>时，它会立即保存并执行回溯。 所以根据这张图，在<code>0xffffff8008a014f5</code>地址上的<code>call rcx</code>是产生错误的位置。</p>
+<p>我们根据这个地址，按照内存的排列顺序往上回溯，我们可以列出如下信息：</p>
+<ul>
+<li><p>kernel.call_continuation() </p>
+<ul>
+<li>0xffffff8008a014f5 call rcx</li>
+</ul>
+</li>
+<li><p>kernel.IOWorkLoop::threadMain()</p>
+<ul>
+<li>0xffffff800908f1d6 call qword [rax+0x1a8]</li>
+</ul>
+</li>
+<li><p>kernel.IOWorkLoop::runEventSources()</p>
+<ul>
+<li>0xffffff800908fb9c call qword [rax+0x120]</li>
+</ul>
+</li>
+<li><p>kernel.IOInterruptEventSource::checkForWork()</p>
+<ul>
+<li>0xffffff8009091392 call r11</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>com.apple.iokit.IOAcceleratorFamily2.IOAccelEventMachine2::hardwareErrorEvent()</p>
+<ul>
+<li>0xffffff7f8b2bcc78 call IOAccelEventMachine2::restart_channel()</li>
+</ul>
+</li>
+<li><p>com.apple.iokit.IOAcceleratorFamily2.IOAccelEventMachine2::restart_channel()</p>
+<ul>
+<li>0xffffff7f8b2bd46d call qword [rax+0x160]</li>
+</ul>
+</li>
+<li><p>com.apple.iokit.IOAcceleratorFamily2.IOAccelFIFOChannel2::restart()</p>
+<ul>
+<li>0xffffff7f8b2b386d call qword [rax+0x208]</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>com.apple.kext.AMDRadeonX4150.AMDRadeonX4150_AMDAccelChannel::getHardwareDiagnosisReport()</p>
+<ul>
+<li>0xffffff7f8c7b9dac call qword [rax+0xb00]</li>
+</ul>
+</li>
+<li><p>com.apple.kext.AMDRadeonX4150.AMDRadeonX4150_AMDGraphicsAccelerator::writeDiagnosisReport()</p>
+<ul>
+<li>0xffffff7f8c7b85e2 call qword [rax+0x258]</li>
+</ul>
+</li>
+<li><p>com.apple.kext.AMDRadeonX4150.AMDRadeonX4150_AMDAccelChannel::writeDiagnosisReport()</p>
+<ul>
+<li>0xffffff7f8c7ba40a call AMDRadeonX4150_AMDAccelChannel::writePendingCommandInfo</li>
+</ul>
+</li>
+<li><p>com.apple.kext.AMDRadeonX4150.AMDRadeonX4150_AMDAccelChannel::writePendingCommandInfoDiagnosisReport()</p>
+<ul>
+<li>0xffffff7f8c7ba8b1 <code>mov r8d, dword [r12+rax*4]</code></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>kernel.hndl_alltraps()<ul>
+<li>0xffffff8008a0211b call _kernel_trap</li>
+</ul>
+</li>
+</ul>
+<p>我们列出表格后，就可以更轻松看到这个错误是如何发生的。准确地说，这个错误是<code>com.apple.iokit.IOAcceleratorFamily2</code> kext 在处理硬件时产生的。<br><code>com.apple.iokit.IOAcceleratorFamily2</code>产生了<code>restart_channel</code>，转而把信息递交到了<code>com.apple.kext.AMDRadeonX4150</code>。一般来说，这个kext是AMD 560显卡的驱动。</p>
+<p>除了这个<code>restart_channel</code>之外，硬件的分析信息也同时生成了。<code>com.apple.kext.AMDRadeonX4150</code>执行了 <code>AMDRadeonX4150_AMDAccelChannel::writeDiagnosisReport</code>，这种方法我们叫做<code>writePendingCommandInfoDiagnosisReport</code>。</p>
+<p> 我们看到第11个位置，它不是一个<code>call</code>指令，而是一个<code>move</code>指令：</p>
+<pre><code class="bash">0xffffff7f8c7ba8b1 mov r8d, dword [r12+rax*4]</code></pre>
+<p>另外，我们在载入<code>com.apple.kext.AMDRadeonX4150</code> kext,同样发现了这个地址<code>0xffffff7f8c7ba8b1</code>，与错误报告中的RIP地址一致。另外，下一段地址执行了一个<code>call back</code>去处理一个trap(<code>call_kernel_trap</code>)，也就是这个报告里面的<code>page fault</code>。这意味着这个<code>move</code>指令是导致错误的真正元凶。</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2020/11/01/7iXtwuvsdCRYKoQ.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="fault.png"></p>
+
+<p>现在我们找到了导致错误的真正地址和指令，我们可以更详细地看这个指令。我们看到它在R12这个base上面增加了一个<code>RAX*4</code>。通过计算我们得到增加到的是<code>R8d</code>。因为我们原始的错误报告中记录了这个错误指令的注册值，我们可以重新计算这个地址：</p>
+<pre><code class="bash">  registers:
+  CR0: 0x000000008001003b, CR2: 0xffffff80639b8000, ...
+  RAX: 0x0000000000000564, RBX: 0x0000000000000564, ...
+  RSP: 0xffffff92354ebc80, RBP: 0xffffff92354ebce0, ...
+  R8:  0x0000000000000000, R9:  0x0000000000000010, ...
+  R12: 0xffffff80639b6a70, R13: 0xffffff92354ebdc0, ...
+  RFL: 0x0000000000010297, RIP: 0xffffff7f8c7ba8b1, ...</code></pre>
+<pre><code class="bash">mov r8d, dword [r12+rax*4]
+
+R12: 0xffffff80639b6a70
+RAX: 0x0000000000000564
+
+R12 + RAX*4 = 0xffffff80639b6a70 + (0x564 * 4) = 0xffffff80639b8000</code></pre>
+<p>计算出来的<code>0xffffff80639b8000</code>地址，便是我们原始报告中的：</p>
+<pre><code class="bash">Fault CR2: 0xffffff80639b8000, Error code: 0x0000000000000000, Fault CPU: 0x6 ...</code></pre>
+<p>从这里看出来，<code>0xffffff80639b8000</code>注册在了没有寻址过的页面中，因此，在<code>com.apple.kext.AMDRadeonX4150</code>中执行<code>mov</code>命令是不可行的，最终导致系统奔溃。<br>但是，我们不能100%确定为什么这个指令会在不被寻址的页面中执行。我们因此会有如下的疑问：</p>
+<ul>
+<li><p>R12这个地址是被其他东西占用了或者本身就是无效的吗？</p>
+</li>
+<li><p>这个增加的RAX值本身就是无效的还是太大了所以超出了范围？</p>
+</li>
+<li><p>还是这本身就是个硬件问题？</p>
+</li>
+</ul>
+<p>显卡驱动是非常复杂的，并且你可能需要通过很多逆向工程才能获得一些基础的认识。但是我们可以假设应该有方法去绕过这个错误，比如说确认一下这个<code>RAX</code>值是否在<code>R12</code>范围内？</p>
+<p>根据这种情况，我们何不考虑把R12这个值移动到可读的范围内呢？<br>我们尝试用一个<code>r8</code>来替换，发现<code>snprintf</code>功能引导出来了。</p>
+<pre><code class="bash">  ffffff7f8c7ba8af   mov        eax, eax
+  ffffff7f8c7ba8b1   mov        r8d, dword [r12+rax*4] ;faulting instruction
+  ffffff7f8c7ba8b5   xor        eax, eax
+  ffffff7f8c7ba8b7   lea        rdx, qword [aC08x]     ; &quot;%c%08x&quot;
+  ffffff7f8c7ba8be   call       0xffffff7f198091e8     ;  snprintf</code></pre>
+<p>关于这个会话，macOS确认了<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/X86_calling_conventions#System_V_AMD64_ABI">ystem V AMD64 ABI</a>。这意味着<code>R8</code>是第五条arg去引入<code>snprintf</code>。</p>
+<pre><code class="bash">int snprintf(char *str, size_t size, const char *format, ...);</code></pre>
+<p>这样的话，<code>snprintf</code>被加入到了<code>%c%08x</code>，第五个指令就会被寻址到<code>%08x</code>。这样，<code>R8</code>就能被注册进寻址过的页面中去了。<br>因为这个代码被加入到了<code>writeDiagnosisReport</code>，我们可以猜测带有<code>R8</code>的<code>snprintf</code>被写到了user mode之外，因此用这样的方法可以暂时解决。</p>
+<hr>
+<h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><p>Objective-See., (2018). An Unpatched Kernel Bug., avaliable at <a target="_blank" rel="noopener" href="https://objective-see.com/index.html">https://objective-see.com/index.html</a>. last accessed at 1st Nov.2020.</p>
+
+	</div>
+
+	
+
+	
+
+	
+		<div class="post-tags">
+			<i class="fa fa-tags" aria-hidden="true"></i>
+			<a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/Hackintosh/" rel="tag">Hackintosh</a><a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/OpenCore/" rel="tag">OpenCore</a>
+		</div>
+	
+</article>
+
+	<div id="share_container">
+	<div id="share" data-initialized="true">
+		<a class="no-pjax icon-wechat" tooltip="分享到微信">
+			<button class="btn btn-icon btn-success">
+				<span class="btn-inner--icon"><i class="fa fa-weixin"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-douban" tooltip="分享到豆瓣">
+			<button class="btn btn-icon btn-primary" style="background: #209261;border: none;">
+				豆
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-qq" tooltip="分享到 QQ">
+			<button class="btn btn-icon btn-primary" style="background: #2196f3;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-qq"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-qzone" tooltip="分享到 QQ 空间">
+			<button class="btn btn-icon btn-primary" style="background: #ffc107;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-star"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-weibo" tooltip="分享到微博">
+			<button class="btn btn-icon btn-warning">
+				<span class="btn-inner--icon"><i class="fa fa-weibo"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-facebook" tooltip="分享到 Facebook">
+			<button class="btn btn-icon btn-primary" style="background: #283593;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-facebook"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-twitter" tooltip="分享到 Twitter">
+			<button class="btn btn-icon btn-primary" style="background: #03a9f4;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://blog.xjn819.com/post/kernel-panic-report-analysis.html&text=内核崩溃报告解读" tooltip="分享到 Telegram">
+			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-copy-link" id="share_copy_link" tooltip="复制链接">
+			<button class="btn btn-icon btn-default">
+				<span class="btn-inner--icon"><i class="fa fa-link"></i></span>
+			</button>
+		</a>
+	</div>
+	<button id="share_show" class="btn btn-icon btn-primary" tooltip="分享">
+		<span class="btn-inner--icon"><i class="fa fa-share"></i></span>
+	</button>
+</div>
+<script type="text/javascript">
+	socialShare("#share", {
+	    title : '内核崩溃报告解读',
+	    description : '准备
+首先我们确认自己的内核版本uname -a
+Darwin xjns-iMac-Pro.loca...',
+	    wechatQrcodeTitle : "分享到微信",
+	    wechatQrcodeHelper : '微信扫描二维码',
+	    source : 'https://blog.xjn819.com/post/kernel-panic-report-analysis.html'
+	});
+	$("#share_show")[0].onclick = function(){
+		$("#share_container").addClass("opened");
+	};
+	$("#share_copy_link")[0].onclick = function(){
+		let input = document.createElement('input');
+		document.body.appendChild(input);
+		input.setAttribute("value", window.location.href);
+		input.setAttribute("readonly", "readonly");
+		input.setAttribute("style", "opacity: 0;mouse-events:none;");
+		input.select();
+		if (document.execCommand('copy')){
+			iziToast.show({
+				title: '链接已复制',
+				message: "链接已复制到剪贴板",
+				class: 'shadow',
+				position: 'topRight',
+				backgroundColor: '#2dce89',
+				titleColor: '#ffffff',
+				messageColor: '#ffffff',
+				iconColor: '#ffffff',
+				progressBarColor: '#ffffff',
+				icon: 'fa fa-check',
+				timeout: 5000
+			});
+		}else{
+			iziToast.show({
+				title: '复制失败',
+				message: "请手动复制链接",
+				class: 'shadow',
+				position: 'topRight',
+				backgroundColor: '#f5365c',
+				titleColor: '#ffffff',
+				messageColor: '#ffffff',
+				iconColor: '#ffffff',
+				progressBarColor: '#ffffff',
+				icon: 'fa fa-close',
+				timeout: 5000
+			});
+		}
+		document.body.removeChild(input);
+	};
+</script>
+
+
+<div id="post_comment" class="card shadow-sm">
+	<div id="gitalk-container"></div>
+<script type="text/javascript">
+	var gitalk = new Gitalk({
+		clientID: '86a6322e810d06834891',
+		clientSecret: 'eaf77d01ffaddf2f06a2a4bbac944d8cca3d0c91',
+		repo: 'OCNHTeam.github.io',
+		owner: 'OCNHTeam',
+		admin: ['SeonMe'],
+		id: location.pathname,
+		distractionFreeMode: false
+	})
+	gitalk.render('gitalk-container');
+</script>
+
+</div>
+
+
+<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"><span class="page-navigation-extra-text"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>上一篇</span><a href="/post/Home-freenas-build.html" rel="prev"> 家用万兆FreeNAS组建</a></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/post/opencore-guide.html" rel="next"> 使用 OpenCore 引导黑苹果</a></div></div>
+
+
+
+		
+		
+		
+		
+
+					<footer id="footer" class="site-footer card shadow-sm border-0">
+						
+						<div>Theme <a target="_blank" rel="noopener" href="https://github.com/solstice23/hexo-theme-argon"><strong>Argon</strong></a> | Powered by Hexo</div>
+						<span id="busuanzi_container_site_uv">
+							本站访客数 <span id="busuanzi_value_site_uv"></span> 人次
+						</span>
+					</footer>
+				</main>
+			</div>
+		</div>
+		
+<script src="/argontheme.js"></script>
+
+		
+		
+		
+
+		
+			<script>
+				var argonEnableCodeHighlight = true;
+			</script>
+			
+<link rel="stylesheet" href="/assets/vendor/highlight/styles/vs2015.css">
+
+		
+
+	</div>
+</div>
+<noscript>
+	<style>
+		article img.lazyload[src^="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPg"]{display: none;}
+		.comment-item-text .comment-sticker.lazyload{display: none;}
+	</style>
+</noscript>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0SS4LFYBFR"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0SS4LFYBFR');
+</script>
+</body>
+
+
+
+</html>
+
