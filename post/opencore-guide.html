@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2021-06-12T17:16:42.530Z">
+<meta property="article:modified_time" content="2021-06-23T19:17:53.441Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -609,7 +609,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-6-13 1:16:42">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-6-24 3:17:53">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -1260,7 +1260,7 @@ Item 7
 <ul>
 <li><p>APFS文件系统根据空间是否<code>被使用</code>或者是<code>空的</code>来设计的，这种设计跟其他文件系统是不同的，一般被设计成<code>被使用</code>，<code>空的</code>或者<code>未映射</code>三种情况。这种不同可能带来在启动时系统需要更多的时间来做trim，甚至导致无法进入系统。这个选项是为了设计一个时间节点来终止trim进入系统。一般来说填入<code>-1</code>是不阻止这个trim过程，但如果你有这个问题，你可以设置一个时间，单位为微秒。</p>
 </li>
-<li><p>因最近的系统更新，当trim过程超过10秒，系统开机时苹果会自动跳过trim，这样会导致一些品牌的ssd无法正常工作，出现系统崩溃，冻屏，死机等问题。解决的办法有两种，一种是将此选项设置一个超长的时间来保证trim结束，(e.g.4294967295)，带来的后果是开机非常慢，第二种方法是设置一个非常短的时间直接跳过trim过程（e.g.999）。关闭trim会带来大量的问题，所有的闪存不具备覆写的功能（除了傲腾），需要通过trim来删除日志中需要删除的空间，不然的话，硬盘的速度会直线下降。我们应该避免使用有这类问题的NVMESSD。</p>
+<li><p>因最近的系统更新，当trim过程超过10秒，系统开机时苹果会自动跳过trim，这样会导致一些品牌的ssd无法正常工作，出现系统崩溃，冻屏，死机等问题。解决的办法有两种，一种是将此选项设置一个超长的时间来保证trim结束，(e.g.4294967295)，带来的后果是开机非常慢，第二种方法是设置一个非常短的时间直接跳过trim过程（e.g.999）。关闭trim会带来大量的问题，所有的闪存不具备覆写的功能（除了傲腾），需要通过trim来删除日志中需要删除的空间，不然的话，硬盘的速度会直线下降。我们应该避免使用有这类问题的SSD。</p>
 </li>
 <li><p>目前检查到的兼容性不够好的硬盘包括并不限于：</p>
 <ul>
@@ -1291,7 +1291,7 @@ Item 7
 </li>
 <li><p><strong>XhciPortLimit</strong> <code>YES</code></p>
 <ul>
-<li>解除 15 个 USB 端口限制。11.3系统起，不要开启，并自行定义usb端口。</li>
+<li>解除 15 个 USB 端口限制。11.3系统不要开启，并自行定义usb端口。</li>
 </ul>
 </li>
 </ul>
