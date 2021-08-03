@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2021-06-23T19:17:53.441Z">
+<meta property="article:modified_time" content="2021-08-03T15:01:49.602Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -609,7 +609,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-6-24 3:17:53">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-8-3 23:01:49">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							13.5k 字
+							13.6k 字
 						</div>
 					
 						
@@ -674,7 +674,12 @@
 <h2 id="更新日记"><a href="#更新日记" class="headerlink" title="更新日记"></a>更新日记</h2><details>
   <summary><font color=red>点击查询帖子最近更新</font></summary>
 
-
+<h3 id="2021-08-03"><a href="#2021-08-03" class="headerlink" title="2021-08-03"></a>2021-08-03</h3><p>适配OpenCore 0.7.2</p>
+<ul>
+<li>增加ACPI/Quirk/SyncTableIds</li>
+<li>增加Kernel/Scheme/CustomKernel</li>
+<li>增加UEFI/AppleInput/GraphicsInputMirroring </li>
+</ul>
 <h3 id="2021-06-13"><a href="#2021-06-13" class="headerlink" title="2021-06-13"></a>2021-06-13</h3><ul>
 <li>补充修改Config/Misc/Boot/PickerMode</li>
 <li>补充修改Config/Misc/Boot/PickerVariant</li>
@@ -963,6 +968,10 @@ TableSignature:        &lt;&gt;</code></pre>
 </li>
 <li><strong>ResetLogoStatus:</strong> <code>NO</code><ul>
 <li>无法在有 <code>BGRT</code> 表的系统上显示 OEM Windows 标志的硬件需要开启</li>
+</ul>
+</li>
+<li><strong>SyncTableIds:</strong> <code>NO</code><ul>
+<li>解决当用Opencore引导windows 7及更早的系统时，因缺少SLIC table而无法激活windows的问题。</li>
 </ul>
 </li>
 </ul>
@@ -1297,12 +1306,16 @@ Item 7
 </ul>
 <hr>
 <h3 id="2-4-7-Config–Kernel–Scheme"><a href="#2-4-7-Config–Kernel–Scheme" class="headerlink" title="2.4.7 Config–Kernel–Scheme"></a>2.4.7 Config–Kernel–Scheme</h3><ul>
-<li><strong>FuzzyMatch</strong> <code>NO</code><ul>
+<li><p><strong>CustomKernel</strong> <code>NO</code></p>
+<ul>
+<li>当使用AMD/Atom等CPU时请开启。</li>
+</ul>
+</li>
+<li><p><strong>FuzzyMatch</strong> <code>NO</code></p>
+<ul>
 <li>此选项是给 10.6 以及更早的系统使用，我们不做探讨。</li>
 </ul>
 </li>
-</ul>
-<ul>
 <li><p><strong>KernelArch</strong> <code>NO</code></p>
 <ul>
 <li>此选项是给 10.7 以及更早的系统使用，不做探讨，直接填写默认的 <code>x86_64</code>。</li>
@@ -1743,6 +1756,12 @@ item 12     String      efi-boot-device-data</code></pre>
 <li><p><strong>KeySubsequentDelay</strong> <code>5</code></p>
 <ul>
 <li>设置UEFI界面键与键之间的延迟时间，5是50ms，此选项必须在<code>CustomDelays</code>=True时生效。</li>
+</ul>
+</li>
+<li><p><strong>GraphicsInputMirroring</strong> <code>YES</code></p>
+<ul>
+<li> <code>NO</code>: 使用Apple的键盘控制，这可能导致在一些环境下无法使用键盘输入(e.g. Windows BitLocker)。</li>
+<li> <code>YES</code>:可以让OpenCore在引导一些系统的UEFI模式下时仍然可以使用键盘输入。</li>
 </ul>
 </li>
 <li><p><strong>PointerSpeedDiv</strong> <code>1</code></p>
