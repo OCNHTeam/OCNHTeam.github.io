@@ -8,19 +8,20 @@
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta name="description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。 为什么选择FreeNas 硬盘池的可拓展性 数据的安全性 ZFS格式 独特的缓存机制     什么样的用户适合FreeNas?首先刚开始玩的小白并不适合用FreeNas，上手比较难，但当然一开始就选择FreeNas，花费多一点的学习成本，肯定也是一个不错的选">
+	<meta name="description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。  现在改名叫TrueNas了，文章里面TrueNas和FreeNas是一回事。  为什么选择FreeNas 硬盘池的可拓展性 数据的安全性 ZFS格式 独特的缓存机制     什么样的用户适合FreeNas?首先刚开始玩的小白并不适合用FreeNas，上手比">
 <meta property="og:type" content="article">
 <meta property="og:title" content="家用万兆FreeNAS组建">
 <meta property="og:url" content="https://blog.xjn819.com/post/Home-freenas-build.html">
 <meta property="og:site_name" content="Xjn&#39;s Blog">
-<meta property="og:description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。 为什么选择FreeNas 硬盘池的可拓展性 数据的安全性 ZFS格式 独特的缓存机制     什么样的用户适合FreeNas?首先刚开始玩的小白并不适合用FreeNas，上手比较难，但当然一开始就选择FreeNas，花费多一点的学习成本，肯定也是一个不错的选">
+<meta property="og:description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。  现在改名叫TrueNas了，文章里面TrueNas和FreeNas是一回事。  为什么选择FreeNas 硬盘池的可拓展性 数据的安全性 ZFS格式 独特的缓存机制     什么样的用户适合FreeNas?首先刚开始玩的小白并不适合用FreeNas，上手比">
 <meta property="og:locale">
 <meta property="og:image" content="https://i.loli.net/2021/04/03/5bFZNyDv2M4p83I.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/03/uZEYmk21iphe8N3.jpg">
 <meta property="og:image" content="https://i.loli.net/2021/04/03/DYcZOzgfPHJQS3h.png">
+<meta property="og:image" content="https://i.loli.net/2021/08/09/cUzY1REwFqox5Xp.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/14/GrqjvK2TtW93gnC.png">
 <meta property="article:published_time" content="2021-04-03T14:27:50.000Z">
-<meta property="article:modified_time" content="2021-07-10T20:10:14.231Z">
+<meta property="article:modified_time" content="2021-08-09T16:02:58.302Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -604,7 +605,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2021-7-11 4:10:14">2021-4-3 22:27
+							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2021-8-10 0:02:58">2021-4-3 22:27
 							</time>
 						</div>
 					
@@ -621,7 +622,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							2.1k 字
+							2.3k 字
 						</div>
 					
 						
@@ -629,7 +630,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							9 分钟
+							10 分钟
 						</div>
 					
 		</div>
@@ -638,6 +639,9 @@
 
 	<div class="post-content" id="post_content">
 		<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。</p>
+<blockquote>
+<p>现在改名叫TrueNas了，文章里面TrueNas和FreeNas是一回事。</p>
+</blockquote>
 <h1 id="为什么选择FreeNas"><a href="#为什么选择FreeNas" class="headerlink" title="为什么选择FreeNas"></a>为什么选择FreeNas</h1><ul>
 <li>硬盘池的可拓展性</li>
 <li>数据的安全性</li>
@@ -831,22 +835,52 @@ uid=1000(xjn) gid=1000(xjn) groups=1000(xjn),0(wheel),545(builtin_users)</code><
 </li>
 </ul>
 <p>得到我的这个xjn账户的uid和gid都是1000，记下来。</p>
+</br>
+</br>
+
 <ul>
-<li><p>创建一个jail</p>
-<pre><code class="bash">iocage create -n &quot;myjail&quot; -r 12.2-RELEASE vnet=&quot;on&quot; ip4_addr=&quot;vnet0|10.10.10.4/24&quot; defaultrouter=&quot;10.10.10.3&quot; boot=&quot;on&quot;</code></pre>
-<p>我们创建一个叫做myjail的jail，使用的是<code>12.2-RELEASE</code>这个版本，把这个jail的ip地址设置成了<code>10.10.10.4</code>，并且本地的路由器地址是<code>10.10.10.3</code>。请根据自己情况改一下。</p>
-</li>
+<li>确定你的目录权限，并且知道他的实际位置</li>
+</ul>
+<p>相信你已经在存储页面（storage）下面建立好你的存储池（pool)了，并且建立了自己的datasheet，比如我的Pool叫做Home，并且在Home下建立了一个叫Media的dataset。点击Media最右边的设置按钮，修改权限，我们把这个dataset的权限修改成你自己的用户和组，而不是root。如图：</p>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2021/08/09/cUzY1REwFqox5Xp.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="Screen Shot 2021-08-09 at 11.16.22 PM.png"></p>
+
+<p>你可以进入shell里查看自己的池：</p>
+<pre><code class="bash">cd /mnt
+ls
+#一般会输出你刚才创建的pool名字，我们这里叫Home
+cd Home
+ls -l
+#输出的是你刚才创建的Media,并应该可以看到这个文件夹的所有人是xjn这个用户</code></pre>
+</br>
+</br>
+这样就可以记下了我们的Media的实际目录是/mnt/Home/Media
+
+<ul>
+<li>创建一个jail<pre><code class="bash">iocage create -n &quot;myjail&quot; -r 12.2-RELEASE vnet=&quot;on&quot; ip4_addr=&quot;vnet0|10.10.10.4/24&quot; defaultrouter=&quot;10.10.10.3&quot; boot=&quot;on&quot;</code></pre>
+我们创建一个叫做myjail的jail，使用的是<code>12.2-RELEASE</code>这个版本，把这个jail的ip地址设置成了<code>10.10.10.4</code>，并且本地的路由器地址是<code>10.10.10.3</code>。请根据自己情况改一下。</li>
+</ul>
+</br>
+</br>
+
+
+<ul>
 <li><p>在Jail中安装软件，我们假设装一个transmission。</p>
-<pre><code class="bash">iocage console myjail   #进入刚才创建的myjail的shell里
-env ASSUME_ALWAYS_YES=YES pkg bootstrap
-pkg update
-pkg upgrade -y          #更新一下软件和源
-pkg install -y nano wget transmission    #安装一下这三个常用软件</code></pre>
+<pre><code class="bash">iocage exec myjail pkg install -y nano transmission   #在刚才创建的myjail的容器里安装transmission以及nano编辑器</code></pre>
+</br>
+</br>
+</li>
+<li><p>在Jail中创建与主系统相连的文件目录<br>我们这里默认刚才得到的下载目录是/mnt/Home/Media</p>
 </li>
 </ul>
+<pre><code class="bash">iocage exec myjail mkdir -p  /mnt/downloads #在myjail下创建一个叫做downloads的文件夹
+iocage fstab -a myjail /mnt/Home/Media /mnt/downloads nullfs rw 0 0 #把主系统的Media与刚才在jail里创建的downloads连接起来。这样的话，到时候transmission下载到这个downloads文件夹，也等同于下载到了我们系统的Media目录下了。</code></pre>
+</br>
+</br>
+
 <ul>
 <li>修改安装好的transmission的权限，保持与主系统一致。</li>
 </ul>
+<p>因为直接安装的transmission会以root的权限运行，这样的话transmission下载下来的文件的权限都是root所有的，我们这个xjn用户是没有权限编辑它的。因此，我们要用xjn这个账户去运行transmission来保证程序正常运行。</p>
 <p>第一步里，记录下来我的常用用户为xjn (uid=1000)，那么我们在这个jail里创建一个一模一样的用户：</p>
 <pre><code class="bash">pw useradd -n xjn -w none -u 1000 -c &quot;xjn&quot;
 #创建好之后，输入：
@@ -855,40 +889,37 @@ id xjn
 <blockquote>
 <p>如果你的主系统NAS有多个用户要用，你可以把所用的用户归类到同一个组里去。<br>我们把transmission的权限交给jail里xjn这个用户：</p>
 </blockquote>
-<pre><code class="bash">cd /usr/local/etc
-chown -R xjn:xjn transmission
-sysrc transmission_enable=YES
-sysrc transmission_user=xjn
-sysrc transmission_group=xjn</code></pre>
+<pre><code class="bash">iocage exec myjail chown -R xjn:xjn /usr/local/etc/transmission
+iocage exec myjail chown -R xjn:xjn /mnt/downloads
+iocage exec myjail sysrc &quot;transmission_enable=YES&quot;
+iocage exec myjail sysrc &quot;transmission_download_dir=/mnt/downloads/&quot;
+iocage exec myjail sysrc &quot;transmission_user=xjn&quot;
+iocage exec myjail sysrc &quot;transmission_group=xjn&quot;</code></pre>
 <ul>
-<li>在jail中创建一个与主系统池相连的目录，用来给transmission下载</li>
+<li>运行及调试<br>做完以上内容，可以运行transmission了<pre><code class="bash">iocage exec transmission service transmission start</code></pre>
+不知道为什么，最新的transmission在运行后，要等十几分钟才能进网页端，慢慢等吧，ip地址是你刚才自己设置好的那个，端口号是9091，这个教程里的地址就是：<pre><code class="xml">http://10.10.10.4:9091</code></pre>
+</li>
 </ul>
-<p>仍然在刚才的jail的shell环境下，创建一个目录，比如是/mnt/pt</p>
-<pre><code class="bash">mkdir /mnt/pt</code></pre>
-<p>退出jail，回到主系统shell中，输入：</p>
-<pre><code class="bash">exit</code></pre>
-<p>把硬盘池的一个目录共享给jail用，比如主目录的地址为/mnt/home/pt,刚才我们在jail中设置的目录是/mnt/pt， 输入：</p>
-<pre><code class="bash">iocage fstab -a myjail &quot;/mnt/home/pt&quot; &quot;/mnt/pt&quot; nullfs rw 0 0</code></pre>
-<p>回到myjail中：</p>
-<pre><code class="bash">iocage console myjail</code></pre>
-<p>让transmission生成配置文件：</p>
-<pre><code class="bash">service transmission start
-service transmission stop</code></pre>
-<p>修改配置文件：</p>
-<pre><code class="bash">nano /usr/local/etc/transmission/home/settings.json</code></pre>
+</br>
+</br>
+你可能需要修改配置文件来符合自己的需求：
+
+<pre><code class="bash">iocage console myjail  #登陆你的jail
+service transmission stop  #必须先停止transmission的主程序才能修改配置文件
+nano /usr/local/etc/transmission/home/settings.json</code></pre>
 <p>修改如下两项：</p>
 <pre><code class="xml">&quot;rpc-whitelist-enabled&quot;: false,
 
-&quot;umask&quot;: 7,</code></pre>
+&quot;umask&quot;: 7,
+
+其他你看情况吧</code></pre>
 <p>修改完后<kbd>⌃</kbd>+<kbd>X</kbd>保存</p>
-<p>在jail里绑定下载路径，输入：</p>
-<pre><code class="bash">cd /usr/local/etc
-sysrc transmission_download_dir=&quot;/mnt/pt&quot;
-service transmission start
-exit</code></pre>
+<p>搞定后输入</p>
+<pre><code class="bash">service transmission start
+exit #退出jail，回到主系统</code></pre>
 <p>至此，完成。</p>
 <blockquote>
-<p><font color="#660000">强烈建议使用transmission的incomplete-dir那个选项，把下载的东西先放到一个MLC的硬盘中，全下载完后，再自动移到主机械硬盘池。</font><br /></p>
+<p><font color="#660000">强烈建议使用transmission配置文件中的incomplete-dir那个选项，把下载的东西先放到一个MLC的硬盘中，全下载完后，再自动移到主机械硬盘池。</font><br /></p>
 </blockquote>
 <br>
 
@@ -923,6 +954,17 @@ exit</code></pre>
 <ul>
 <li>ZFS是什么？<br>好问题，有一篇图文并茂的文章，可以看看：<a target="_blank" rel="noopener" href="https://arstechnica.com/information-technology/2020/05/zfs-101-understanding-zfs-storage-and-performance/3/">Understanding ZFS storage and performance</a></li>
 </ul>
+<br>
+
+<ul>
+<li>IO问题</li>
+</ul>
+<p>我玩pt的时候老是遇到自己的垃圾mlc缓存盘因为过热，内存写入速度过快或者什么的导致缓存盘io suspend。请尽量确保你的pt缓存池已经打开了<code>auto trim</code>功能(买傲腾当pt缓存盘的不需要，傲腾不需要trim)；不需要对这种池开启<code>sync</code>和<code>A time</code>功能。<br>如果你还是碰到io suspend的情况，请先关掉任何有关这个盘的进程。比如先把transmission的jail关了<br>然后输入：</p>
+<pre><code class="bash">zpool status #看看你的pt缓存池有没有error，一般会有好多好多。
+zpool clear -F pt #我的pt缓存池就叫pt，按你自己情况写
+zpool scrub pt  #scrub一下这个池</code></pre>
+<p>如果是过热导致的，你还是等他冷一会吧。。。</p>
+<p>如果还是不行，smart信息查一下是不是挂了。。。</p>
 
 	</div>
 
