@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://i.loli.net/2021/08/09/cUzY1REwFqox5Xp.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/14/GrqjvK2TtW93gnC.png">
 <meta property="article:published_time" content="2021-04-03T14:27:50.000Z">
-<meta property="article:modified_time" content="2021-09-25T01:26:43.157Z">
+<meta property="article:modified_time" content="2021-09-30T06:09:25.712Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -605,7 +605,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2021-9-25 9:26:43">2021-4-3 22:27
+							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2021-9-30 14:09:25">2021-4-3 22:27
 							</time>
 						</div>
 					
@@ -865,7 +865,8 @@ ls -l
 
 <ul>
 <li><p>在Jail中安装软件，我们假设装一个transmission。</p>
-<pre><code class="bash">iocage exec myjail pkg install -y nano transmission   #在刚才创建的myjail的容器里安装transmission以及nano编辑器</code></pre>
+<pre><code class="bash">iocage exec myjail pkg update
+iocage exec myjail pkg install -y nano transmission   #在刚才创建的myjail的容器里安装transmission以及nano编辑器</code></pre>
 </br>
 </br>
 </li>
