@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2021-08-03T15:01:49.000Z">
+<meta property="article:modified_time" content="2021-11-23T15:15:29.233Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -609,7 +609,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-8-3 23:01:49">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-11-23 23:15:29">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							13.6k 字
+							13.9k 字
 						</div>
 					
 						
@@ -634,7 +634,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							58 分钟
+							60 分钟
 						</div>
 					
 		</div>
@@ -674,9 +674,13 @@
 <h2 id="更新日记"><a href="#更新日记" class="headerlink" title="更新日记"></a>更新日记</h2><details>
   <summary><font color=red>点击查询帖子最近更新</font></summary>
 
+<h3 id="2021-11-23"><a href="#2021-11-23" class="headerlink" title="2021-11-23"></a>2021-11-23</h3><p>适配OpenCore 0.7.6</p>
+<ul>
+<li>增加Booters/QuirkResizeAppleGpuBars</li>
+</ul>
 <h3 id="2021-08-03"><a href="#2021-08-03" class="headerlink" title="2021-08-03"></a>2021-08-03</h3><p>适配OpenCore 0.7.2</p>
 <ul>
-<li>增加ACPI/Quirk/SyncTableIds</li>
+<li>增加ACPI/Quirks/SyncTableIds</li>
 <li>增加Kernel/Scheme/CustomKernel</li>
 <li>增加UEFI/AppleInput/GraphicsInputMirroring </li>
 </ul>
@@ -1082,6 +1086,24 @@ TableSignature:        &lt;&gt;</code></pre>
 <li>重新生成内存地图来匹配苹果系统。苹果的内核有很多缺陷，比如单张的内存地图不能超过 4K，一旦超过就可能无法开机；又比如一些硬件会直接把读写权限写进内存里，而苹果却不能给与写入权限。如果你遇到此类的问题，请尝试开启它。注意此项目与 <code>EnableWriteUnprotector</code> 存在冲突关系，确保开启这个的时候，另一个是关闭的。另外，此项又需要与 <code>SyncRuntimePermissions</code> 项搭配使用。一般情况下请选择 <code>NO</code>。</li>
 </ul>
 </li>
+<li><p><strong>ResizeAppleGpuBars:</strong> <code>-1</code></p>
+<ul>
+<li><p>此选项用于适配BIOS具备<code>Resizable BAR</code>功能的主板。BIOS支持此功能可以给Windows带来更好的显卡性能，但另一方面会导致MacOS不稳定。    </p>
+</li>
+<li><p>填如下值对应相对功能：</p>
+<ul>
+<li>当值为<code>-1</code>时:关闭此功能 </li>
+<li>当值为<code>0</code>时: 预留1MB</li>
+<li>当值为<code>1</code>时: 预留2MB</li>
+<li>当值为<code>2</code>时: 预留4MB</li>
+<li>当值为<code>10</code>时: 预留1GB</li>
+<li>若要开启此功能建议填<code>0</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
 <li><p><strong>SetupVirtualMap:</strong> <code>YES</code></p>
 <ul>
 <li>是否建立虚拟内存并对物理内存进行映射。我们在开机时，OC 的程序需要一块连续性的内存进行存放内核等东西，而实际的物理内存一般都是分散的。因此，我们通过虚拟内存建立连续性内存供OC使用，并映射到分散的物理内存中。这里我们选择 <code>YES</code>。</li>
@@ -1262,7 +1284,6 @@ Item 7
 <li><p><strong>ProvideCurrentCpuInfo</strong> <code>NO</code></p>
 <ul>
 <li>给hyper-V虚拟化MacOS时提供cpu的信息，保证全核同步。</li>
-<li></li>
 </ul>
 </li>
 <li><p><strong>SetApfsTrimTimeout</strong> <code>-1</code></p>
@@ -1748,6 +1769,12 @@ item 12     String      efi-boot-device-data</code></pre>
 </li>
 </ul>
 </li>
+<li><p><strong>GraphicsInputMirroring</strong> <code>YES</code></p>
+<ul>
+<li> <code>NO</code>: 使用Apple的键盘控制，这可能导致在一些环境下无法使用键盘输入(e.g. Windows BitLocker)。</li>
+<li> <code>YES</code>:可以让OpenCore在引导一些系统的UEFI模式下时仍然可以使用键盘输入。</li>
+</ul>
+</li>
 <li><p><strong>KeyInitialDelay</strong> <code>50</code></p>
 <ul>
 <li>设置UEFI界面第一次延迟时间，50是500ms，此选项必须在<code>CustomDelays</code>=True时生效。</li>
@@ -1758,12 +1785,8 @@ item 12     String      efi-boot-device-data</code></pre>
 <li>设置UEFI界面键与键之间的延迟时间，5是50ms，此选项必须在<code>CustomDelays</code>=True时生效。</li>
 </ul>
 </li>
-<li><p><strong>GraphicsInputMirroring</strong> <code>YES</code></p>
-<ul>
-<li> <code>NO</code>: 使用Apple的键盘控制，这可能导致在一些环境下无法使用键盘输入(e.g. Windows BitLocker)。</li>
-<li> <code>YES</code>:可以让OpenCore在引导一些系统的UEFI模式下时仍然可以使用键盘输入。</li>
 </ul>
-</li>
+<ul>
 <li><p><strong>PointerSpeedDiv</strong> <code>1</code></p>
 <ul>
 <li>设置UEFI界面中，光标的跟踪速度版本，一般填1。</li>
@@ -1831,11 +1854,23 @@ item 12     String      efi-boot-device-data</code></pre>
 <h3 id="2-8-4-Config–UEFI–ConnectDrivers"><a href="#2-8-4-Config–UEFI–ConnectDrivers" class="headerlink" title="2.8.4 Config–UEFI–ConnectDrivers"></a>2.8.4 Config–UEFI–ConnectDrivers</h3><p>是否加载补丁，我们选择 <code>YES</code>。</p>
 <hr>
 <h3 id="2-8-5-Config–UEFI–Drivers"><a href="#2-8-5-Config–UEFI–Drivers" class="headerlink" title="2.8.5 Config–UEFI–Drivers"></a>2.8.5 Config–UEFI–Drivers</h3><pre><code class="bash">Drivers
-item0                      String
-0 .................... MemoryAllocation.efi
-1 .................... OpenRuntime.efi
-2 .................... HFSPlus.efi
-3 .................... OpenCanopy.efi</code></pre>
+...  item0                          Dictionary
+       Arguments...........String .....
+       Comment.............string...... HFSPlus
+       Enabled.............Boolean..... Yes
+       Path................String...... HfsPlus.efi
+
+...  item1                          Dictionary
+       Arguments...........String .....
+       Comment.............string...... OpenRuntime
+       Enabled.............Boolean..... Yes
+       Path................String...... OpenRuntime.efi       
+...  item2                         Dictionary
+       Arguments...........String .....
+       Comment.............string...... OpenCanopy.efi
+       Enabled.............Boolean..... No (请参考PickerMode选项设置)
+       Path................String...... OpenCanopy.efi    
+3 .................... </code></pre>
 <h3 id="2-8-6-Config–UEFI–Input"><a href="#2-8-6-Config–UEFI–Input" class="headerlink" title="2.8.6 Config–UEFI–Input"></a>2.8.6 Config–UEFI–Input</h3><p>此选项是原生 Apple 开机热键的选项，需要配合我们之前设置的 <code>PollAppleHotKeys = yes</code> 一起用。下面的设置完全按照默认情况就行了。</p>
 <blockquote>
 <p>如果你是华硕的z87或者z97，你需要打开PointerSupport这个选项。</p>
@@ -2028,6 +2063,13 @@ item0                      String
 <li>旧主板需要给予主板退出时间（单位为微秒），较新的主板直接填 <code>0</code>。旧的主板比如 Z87pro，填 <code>3000000-5000000</code>。</li>
 </ul>
 </li>
+<li><p><strong>ForceOcWriteFlash</strong> <code>No</code></p>
+<ul>
+<li>请尽可能关闭它。除非你的主板是eg. Thinkpad T430 and T530。这样的主板必须开启才能保证多系统运行，如果你需要打开它，请在开启后重置NVRAM。</li>
+</ul>
+</li>
+</ul>
+<ul>
 <li><p><strong>ForgeUefiSupport</strong> <code>NO</code></p>
 <ul>
 <li>旧的NVIDIA显卡使用UEFI 2.0的gop，但在一些老的MAC中只支持UEFI 1.X。这个开关帮助旧的MAC使用NVDIA2.0的GOP。</li>
@@ -2051,6 +2093,21 @@ item0                      String
 <li><p><strong>RequestBootVarRouting</strong> <code>YES</code></p>
 <ul>
 <li>增加 <code>启动磁盘</code> 的可靠性。</li>
+</ul>
+</li>
+<li><p><strong>ResizeGpuBars</strong> <code>-1</code></p>
+<ul>
+<li>以Opencore为引导时，使用此功能可以自由设置GPU的PCI BAR 大小。注意此功能是通用的，而<code>ResizeAppleGpuBars</code>是针对MacOS系统的。你可以设置的大小如：<ul>
+<li>当值为<code>-1</code>时，此功能关闭</li>
+<li>当值为<code>0</code>时，设置BAR为1MB</li>
+<li>当值为<code>1</code>时，设置BAR为2MB</li>
+<li>当值为<code>2</code>时，设置BAR为4MB</li>
+<li>当值为<code>19</code>时，设置BAR为512GB<blockquote>
+<p>MacOS的极限为1GB,此选项无法更改MacOS的上限。</p>
+</blockquote>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li><p><strong>TscSyncTimeout</strong> <code>0</code></p>
