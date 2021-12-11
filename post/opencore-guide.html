@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2021-12-05T15:52:38.543Z">
+<meta property="article:modified_time" content="2021-12-11T14:58:40.259Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -609,7 +609,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-12-5 23:52:38">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-12-11 22:58:40">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							14k 字
+							14.1k 字
 						</div>
 					
 						
@@ -674,6 +674,15 @@
 <h2 id="更新日记"><a href="#更新日记" class="headerlink" title="更新日记"></a>更新日记</h2><details>
   <summary><font color=red>点击查询帖子最近更新</font></summary>
 
+<h3 id="2021-12-11"><a href="#2021-12-11" class="headerlink" title="2021-12-11"></a>2021-12-11</h3><p>适配OpenCore 0.7.6</p>
+<ul>
+<li>删除Config–NVRAM–Add下关于UIScale的设置</li>
+<li>增加UEFI–Output–ReconnectGraphicsOnConnect</li>
+<li>增加UEFI–Output–UIScale<ul>
+<li> 增加UEFI–Quirks–EnableVmx</li>
+</ul>
+</li>
+</ul>
 <h3 id="2021-11-23"><a href="#2021-11-23" class="headerlink" title="2021-11-23"></a>2021-11-23</h3><p>适配OpenCore 0.7.5</p>
 <ul>
 <li>增加Booters/Quirk/ResizeAppleGpuBars</li>
@@ -1622,7 +1631,6 @@ Item 7
 <hr>
 <h2 id="2-6-Config–NVRAM"><a href="#2-6-Config–NVRAM" class="headerlink" title="2.6 Config–NVRAM"></a>2.6 Config–NVRAM</h2><hr>
 <h3 id="2-6-1-Config–NVRAM–Add"><a href="#2-6-1-Config–NVRAM–Add" class="headerlink" title="2.6.1 Config–NVRAM–Add "></a>2.6.1 Config–NVRAM–Add <a id=2.6.1></a></h3><pre><code class="xml">4D1EDE05-38C7-4A6A-9CC6-4BCCA8B38C14
-    UIScale                     Data       &lt;02&gt; //这里填写01为普通的UI显示模式，02为开启HIDPI的UI显示模式，我选择02
     DefaultBackgroundColor      Data       &lt;00000000&gt; //默认开机背景色为黑色
 
 7C436110-AB2A-4BBB-A880-FE41995C9F82
@@ -1918,6 +1926,13 @@ item 12     String      efi-boot-device-data</code></pre>
 <li>调用显卡 GOP。</li>
 </ul>
 </li>
+<li><p><strong>ReconnectGraphicsOnConnect</strong> <code>NO</code></p>
+<ul>
+<li>在老的设备中需要开启这个设置并加载BiosVideo.efi才能更好的呈现UEFI界面，如果要加载这个.efi文件请开启这个，一般情况下请不要开启这个选项。</li>
+</ul>
+</li>
+</ul>
+<ul>
 <li><p><strong>ReconnectOnResChange</strong> <code>NO</code></p>
 <ul>
 <li>一些固件在 GOP 分辨率改变后会重新连接显示器才能输出，一般情况下选择 <code>NO</code>。</li>
@@ -1941,6 +1956,17 @@ item 12     String      efi-boot-device-data</code></pre>
 <li><p><strong>TextRenderer</strong> <code>BuiltinGraphics</code></p>
 <ul>
 <li>OC 开机代码字体渲染方式</li>
+</ul>
+</li>
+<li><p><strong>UIScale</strong> <code>2</code></p>
+<ul>
+<li>在UEFI界面设置图像拉伸尺度：<ul>
+<li><code>1</code>  ：  一倍拉伸，正常显示</li>
+<li><code>2</code>  ：  2倍拉伸，等同于苹果的HiDPI效果</li>
+<li><code>-1</code> ：  不做任何设置</li>
+<li><code>0</code>  ：  自动选择  </li>
+</ul>
+</li>
 </ul>
 </li>
 <li><p><strong>UgaPassThrough</strong> <code>NO</code></p>
@@ -2054,7 +2080,11 @@ item 12     String      efi-boot-device-data</code></pre>
 <li><p><strong>EnableVectorAcceleration</strong> <code>YES</code></p>
 <ul>
 <li>在CPU支持avx512或者avx的情况下，在UEFI界面中开启avx加速。</li>
-<li></li>
+</ul>
+</li>
+<li><p><strong>EnableVmx</strong> <code>NO</code></p>
+<ul>
+<li>当使用Opencore引导Windows时，是否开启VMX功能。如果要使用此功能首先请在BIOS中开启，再设置此选项。</li>
 </ul>
 </li>
 <li><p><strong>DisableSecurityPolicy</strong> <code>NO</code></p>
