@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2021-12-11T15:00:45.319Z">
+<meta property="article:modified_time" content="2021-12-19T10:08:20.326Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -609,7 +609,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-12-11 23:00:45">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-12-19 18:08:20">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -2531,7 +2531,9 @@ TableSignature:            &lt;&gt;</code></pre>
 <p>直接下载宪武大大的<a target="_blank" rel="noopener" href="https://github.com/daliansky/P-little/tree/master/%E9%83%A8%E4%BB%B6%E8%A1%A5%E4%B8%81%E5%8C%85/11-1-%E7%9D%A1%E4%BA%86%E5%8D%B3%E9%86%92(0D:6D)%E8%A1%A5%E4%B8%81">clover hotpatch</a>补丁包，打开plist文件。那我们拿出一组数据来讲解怎么把它翻译成oc版本：</p>
 <pre><code class="xml">Comment      String       XHC:_PRW to XPRW
 Disabled     Boolean      True//此补丁并未生效，这里要改成false才会生效
-Find         5F505257         //hex转text的含义即是：_PRW Replace      58505257         //hex转text的含义即是：XPRW TgtBridge    5848435F         //hex转text的含义即是：XHC_</code></pre>
+Find         5F505257         //hex转text的含义即是：_PRW 
+Replace      58505257         //hex转text的含义即是：XPRW 
+TgtBridge    5848435F         //hex转text的含义即是：XHC_</code></pre>
 <p>这组改名是对 <code>XHC</code> 下的 PRW 改名为<code> xprw</code>，这样的话，之前 prw 下的 <code>(0x6D, 0x04)</code> 即不生效了。而指定 xhc 的方法即是使用了 tgtbridge，因为整张 dsdt 上有几十上百个 <code>_PRW</code>，你必须通过 tgtbridge 来指定到底是哪一个部件的 <code>_PRW</code>。</p>
 <p>那么 OC 到底怎么使用 tgtbridge 来特定某一部件下的内容重命名呢？我们先把上面一段 clover 的补丁转换成 oc 的版本先吧：</p>
 <pre><code class="xml">Comment           String        XHC:_PRW to XPRW
@@ -2688,7 +2690,7 @@ sudo defaults delete com.apple.loginwindow LogoutHook</code></pre>
 <p>如果我们需要debug报告，我们需要将所有的Acidanthera的kext以及OC bootloader替换成debug版本，所有的debug版本都会在github中提供。我们下载debug版本的Opencore，替换：</p>
 <ul>
 <li>EFI/BOOT/<ul>
-<li>BOOTx64.efi</li>
+<li>BOOTx64.efi</li>
 </ul>
 </li>
 <li>EFI/OC/Bootstrap/<ul>
