@@ -8,12 +8,12 @@
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta name="description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。  现在改名叫TrueNas,并且分支为TrueNas Core和TrueNas Scale。文章里面提及的FreeNas与TrueNas Core是一回事。  为什么选择FreeNas 硬盘池的可拓展性 数据的安全性 ZFS格式 独特的缓存机制     什么">
+	<meta name="description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。  现在改名叫TrueNas,并且分支为TrueNas Core和TrueNas Scale。文章里面提及的FreeNas与TrueNas Core是一回事。最近TrueNas的官网好像被污染了，自己找梯子解决&#x3D;。&#x3D; https:&#x2F;&#x2F;www.v2ex.com&#x2F;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="家用万兆FreeNAS组建">
 <meta property="og:url" content="https://blog.xjn819.com/post/Home-freenas-build.html">
 <meta property="og:site_name" content="Xjn&#39;s Blog">
-<meta property="og:description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。  现在改名叫TrueNas,并且分支为TrueNas Core和TrueNas Scale。文章里面提及的FreeNas与TrueNas Core是一回事。  为什么选择FreeNas 硬盘池的可拓展性 数据的安全性 ZFS格式 独特的缓存机制     什么">
+<meta property="og:description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。  现在改名叫TrueNas,并且分支为TrueNas Core和TrueNas Scale。文章里面提及的FreeNas与TrueNas Core是一回事。最近TrueNas的官网好像被污染了，自己找梯子解决&#x3D;。&#x3D; https:&#x2F;&#x2F;www.v2ex.com&#x2F;">
 <meta property="og:locale">
 <meta property="og:image" content="https://i.loli.net/2021/04/03/5bFZNyDv2M4p83I.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/03/uZEYmk21iphe8N3.jpg">
@@ -22,7 +22,7 @@
 <meta property="og:image" content="https://i.loli.net/2021/10/02/BXdfPDqb6OvxnAh.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/14/GrqjvK2TtW93gnC.png">
 <meta property="article:published_time" content="2021-04-03T14:27:50.000Z">
-<meta property="article:modified_time" content="2021-10-20T10:10:28.000Z">
+<meta property="article:modified_time" content="2022-02-23T09:58:34.165Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -606,7 +606,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2021-10-20 18:10:28">2021-4-3 22:27
+							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2022-2-23 17:58:34">2021-4-3 22:27
 							</time>
 						</div>
 					
@@ -641,7 +641,7 @@
 	<div class="post-content" id="post_content">
 		<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。</p>
 <blockquote>
-<p>现在改名叫<code>TrueNas</code>,并且分支为<code>TrueNas Core</code>和<code>TrueNas Scale</code>。文章里面提及的<code>FreeNas</code>与<code>TrueNas Core</code>是一回事。</p>
+<p>现在改名叫<code>TrueNas</code>,并且分支为<code>TrueNas Core</code>和<code>TrueNas Scale</code>。文章里面提及的<code>FreeNas</code>与<code>TrueNas Core</code>是一回事。<br>最近TrueNas的官网好像被污染了，自己找梯子解决=。= <a target="_blank" rel="noopener" href="https://www.v2ex.com/t/832355">https://www.v2ex.com/t/832355</a></p>
 </blockquote>
 <h1 id="为什么选择FreeNas"><a href="#为什么选择FreeNas" class="headerlink" title="为什么选择FreeNas"></a>为什么选择FreeNas</h1><ul>
 <li>硬盘池的可拓展性</li>
@@ -656,9 +656,9 @@
 <ul>
 <li><p>你并不打算用FreeNas来做一个All in One(AIO)的服务器。FreeNas更适合单独使用作为存储使用，它的虚拟化真的不怎么样，我有另外一台PVE来专门做别的服务。</p>
 </li>
-<li><p>你打算使用10GB万兆网络来使用FreeNas。其实FreeNas在万兆网络环境情况下才能体现优势，不然好像跟群晖之类的也没啥区别，设置还更难。</p>
+<li><p>你打算使用10GB以上的万兆网络来使用FreeNas。其实FreeNas在万兆以上的网络环境情况下才能体现优势，不然好像跟群晖之类的也没啥区别，设置还更难。</p>
 </li>
-<li><p>你的7200转的硬盘数量必须大于或者等于10个。因为考虑万兆环境，我们并不喜欢通过加缓存提高读命中率的方式来达到万兆，直接10个盘来让读取速度达到恒定万兆读取。（当然你可以加读缓存，但缓存永远是有限的，你还要考虑命中率等问题，没意思）</p>
+<li><p>你的7200转的硬盘数量必须大于或者等于10个。因为考虑万兆环境，我们并不喜欢通过加缓存提高读命中率的方式来达到万兆，直接10个盘来让读取速度达到万兆读取。（当然你可以加读缓存，但缓存永远是有限的，你还要考虑命中率等问题，没意思）</p>
 </li>
 <li><p>你的内存起码128GB，别慌，这其实不是很贵，比如我也会推荐DDR3的内存给X79用。</p>
 </li>
@@ -678,8 +678,6 @@
 </li>
 <li><p>CPU：E5-2680V3 我买的线程数有点多了，非常够用，可以考虑买便宜一点的。665元</p>
 </li>
-</ul>
-<ul>
 <li><p>机箱：超微846 24盘位机箱。这款机箱淘宝有很多很多，并且自带背板，注意要问清楚自带的背板是SAS几的，最好买背板是SAS2或者SAS3的！如果机箱自带的是SAS1的话，你必须买回来把背板拆了，再买一个SAS2+的背板。1100元</p>
 </li>
 <li><p>散热器：猫头鹰（NOCTUA）NH-D15S 买这个完全是为了静音。这个高度是刚好给这个4U机箱用的，你可以按照此款高度购买别的静音款风扇。 600元</p>
@@ -700,7 +698,7 @@
 </li>
 </ul>
 <ul>
-<li><p>SAS卡：LSI SAS 9217-8i 这款卡是给SAS2用的，有两个模式，自己刷成it模式，可以找淘宝店主直接帮你刷好。如果你买的是SAS3的背板，你需要购买LSI SAS 9300-8i，同样需要刷好it模式（以防万一，我会写一下刷IT模式的教程）。 闲鱼100元</p>
+<li><p>SAS卡：LSI SAS 9217-8i 这款卡是给SAS2用的，有两个模式，自己刷成it模式，可以找淘宝店主直接帮你刷好。如果你买的是SAS3的背板，你需要购买LSI SAS 9300-8i，这卡好像本来就是it模式（以防万一，我会写一下刷IT模式的教程）。 闲鱼100元</p>
 </li>
 <li><p>SAS线：MINI-SAS线SFF-8087 X2，SAS2的线，80CM的。如果是买的SAS3背板请购买相应的线，两根46元</p>
 </li>
@@ -714,8 +712,6 @@
 </li>
 </ul>
 </br>
-
-
 
 
 <h2 id="清单二-（除机械硬盘外总计6780元）"><a href="#清单二-（除机械硬盘外总计6780元）" class="headerlink" title="清单二 （除机械硬盘外总计6780元）"></a>清单二 （除机械硬盘外总计6780元）</h2><ul>
@@ -771,7 +767,7 @@
 <ul>
 <li>解压Installer_P20_for_UEFI.zip，复制Installer_P20_for_UEFI\sas2flash_efi_ebc_rel\sas2flash.efi 至U盘根目录。</li>
 <li>解压UEFI_BSD_P20.zip，复制UEFI_BSD_P20\uefi_bsd_rel\Signed\x64sas2.rom 至U盘根目录。</li>
-<li>解压9207_8i_Package_P20_IR_IT_FW_BIOS_for_MSDOS_Windows.zip。复制Firmware\HBA_9207_8i_IT\9207-8.bin 至U盘根目录。当然如果你是9300-8i的SAS卡，到官网下载一下it固件，一样的。</li>
+<li>解压9207_8i_Package_P20_IR_IT_FW_BIOS_for_MSDOS_Windows.zip。复制Firmware\HBA_9207_8i_IT\9207-8.bin 至U盘根目录。</li>
 <li>在同上一个目录复制sasbios_rel\mptsas2.rom 至U盘根目录。</li>
 </ul>
 </li>
