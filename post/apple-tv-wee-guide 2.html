@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+
+<html class="article-header-style-default">
+<head>
+	
+	<title>Apple TV小指南 - Xjn&#39;s Blog</title>
+	<meta charset="utf-8">
+	
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	
+	<meta name="description" content="背景Apple TV（下文简称TV）相比国内很多机顶盒，比较干净，适合看NAS上的电影视，以及各种流媒体。   相反，对爱优腾支持比较不好。当然因为我一直使用香港APPLE ID，是有优酷和爱奇艺的，自制剧内容都是同步的，甚至有更多专做海外的国语内容，却无法在国内过审的(e.g.逆局)；会员体系不一样，你买了后无法在国内的爱优上使用。提一句，IPTV有很多办法在TV上实现，这个不是问题，本文也">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Apple TV小指南">
+<meta property="og:url" content="https://blog.xjn819.com/post/apple-tv-wee-guide.html">
+<meta property="og:site_name" content="Xjn&#39;s Blog">
+<meta property="og:description" content="背景Apple TV（下文简称TV）相比国内很多机顶盒，比较干净，适合看NAS上的电影视，以及各种流媒体。   相反，对爱优腾支持比较不好。当然因为我一直使用香港APPLE ID，是有优酷和爱奇艺的，自制剧内容都是同步的，甚至有更多专做海外的国语内容，却无法在国内过审的(e.g.逆局)；会员体系不一样，你买了后无法在国内的爱优上使用。提一句，IPTV有很多办法在TV上实现，这个不是问题，本文也">
+<meta property="og:locale">
+<meta property="article:published_time" content="2022-05-08T14:27:50.000Z">
+<meta property="article:modified_time" content="2022-05-08T21:53:41.200Z">
+<meta property="article:author" content="Seon">
+<meta property="article:tag" content="NAS">
+<meta property="article:tag" content="Hardware">
+<meta name="twitter:card" content="summary">
+
+	<meta name="theme-color" content="#212121">
+	<meta name="theme-color-rgb" content="33,33,33">
+	<meta name="theme-color-origin" content="#212121">
+	<meta name="argon-enable-custom-theme-color" content="false">
+	<meta name="theme-card-radius" content="4">
+	<meta name="theme-version" content="1.0.1">
+	<link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="/assets/img/favicon.ico" type="image/x-icon">
+
+	
+<link rel="stylesheet" href="/assets/argon_css_merged.css">
+
+	
+<link rel="stylesheet" href="/style.css">
+
+	
+<link rel="stylesheet" href="//fonts.loli.net/css?family=Open+Sans:300,400,600,700|Noto+Serif+SC:300,600&display=swap.css">
+
+	
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+	
+<script src="/assets/argon_js_merged.js"></script>
+
+	
+<script src="/assets/js/argon.min.js"></script>
+
+	
+<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+	
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+	<script>
+		var argonConfig = {
+			language: "zh_CN",
+			
+				zoomify: {
+					duration: 200,
+					easing: "cubic-bezier(0.4,0,0,1)",
+					scale: 0.9
+				},
+			
+			pangu: "true",
+			
+				lazyload: {
+					threshold: 800,
+					effect: "fadeIn"
+				},
+			
+			disable_pjax: false,
+			headroom: true
+		}
+	</script>
+	<script>
+		var darkmodeAutoSwitch = "false";
+		function setDarkmode(enable){
+			if (enable == true){
+				$("html").addClass("darkmode");
+			}else{
+				$("html").removeClass("darkmode");
+			}
+			$(window).trigger("scroll");
+		}
+		function toggleDarkmode(){
+			if ($("html").hasClass("darkmode")){
+				setDarkmode(false);
+				sessionStorage.setItem("Argon_Enable_Dark_Mode", "false");
+			}else{
+				setDarkmode(true);
+				sessionStorage.setItem("Argon_Enable_Dark_Mode", "true");
+			}
+		}
+		if (sessionStorage.getItem("Argon_Enable_Dark_Mode") == "true"){
+			setDarkmode(true);
+		}
+		function toggleDarkmodeByPrefersColorScheme(media){
+			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
+				return;
+			}
+			if (media.matches){
+				setDarkmode(true);
+			}else{
+				setDarkmode(false);
+			}
+		}
+		function toggleDarkmodeByTime(){
+			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
+				return;
+			}
+			let hour = new Date().getHours();
+			if (hour < 7 || hour >= 22){
+				setDarkmode(true);
+			}else{
+				setDarkmode(false);
+			}
+		}
+		if (darkmodeAutoSwitch == 'system'){
+			var darkmodeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+			darkmodeMediaQuery.addListener(toggleDarkmodeByPrefersColorScheme);
+			toggleDarkmodeByPrefersColorScheme(darkmodeMediaQuery);
+		}
+		if (darkmodeAutoSwitch == 'time'){
+			toggleDarkmodeByTime();
+		}
+		if (darkmodeAutoSwitch == 'alwayson'){
+			setDarkmode(true);
+		}
+
+		function toggleAmoledDarkMode(){
+			$("html").toggleClass("amoled-dark");
+			if ($("html").hasClass("amoled-dark")){
+				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "true");
+			}else{
+				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "false");
+			}
+		}
+		if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "true"){
+			$("html").addClass("amoled-dark");
+		}else if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "false"){
+			$("html").removeClass("amoled-dark");
+		}
+	</script>
+	<script>
+		if (navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("Chrome") === -1){
+			$("html").addClass("using-safari");
+		}
+	</script>
+
+	
+		
+<script src="/assets/vendor/smoothscroll/smoothscroll1.js"></script>
+
+	
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/feed.xml" title="Xjn's Blog" type="application/atom+xml">
+</head>
+
+
+
+<style id="themecolor_css">
+	
+	:root{
+		--themecolor: #212121;
+		--themecolor-dark0: #1B1B1B;
+		--themecolor-dark: #141414;
+		--themecolor-dark2: #080808;
+		--themecolor-dark3: #000000;
+		--themecolor-light: #3B3B3B;
+		--themecolor-rgbstr: 33,33,33;
+		--themecolor-gradient: linear-gradient(150deg,var(--themecolor-light) 15%, var(--themecolor) 70%, var(--themecolor-dark0) 94%);
+
+	}
+</style>
+<style id="theme_cardradius_css">
+	:root{
+		--card-radius: 4px;
+	}
+</style>
+
+<body>
+<div id="toolbar">
+	<header class="header-global">
+		<nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light bg-primary headroom--not-bottom headroom--not-top headroom--pinned">
+			<div class="container">
+				
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<a class="navbar-brand" href="/">Xjn&#39;s Blog</a>
+				<div class="navbar-collapse collapse" id="navbar_global">
+					<div class="navbar-collapse-header">
+						<div class="row">
+							<div class="col-6 collapse-brand"></div>
+							<div class="col-6 collapse-close">
+								<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
+									<span></span>
+									<span></span>
+								</button>
+							</div>
+						</div>
+					</div>
+					<ul id="navbar_search_btn_mobile" class="navbar-nav align-items-lg-center ml-lg-auto">
+						<li class="nav-item" data-toggle="modal" data-target="#argon_search_modal" style="padding-left: 5px;">
+							<a class="nav-link nav-link-icon">
+								<i class="fa fa-search"></i>
+								<span class="nav-link-inner--text d-lg-none">搜索</span>
+							</a>
+						</li>
+					</ul>
+					
+							<ul class='navbar-nav navbar-nav-hover align-items-lg-center'>
+								
+										<li class='nav-item'>
+											<a href='/' class='nav-link' >
+												<i class='ni ni-book-bookmark d-lg-none'></i>
+												<span class='nav-link-inner--text'>首页</span>
+											</a>
+											
+										</li>
+									
+										<li class='nav-item'>
+											<a href='/archives' class='nav-link' >
+												<i class='ni ni-book-bookmark d-lg-none'></i>
+												<span class='nav-link-inner--text'>归档</span>
+											</a>
+											
+										</li>
+									
+										<li class='nav-item'>
+											<a href='/feed.xml' class='nav-link' >
+												<i class='ni ni-book-bookmark d-lg-none'></i>
+												<span class='nav-link-inner--text'>订阅</span>
+											</a>
+											
+										</li>
+									
+							</ul>
+						
+					<ul class="navbar-nav align-items-lg-center ml-lg-auto">
+						<li class="nav-item" data-toggle="modal" data-target="#argon_search_modal" id="navbar_search_btn_pc">
+							<a class="nav-link nav-link-icon">
+								<i class="fa fa-search"></i>
+								<span class="nav-link-inner--text d-lg-none">搜索</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+				
+				<div id="navbar_menu_mask" data-toggle="collapse" data-target="#navbar_global"></div>
+			</div>
+		</nav>
+	</header>
+</div>
+<div class="modal fade" id="argon_search_modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">搜索</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<!-- TODO -->
+<div class="form-group mb-3">
+	<div class="input-group input-group-alternative">
+		<div class="input-group-prepend">
+			<span class="input-group-text"><i class="fa fa-search"></i></span>
+		</div>
+		<input id="local-search-input" class="form-control" placeholder="搜索什么..." type="text"  autocomplete="off" data-search.path="search.xml" data-config.root="/">
+	</div>
+	<div id="local-search-result"></div>
+</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--Banner-->
+<section id="banner" class="banner section section-lg section-shaped">
+	<div class="shape  shape-primary">
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+	</div>
+
+	
+	<div id="banner_container" class="banner-container container text-center">
+		
+			<div class="banner-title text-white"><span class="banner-title-inner">Xjn´s Blog</span>
+		
+		</div>
+	</div>
+	
+		<style>
+			section.banner{
+				background-image: url(/assets/img/banner.jpg) !important;
+			}
+		</style>
+	
+</section>
+
+
+	<style>
+		#content:before {
+			content: '';
+			display: block;
+			position: fixed;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			z-index: -2;
+			background: url(/assets/img/banner.jpg);
+			background-position: center;
+			background-size: cover;
+			background-repeat: no-repeat;
+			opacity: 1;
+			transition: opacity .5s ease;
+		}
+		html.darkmode #content:before{
+			filter: brightness(0.65);
+		}
+		
+			#content:after {
+				content: '';
+				display: block;
+				position: fixed;
+				left: 0;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				z-index: -2;
+				background: url(/assets/img/banner.jpg);
+				background-position: center;
+				background-size: cover;
+				background-repeat: no-repeat;
+				opacity: 0;
+				transition: opacity .5s ease;
+			}
+			html.darkmode #content:after {
+				opacity: 1;
+			}
+			html.darkmode #content:before {
+				opacity: 0;
+			}
+		
+		
+			#banner, #banner .shape {
+				background: transparent !important;
+			}
+		
+	</style>
+
+
+
+
+<div id="float_action_buttons" class="float-action-buttons fabtns-unloaded">
+	<button id="fabtn_toggle_sides" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip-move-to-left="移至左侧" tooltip-move-to-right="移至右侧">
+		<span class="btn-inner--icon fabtn-show-on-right"><i class="fa fa-caret-left"></i></span>
+		<span class="btn-inner--icon fabtn-show-on-left"><i class="fa fa-caret-right"></i></span>
+	</button>
+	<button id="fabtn_back_to_top" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Back To Top" tooltip="回到顶部">
+		<span class="btn-inner--icon"><i class="fa fa-angle-up"></i></span>
+	</button>
+	<button id="fabtn_go_to_comment" class="btn btn-icon btn-neutral fabtn shadow-sm d-none" type="button" <-% theme.fab_show_gotocomment_button ? "" : "style='display: none;'"  aria-label="Comment" tooltip="评论">
+		<span class="btn-inner--icon"><i class="fa fa-comment-o"></i></span>
+	</button>
+	<button id="fabtn_toggle_darkmode" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" <-% theme.fab_show_darkmode_button ? "" : "style='display: none;'"  aria-label="Toggle Darkmode" tooltip-darkmode="夜间模式" tooltip-blackmode="暗黑模式" tooltip-lightmode="日间模式">
+		<span class="btn-inner--icon"><i class="fa fa-moon-o"></i><i class='fa fa-lightbulb-o'></i></span>
+	</button>
+	<button id="fabtn_toggle_blog_settings_popup" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" <-% theme.fab_show_settings_button ? "" : "style='display: none;'"  aria-label="Open Blog Settings Menu" tooltip="设置">
+		<span class="btn-inner--icon"><i class="fa fa-cog"></i></span>
+	</button>
+	<div id="fabtn_blog_settings_popup" class="card shadow-sm" style="opacity: 0;" aria-hidden="true">
+		<div id="close_blog_settings"><i class="fa fa-close"></i></div>
+		<div class="blog-setting-item mt-3">
+			<div style="transform: translateY(-4px);"><div id="blog_setting_toggle_darkmode_and_amoledarkmode" tooltip-switch-to-darkmode="切换到夜间模式" tooltip-switch-to-blackmode="切换到暗黑模式"><span>夜间模式</span><span>暗黑模式</span></div></div>
+			<div style="flex: 1;"></div>
+			<label id="blog_setting_darkmode_switch" class="custom-toggle">
+				<span class="custom-toggle-slider rounded-circle"></span>
+			</label>
+		</div>
+		<div class="blog-setting-item mt-3">
+			<div style="flex: 1;">字体</div>
+			<div>
+				<button id="blog_setting_font_sans_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-left">Sans Serif</button><button id="blog_setting_font_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-right">Serif</button>
+			</div>
+		</div>
+		<div class="blog-setting-item mt-3">
+			<div style="flex: 1;">阴影</div>
+			<div>
+				<button id="blog_setting_shadow_small" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-left">浅阴影</button><button id="blog_setting_shadow_big" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-right">深阴影</button>
+			</div>
+		</div>
+		<div class="blog-setting-item mt-3 mb-3">
+			<div style="flex: 1;">滤镜</div>
+			<div id="blog_setting_filters" class="ml-3">
+				<button id="blog_setting_filter_off" type="button" class="blog-setting-filter-btn ml-0" filter-name="off">关闭</button>
+				<button id="blog_setting_filter_sunset" type="button" class="blog-setting-filter-btn" filter-name="sunset">日落</button>
+				<button id="blog_setting_filter_darkness" type="button" class="blog-setting-filter-btn" filter-name="darkness">暗化</button>
+				<button id="blog_setting_filter_grayscale" type="button" class="blog-setting-filter-btn" filter-name="grayscale">灰度</button>
+			</div>
+		</div>
+		<div class="blog-setting-item mb-3">
+			<div id="blog_setting_card_radius_to_default" style="cursor: pointer;" tooltip="恢复默认">圆角</div>
+			<div style="flex: 1;margin-left: 20px;margin-right: 8px;transform: translateY(2px);">
+				<div id="blog_setting_card_radius"></div>
+			</div>
+		</div>
+		
+	</div>
+	<button id="fabtn_open_sidebar" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Open Sidebar Menu" tooltip="菜单">
+		<span class="btn-inner--icon"><i class="fa fa-bars"></i></span>
+	</button>
+	<button id="fabtn_reading_progress" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip="阅读进度">
+		<div id="fabtn_reading_progress_bar" style="width: 0%;"></div>
+		<span id="fabtn_reading_progress_details">0%</span>
+	</button>
+</div>
+
+<div id="content" class="site-content">
+
+
+<div class="page-information-card-container">
+	
+</div>
+
+<div id="sidebar_mask"></div>
+<aside id="leftbar" class="leftbar widget-area" role="complementary">
+		
+		<div id="leftbar_part1" class="widget widget_search card bg-white shadow-sm border-0">
+			<div class="leftbar-banner card-body">
+				<span class="leftbar-banner-title text-white">Xjn´s Blog</span>
+				
+				
+			</div>
+			
+			
+				<ul id='leftbar_part1_menu' class='leftbar-menu'>
+					
+				</ul>
+			
+			<div class="card-body text-center leftbar-search-button">
+				<button id="leftbar_search" class="btn btn-secondary btn-lg active btn-sm btn-block border-0" role="button" data-toggle="modal" data-target="#argon_search_modal" >
+					<i class="menu-item-icon fa fa-search mr-0"></i> 搜索
+				</button>
+			</div>
+		</div>
+		<div id="leftbar_part2" class="widget widget_search card bg-white shadow-sm border-0">
+			<div id="leftbar_part2_inner" class="card-body">
+				
+				<div class="nav-wrapper" style="padding-top: 5px;">
+	                <ul class="nav nav-pills nav-fill" role="tablist">
+						
+							<li class="nav-item sidebar-tab-switcher">
+								<a class="active show" id="leftbar_tab_catalog_btn" data-toggle="tab" href="#leftbar_tab_catalog" role="tab" aria-controls="leftbar_tab_catalog" no-pjax>文章目录</a>
+							</li>
+						
+						<li class="nav-item sidebar-tab-switcher">
+							<a class="" id="leftbar_tab_overview_btn" data-toggle="tab" href="#leftbar_tab_overview" role="tab" aria-controls="leftbar_tab_overview" no-pjax>站点概览</a>
+						</li>
+	                </ul>
+				</div>
+				<div>
+					<div class="tab-content" style="padding: 10px 10px 0 10px;">
+						
+							<div class="tab-pane fade active show" id="leftbar_tab_catalog" role="tabpanel" aria-labelledby="leftbar_tab_catalog_btn">
+								<div id="leftbar_catalog"></div>
+								<script type="text/javascript">
+									$(function () {
+										$(document).headIndex({
+											articleWrapSelector: '#post_content',
+											indexBoxSelector: '#leftbar_catalog',
+											subItemBoxClass: "index-subItem-box",
+											itemClass: "index-item",
+											linkClass: "index-link",
+											offset: 80,
+										});
+									})
+								</script>
+								
+							</div>
+						
+						<div class="tab-pane fade text-center" id="leftbar_tab_overview" role="tabpanel" aria-labelledby="leftbar_tab_overview_btn">
+							<img id="leftbar_overview_author_image" src="/assets/img/auther.jpg" class="img-fluid rounded-circle shadow-sm" style="width: 100px;" alt="avatar">
+							<h6 id="leftbar_overview_author_name">xjn819</h6>
+							<nav class="site-state">
+								<div class="site-state-item site-state-posts">
+									<a href="/archives">
+										<span class="site-state-item-count">5</span>
+										<span class="site-state-item-name">文章</span>
+									</a>
+								</div>
+								<div class="site-state-item site-state-categories">
+									<a data-toggle="modal" data-target="#blog_categories">
+										<span class="site-state-item-count">2</span>
+										<span class="site-state-item-name">分类</span>
+									</a>
+								</div>      
+								<div class="site-state-item site-state-tags">
+									<a data-toggle="modal" data-target="#blog_tags">
+										<span class="site-state-item-count">4</span>
+										<span class="site-state-item-name">标签</span>
+									</a>
+								</div>
+							</nav>
+							
+									<div class="site-author-links">
+										
+									</div>
+								
+							
+									<div class='site-friend-links'>
+										<div class='site-friend-links-title'><i class='fa fa-fw fa-link'></i> Links</div>
+										<ul class='site-friend-links-ul'>
+											
+												<li class='site-friend-links-item'>
+													<a href='https://blog.daliansky.net' rel='noopener' target='_blank'>黑果小兵的部落阁</a>
+												</li>
+											
+												<li class='site-friend-links-item'>
+													<a href='https://blog.tlhub.cn/' rel='noopener' target='_blank'>套陆的部落阁</a>
+												</li>
+											
+												<li class='site-friend-links-item'>
+													<a href='https://www.bugprogrammer.me/' rel='noopener' target='_blank'>Bugprogrammer的博客</a>
+												</li>
+											
+												<li class='site-friend-links-item'>
+													<a href='https://www.insanelymac.com/' rel='noopener' target='_blank'>InsanelyMac</a>
+												</li>
+											
+												<li class='site-friend-links-item'>
+													<a href='https://hyejeong.cn/' rel='noopener' target='_blank'>针针小站</a>
+												</li>
+											
+										</ul>
+									</div>
+								
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+</aside>
+<div class="modal fade" id="blog_categories" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">分类</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<a class="badge badge-secondary tag" href="/categories/Hackintosh/" rel="tag">Hackintosh <span class="tag-num">3</span></a><a class="badge badge-secondary tag" href="/categories/Hardware/" rel="tag">Hardware <span class="tag-num">2</span></a>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="blog_tags" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">标签</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<a class="badge badge-secondary tag" href="/tags/Hackintosh/" rel="tag">Hackintosh <span class="tag-num">3</span></a><a class="badge badge-secondary tag" href="/tags/Hardware/" rel="tag">Hardware <span class="tag-num">2</span></a><a class="badge badge-secondary tag" href="/tags/NAS/" rel="tag">NAS <span class="tag-num">2</span></a><a class="badge badge-secondary tag" href="/tags/OpenCore/" rel="tag">OpenCore <span class="tag-num">3</span></a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="primary" class="content-area">
+	<main id="main" class="site-main" role="main">
+		
+		
+			
+	<article class="post post-full card bg-white shadow-sm border-0 ">
+	<header class="post-header text-center">
+		
+		<a class="post-title" href="/post/apple-tv-wee-guide.html">Apple TV小指南</a>
+		<div class="post-meta">
+			
+						
+						<div class="post-meta-detail post-meta-detail-time">
+							<i class="fa fa-clock-o" aria-hidden="true"></i>
+							<time title="发布于 2022-5-8 22:27:50 | 编辑于 2022-5-9 5:53:41">2022-5-8 22:27
+							</time>
+						</div>
+					
+						
+							<div class="post-meta-devide">|</div>
+						
+						<div class="post-meta-detail post-meta-detail-categories">
+							<i class="fa fa-bookmark-o" aria-hidden="true"></i>
+							<a class="post-meta-detail-catagory-link" href="/categories/Hardware/">Hardware</a>
+						</div>
+					
+						
+							<div class="post-meta-devide">|</div>
+						
+						<div class="post-meta-detail post-meta-detail-words">
+							<i class="fa fa-file-word-o" aria-hidden="true"></i>
+							1.2k 字
+						</div>
+					
+						
+							<div class="post-meta-devide">|</div>
+						
+						<div class="post-meta-detail post-meta-detail-readingtime">
+							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
+							5 分钟
+						</div>
+					
+		</div>
+		
+	</header>
+
+	<div class="post-content" id="post_content">
+		<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>Apple TV（下文简称TV）相比国内很多机顶盒，比较干净，适合看NAS上的电影视，以及各种流媒体。</p>
+</br>
+
+<p>相反，对爱优腾支持比较不好。当然因为我一直使用香港APPLE ID，是有优酷和爱奇艺的，自制剧内容都是同步的，甚至有更多专做海外的国语内容，却无法在国内过审的(e.g.逆局)；会员体系不一样，你买了后无法在国内的爱优上使用。提一句，IPTV有很多办法在TV上实现，这个不是问题，本文也不会提及。</p>
+</br>
+
+
+<p>在我想好好使用TV的利益驱动下，这篇文章就打算写写怎么搞Dolby Vision以及各种声音拓展。</p>
+<blockquote>
+<p>此文中指的TV是2021年发布的<a target="_blank" rel="noopener" href="https://www.apple.com/hk-zh/shop/buy-tv/apple-tv-4k">Apple TV 4K</a>。</p>
+</blockquote>
+<h1 id="TV与电视机的适配"><a href="#TV与电视机的适配" class="headerlink" title="TV与电视机的适配"></a>TV与电视机的适配</h1><p>一般情况下TV只要电视有A/V或者HDMI接口既可以使用，但是你需要考虑如下问题：</p>
+<ul>
+<li>你是否需要让TV掌控整个电视，即你不再使用电视的安卓魔改系统，并不再使用电视自带的遥控器。见<code>TV与电视CEC</code></li>
+<li>你是否需要通过TV播放单层的Dolby Vision(aka 杜比视界)。见<code>TV与Dolby Vision</code></li>
+<li>你是否需要通过TV播放超过5.1声道的音频(e.g. Dolby TrueHD 7.1)。见<code>TV与音频</code></li>
+</ul>
+<h2 id="TV与电视CEC"><a href="#TV与电视CEC" class="headerlink" title="TV与电视CEC"></a>TV与电视CEC</h2><p>CEC功能是HDMI1.3b开始提出的一项功能，自行搜索具体原理，大概就是机顶盒的遥控器可以通过CEC功能控制整个电视，或反之亦然。因此，在标注有HDMI CEC功能的电视机上，你可以丢到现有电视机遥控器，或者TV遥控器做到一个遥控器控制所有东西。</p>
+<p>尽管CEC应该是一个比较标准的功能，各个厂家也许因自己利益驱使，或者技术上的问题，并不会完全把自己的生态完全交给TV，比如小米，LG，Samsung等。目前看来只有日本厂商在CEC上做的比较开放，索尼电视机你可以完全丢弃自己的垃圾遥控器。当然你可以使用相反的逻辑，用电视机的遥控器控制TV。</p>
+<blockquote>
+<p>值得一提的是，TV支持红外学习，也算一种办法，但是小米电视的遥控器是蓝牙的。</p>
+</blockquote>
+</br>
+
+
+<h2 id="TV与Dolby-Vision"><a href="#TV与Dolby-Vision" class="headerlink" title="TV与Dolby Vision"></a>TV与Dolby Vision</h2><p>一部支持Dolby Vision的电影，一般由BL+EL+RPU所组成。当视频中只含有BL+RPU，我们叫做单层杜比视界。这种视频一般通过杜比的Profile 5进行封装导出MKV格式（极少数蓝光原盘也有单层）。<br>目前，TV只支持BL+RPU的Dolby Vision，并且原生只支持profile 5封装的，当然一些App(e.g.Infuse)可以通过它自己的拓展播放Profile 7。</p>
+<blockquote>
+<p>目前在整个苹果生态里，Infuse可能是唯一一个能够播放Dolby Profile 5.2封装的软件。</p>
+</blockquote>
+<p>双层杜比则是指BL+EL+RPU所组成的杜比视频，目前看来，并没有机顶盒支持它，因为涉及到dolby私钥，也没啥好破解的。市面上说支持双层杜比的安卓机顶盒，大概率是通过双层转单层实现的（不能说死，万一这个安卓厂商愿意给杜比付钱呢）。</p>
+<p>总结：TV无法播放双层杜比，但是可以转回单层，你可能需要购买蓝光碟机来播放双层杜比。</p>
+<h2 id="TV与音频"><a href="#TV与音频" class="headerlink" title="TV与音频"></a>TV与音频</h2><p>音频种类非常繁杂，我尽可能概括，也许有错误，疏漏，时效性问题，请留言讨论（先甩锅）。</p>
+<p>电子音频被定义为Pulse Coded Modulation (PCM)，这是一种无损(lossless)，无压缩(uncompressed)，原始记录的一种电子音频格式。</p>
+<blockquote>
+<p>PCM可以与.bmp格式图片作为类比</p>
+</blockquote>
+</br>
+
+
+<p>我们现在的手机通话，是由声波(sound waves)转换成音频信号(analogue electrical audio signals)，这些信号再转换成PCM。</p>
+</br>
+
+<p>在信号到PCM的转换过程中，声波被分割成各种网格，网格中块状的数量，被定义成了bits(e.g.16-bits)，越多的bits代表着它能更精确的反应声音的原始程度，你可以参考4K图片比2K图片更加清晰是因为pixels更多。</p>
+<p>同样在转换的过程中，不断的重复抓取声音是为了更精确的抓住声音的改变，比如44,000次每秒的抓取，等于是44kHz。你可以参考电影或者游戏中的fps，60fps的电影，你能感觉到更加流畅的观感效果。</p>
+<p>综上所述，一个16bits+44kHz的音频，意味着在一个声道中704,000 bits每秒的输出。</p>
+</br>
+
+
+<p>相反，从电子音频格式到信号转换(Digital to Analog Converter;aka, DAC)，是把PCM重新转换成音频信号，我们打电话的时候才能听到。这种DAC装置可以是你的电视，可以是声卡。</p>
+<p>说到底，电子音频转换成PCM，再通过DAC装置让你听到，或者让电话另一头的人听到。</p>
+</br>
+
+
+<p>我们一般会下载到带多个声音文件的电影，这可能是为了兼容性，多语言，讲解等需求。尤其是多声道的情况下，这种无损音频所占据的空间和比特率可能会很大，类似于我们想把超级大的.bmp图片转换成.jpg。考虑到压缩可能带来损耗，因此就有了各种codec。<br>Codec包含了解码和编码两部分，比如你把一个文件通过ZIP压缩了，但解压可以是不同的7ZIP,好压等软件，类比于各种codec解码。<br>音频Codec压缩/解压缩主要分为两种：</p>
+<ul>
+<li><p>有损(compressed, lossy)：牺牲音频质量，来减少占用空间，主要是Dolby Digital(AC3)以及另一家Digital Theatre Systems (DTS)在使用。</p>
+</li>
+<li><p>无损(compressed, lossless)：保护原有的音频，但压缩率偏低，一般就是Dolby TrueHD 或者 DTS HD Master Audio (MA)在用。可以参考.png的无损压缩，或者直接把.bmp文件打包成zip。</p>
+</li>
+</ul>
+<p>电影文件中DTS-HD MA是被编码成DTS的，并且DTS-HD MA，作为拓展层被包含在一起。这样做的好处是，当你的设备支持DTS-HD MA则可以播放音频，如果不支持，则自动回落到DTS上。Dolby TrueHD同样用了这种拓展层的方法去解决兼容性问题。</p>
+<p>打个比方，一本电影中你可能看到如下的音频列表：</p>
+<ul>
+<li><p>#1 [uncompressed, lossless] PCM 5.1 (English)</p>
+</li>
+<li><p>#2 [compressed, lossless] DTS-HD Master Audio 5.1 (English)</p>
+</li>
+<li><p>#3 [compressed, lossy] Dolby Digital 5.1 (French)</p>
+</li>
+<li><p>#4 [compressed, lossy] Dolby Stereo 2.0 (Mandarin)</p>
+<ul>
+<li><p>#2/3/4是压缩的，需要被解码codec解压成PCM再发送到DAC装置，#1已经是PCM了，可以直接到DAC。</p>
+</li>
+<li><p>#1/2都是无损的，最终被转换成PCM的。那为什么要放两个无损的同一语言的5.1呢。也许是PCM 5.1占据的空间太大，所以它放了一个16bits/44 kHZ的PCM，然后DTS-HD MA占据的空间小，可以再放一个24-bits/96kHz的无损音频，用户就多了一个选择。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>接着我们来说一下主要的两大根据空间定位为依据的音频格式：Dolby Atmos 和 DTS:X。在电影中，如果有一声枪响，这类音频格式会根据本地音响的位置，比如左后方，上中下的某一个喇叭发出来，让用户有更好的场景代入感。<br>Dolby Atmos或者DTS:X都不是codec，也不是单独的音轨，他们是音频拓展层上的东西，像之前说的那样，旧设备不支持，则不播放，当支持时，使用这种空间定位的meta信息。一般来说，常见的拓展层有如下几个：</p>
+<ul>
+<li>Dolby TrueHD + Dolby Atmos - 常见于蓝光原盘或者REMUX</li>
+<li>DTS-HD Master Audio + DTS:X - 同样常见于蓝光原盘或者REMUX</li>
+<li>Dolby Digital Plus + Dolby Atmos - 常见于流媒体 (Netflix etc)</li>
+<li>Dolby MAT 2.0 + Dolby Atmos - 常见于游戏主机或者TV </li>
+</ul>
+<p>我们用TV打开一个视频时，它一定会检测音轨，通过解码器首先把声音还原成PCM，或者音轨就是PCM则不需要。这里要求TV有这样的Codec或者APP有，或者你的解码在服务端（e.g plex)。就像别人给你了一个.psd格式的图片，是你让你同事的电脑去打开后转换成你电脑上就有的格式(e.g png)给你，或者是你自己下载Photoshop。<br>根据标准，所有的DVD碟机，或者蓝光碟机，都必须拥有Dolby Digital的Codec，但DTS-HD MA则没有明文规定。理论上，我们支持用终端机器来观影，可以得到最好的音频体验，但更优质的音频，则需要更大的带宽，无论S/PDIF 接口 或者 HDMI ARC都受限于自身带宽，最多放出2声道的PCM，或者5.1声道压缩音频，具体来说，S/PDIF或者HDMI ARC</p>
+<ul>
+<li><p>支持</p>
+<ul>
+<li>PCM Stereo (2.0声道)</li>
+<li>Dolby Digital (5.1声道）</li>
+<li>Dolby Digital Plus (5.1声道 也许只有HDMI ARC支持)</li>
+<li>DTS (5.1声道)</li>
+</ul>
+</li>
+<li><p>不支持</p>
+<ul>
+<li>Dolby TrueHD </li>
+<li>DTS-HD Master Audio </li>
+</ul>
+</li>
+</ul>
+<p>在这种限制下，HDMI推出了eARC，在HDMI eARC模式下，你可以享受到更多7声道甚至11声道的体验，当然目前似乎并没有11声道的电影。TV在通过eARC后，可以播放出更多声道，因此，如果你还没有买电视，并且想用TV的话，请购买带有HDMI eARC的电视机。</p>
+<p>TV的工作机制如下：</p>
+<ul>
+<li>它原生支持的codec包括<ul>
+<li>Dolby Digital</li>
+<li>Dolby Digital Plus (包括 Atmos)</li>
+<li>Dolby TrueHD (但不支持带有Atmos的)</li>
+</ul>
+</li>
+<li>它原生不支持:<ul>
+<li>DTS 或者 DTS-HD MA，主要就是没买license。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>但一些APP自带了Codec来解决一些问题(e.g. Infuse)。</p>
+</blockquote>
+<p>当TV碰到这些不支持的格式，包括Dolby TrueHD Atmos或者带有DTS:X的DTS-HD MA，它会自动转成PCM然后通过2.0/5.1/7.1声道播放出来。</p>
+<p>总结一下，你需要一个支持eARC的音响(e.g Samsung Q950)，以及支持eARC的电视机，配合TV，播放出最高带有7.1声道的电影，并且这个7.1声道，不支持带有Atmos字样的Dolby TrueHD，或者DTS:X字样的DTS-HD MA。</p>
+<blockquote>
+<p>不支持不代表不能播放，转成PCM 7.1，但损失带有空间位置的Meta数据。</p>
+</blockquote>
+
+	</div>
+
+	
+
+	
+
+	
+		<div class="post-tags">
+			<i class="fa fa-tags" aria-hidden="true"></i>
+			<a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/Hardware/" rel="tag">Hardware</a><a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/NAS/" rel="tag">NAS</a>
+		</div>
+	
+</article>
+
+	<div id="share_container">
+	<div id="share" data-initialized="true">
+		<a class="no-pjax icon-wechat" tooltip="分享到微信">
+			<button class="btn btn-icon btn-success">
+				<span class="btn-inner--icon"><i class="fa fa-weixin"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-douban" tooltip="分享到豆瓣">
+			<button class="btn btn-icon btn-primary" style="background: #209261;border: none;">
+				豆
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-qq" tooltip="分享到 QQ">
+			<button class="btn btn-icon btn-primary" style="background: #2196f3;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-qq"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-qzone" tooltip="分享到 QQ 空间">
+			<button class="btn btn-icon btn-primary" style="background: #ffc107;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-star"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-weibo" tooltip="分享到微博">
+			<button class="btn btn-icon btn-warning">
+				<span class="btn-inner--icon"><i class="fa fa-weibo"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-facebook" tooltip="分享到 Facebook">
+			<button class="btn btn-icon btn-primary" style="background: #283593;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-facebook"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-twitter" tooltip="分享到 Twitter">
+			<button class="btn btn-icon btn-primary" style="background: #03a9f4;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://blog.xjn819.com/post/apple-tv-wee-guide.html&text=Apple TV小指南" tooltip="分享到 Telegram">
+			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-copy-link" id="share_copy_link" tooltip="复制链接">
+			<button class="btn btn-icon btn-default">
+				<span class="btn-inner--icon"><i class="fa fa-link"></i></span>
+			</button>
+		</a>
+	</div>
+	<button id="share_show" class="btn btn-icon btn-primary" tooltip="分享">
+		<span class="btn-inner--icon"><i class="fa fa-share"></i></span>
+	</button>
+</div>
+<script type="text/javascript">
+	socialShare("#share", {
+	    title : 'Apple TV小指南',
+	    description : '背景Apple TV（下文简称TV）相比国内很多机顶盒，比较干净，适合看NAS上的电影视，以及各种...',
+	    wechatQrcodeTitle : "分享到微信",
+	    wechatQrcodeHelper : '微信扫描二维码',
+	    source : 'https://blog.xjn819.com/post/apple-tv-wee-guide.html'
+	});
+	$("#share_show")[0].onclick = function(){
+		$("#share_container").addClass("opened");
+	};
+	$("#share_copy_link")[0].onclick = function(){
+		let input = document.createElement('input');
+		document.body.appendChild(input);
+		input.setAttribute("value", window.location.href);
+		input.setAttribute("readonly", "readonly");
+		input.setAttribute("style", "opacity: 0;mouse-events:none;");
+		input.select();
+		if (document.execCommand('copy')){
+			iziToast.show({
+				title: '链接已复制',
+				message: "链接已复制到剪贴板",
+				class: 'shadow',
+				position: 'topRight',
+				backgroundColor: '#2dce89',
+				titleColor: '#ffffff',
+				messageColor: '#ffffff',
+				iconColor: '#ffffff',
+				progressBarColor: '#ffffff',
+				icon: 'fa fa-check',
+				timeout: 5000
+			});
+		}else{
+			iziToast.show({
+				title: '复制失败',
+				message: "请手动复制链接",
+				class: 'shadow',
+				position: 'topRight',
+				backgroundColor: '#f5365c',
+				titleColor: '#ffffff',
+				messageColor: '#ffffff',
+				iconColor: '#ffffff',
+				progressBarColor: '#ffffff',
+				icon: 'fa fa-close',
+				timeout: 5000
+			});
+		}
+		document.body.removeChild(input);
+	};
+</script>
+
+
+<div id="post_comment" class="card shadow-sm">
+	<div id="gitalk-container"></div>
+<script type="text/javascript">
+	var gitalk = new Gitalk({
+		clientID: '86a6322e810d06834891',
+		clientSecret: 'eaf77d01ffaddf2f06a2a4bbac944d8cca3d0c91',
+		repo: 'OCNHTeam.github.io',
+		owner: 'OCNHTeam',
+		admin: ['SeonMe'],
+		id: location.pathname,
+		distractionFreeMode: false
+	})
+	gitalk.render('gitalk-container');
+</script>
+
+</div>
+
+
+<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/post/Home-freenas-build.html" rel="next"> 家用万兆FreeNAS组建</a></div></div>
+
+
+
+		
+		
+		
+		
+
+					<footer id="footer" class="site-footer card shadow-sm border-0">
+						
+						<div>Theme <a target="_blank" rel="noopener" href="https://github.com/solstice23/hexo-theme-argon"><strong>Argon</strong></a> | Powered by Hexo</div>
+						<span id="busuanzi_container_site_uv">
+							本站访客数 <span id="busuanzi_value_site_uv"></span> 人次
+						</span>
+					</footer>
+				</main>
+			</div>
+		</div>
+		
+<script src="/argontheme.js"></script>
+
+		
+		
+		
+
+		
+			<script>
+				var argonEnableCodeHighlight = true;
+			</script>
+			
+<link rel="stylesheet" href="/assets/vendor/highlight/styles/vs2015.css">
+
+		
+
+	</div>
+</div>
+<noscript>
+	<style>
+		article img.lazyload[src^="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPg"]{display: none;}
+		.comment-item-text .comment-sticker.lazyload{display: none;}
+	</style>
+</noscript>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0SS4LFYBFR"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0SS4LFYBFR');
+</script>
+</body>
+
+
+
+</html>
+
