@@ -22,7 +22,7 @@
 <meta property="og:image" content="https://i.loli.net/2021/10/02/BXdfPDqb6OvxnAh.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/14/GrqjvK2TtW93gnC.png">
 <meta property="article:published_time" content="2021-04-03T14:27:50.000Z">
-<meta property="article:modified_time" content="2022-08-01T15:19:52.538Z">
+<meta property="article:modified_time" content="2022-08-01T15:27:30.803Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -606,7 +606,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2022-8-1 23:19:52">2021-4-3 22:27
+							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2022-8-1 23:27:30">2021-4-3 22:27
 							</time>
 						</div>
 					
@@ -760,7 +760,7 @@
 <li><p>准备一个U盘</p>
 <ul>
 <li>4G的U盘都够用了，不需要太大，但不要超过32G。</li>
-<li>把U盘格式化成Fat32格式，<font color="#660000">注意不要带任何ESP分区</font><br />。</li>
+<li>把U盘格式化成Fat32格式，<font color="#660000">注意不要带任何ESP分区</font>。</li>
 </ul>
 </li>
 <li><p>把文件放入U盘</p>
@@ -805,12 +805,12 @@
 <li>进入U盘根目录后，输入sas2flash.efi -listall，确保你的卡被识别出来（图片我随便找的，跟你的卡数值可能不同）。<img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2021/04/03/uZEYmk21iphe8N3.jpg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="5a719c1baa02ba545539f89c3c77696dba3a1e60.jpg"></li>
 
 <li>如果找不到这张卡，请确认这张卡是完好的，在bios设置界面中也能看到。</li>
-<li>输入<code>sas2flash.efi -list</code>，<font color="#660000">记录下</font><br />16位SAS Address (图片也是网上找的，可能不同，红色框内的所有东西都记下来！！！！！！！).<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2021/04/03/DYcZOzgfPHJQS3h.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="afae920ac73b9b7a6fa5b201efa5cf09dc4ddc00.png"></li>
+<li>输入<code>sas2flash.efi -list</code>，<font color="#660000">记录下</font>16位SAS Address (图片也是网上找的，可能不同，红色框内的所有东西都记下来！！！！！！！).<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2021/04/03/DYcZOzgfPHJQS3h.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="afae920ac73b9b7a6fa5b201efa5cf09dc4ddc00.png"></li>
 
 <li>输入<code>sas2flash.efi -o -e 7</code>来删除当前固件。</li>
 <li>输入<code>sas2flash.efi -o -f xxxxx.bin -b x64sas2.rom -b mptsas2.rom</code> 写入新的固件。xxxxx.bin应该是你之前放入的固件名字，比如9207-8.bin。</li>
-<li>输入<code>sas2flash.efi -o -sasaddhi XXXXXXX</code> 写入SAS地址，其中XXXXXXX为刚才记录的SAS地址的<font color="#660000">前7位</font><br />，一般是500开头。</li>
-<li>接着按提示输入剩下的sas地址的数字，<font color="#660000">不需要</font><br />输入<code>-</code>。</li>
+<li>输入<code>sas2flash.efi -o -sasaddhi XXXXXXX</code> 写入SAS地址，其中XXXXXXX为刚才记录的SAS地址的<font color="#660000">前7位</font>，一般是500开头。</li>
+<li>接着按提示输入剩下的sas地址的数字，<font color="#660000">不需要</font>输入<code>-</code>。</li>
 <li>搞定，输入一下<code>sas2flash.efi -list</code>看看新的固件有没有刷进去。</li>
 <li>重启输入<code>reset</code>就可以用了。</li>
 </ul>
