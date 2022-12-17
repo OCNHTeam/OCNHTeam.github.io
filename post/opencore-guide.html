@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/cRhHzeEiAQXLSds.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/6p4iKMAeIHPyfBC.png">
 <meta property="article:published_time" content="2020-10-29T14:42:50.000Z">
-<meta property="article:modified_time" content="2021-12-19T10:08:20.000Z">
+<meta property="article:modified_time" content="2022-12-17T04:24:40.541Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="OpenCore">
 <meta property="article:tag" content="Hackintosh">
@@ -609,7 +609,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2021-12-19 18:08:20">2020-10-29 22:42
+							<time title="发布于 2020-10-29 22:42:50 | 编辑于 2022-12-17 12:24:40">2020-10-29 22:42
 							</time>
 						</div>
 					
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							14.1k 字
+							14.4k 字
 						</div>
 					
 						
@@ -634,7 +634,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							60 分钟
+							62 分钟
 						</div>
 					
 		</div>
@@ -674,6 +674,21 @@
 <h2 id="更新日记"><a href="#更新日记" class="headerlink" title="更新日记"></a>更新日记</h2><details>
   <summary><font color=red>点击查询帖子最近更新</font></summary>
 
+<h3 id="2022-12-17"><a href="#2022-12-17" class="headerlink" title="2022-12-17"></a>2022-12-17</h3><p>适配OpenCore 0.8.7</p>
+<ul>
+<li>增加Config–Kernel–Quirks-CustomPciSerialDevice</li>
+<li>增加Config–Kernel–Quirks-ForceAquantiaEthernet</li>
+<li>3.10章节增加<code>LogModules</code></li>
+<li>删除Misc–Security–AllowSetDefault</li>
+<li>删除Misc–Security–AllowToggleSip</li>
+<li>增加Config–Misc–Serial</li>
+<li>增加Config–Misc–Tools–FullNvramAccess</li>
+<li>修改Config–UEFI–AppleInput</li>
+<li>修改Config–UEFI–Audio</li>
+<li>修改Config–UEFI–Drivers</li>
+<li>其他一些小修改</li>
+<li>更新时间跨度太大，若有问题请留言</li>
+</ul>
 <h3 id="2021-12-11"><a href="#2021-12-11" class="headerlink" title="2021-12-11"></a>2021-12-11</h3><p>适配OpenCore 0.7.6</p>
 <ul>
 <li>删除Config–NVRAM–Add下关于UIScale的设置</li>
@@ -1232,6 +1247,13 @@ Item 7
 <li>开启时将电脑的 cpu 频率锁定为最高频率。</li>
 </ul>
 </li>
+</ul>
+<ul>
+<li><p><strong>CustomPciSerialDevice:</strong> <code>NO</code></p>
+<ul>
+<li>修改COM串口的默认地址。</li>
+</ul>
+</li>
 <li><p><strong>CustomSMBIOSGuid:</strong> <code>NO</code></p>
 <ul>
 <li>戴尔笔记本专用项。</li>
@@ -1260,6 +1282,11 @@ Item 7
 <li><p><strong>ExternalDiskIcons</strong> <code>NO</code></p>
 <ul>
 <li>修复苹果系统把内部硬盘识别为外置硬盘时（黄色图标的硬盘）开启。</li>
+</ul>
+</li>
+<li><p><strong>ForceAquantiaEthernet</strong> <code>NO</code></p>
+<ul>
+<li>开启次项目以便使用AQC107万兆网卡，同时需要注意关闭<code>DisableIOMapper</code>、开启BIOS中的VT-D等选项以确保VT-D在MacOS中<code>AppleVTD</code>正常运行。</li>
 </ul>
 </li>
 <li><p><strong>ForceSecureBootScheme</strong> <code>NO</code></p>
@@ -1417,6 +1444,13 @@ Item 7
 </li>
 </ul>
 </li>
+<li><p><strong>HibernateSkipsPicker</strong> <code>NO</code></p>
+<ul>
+<li>在休眠唤醒后不显示<code>picker</code>，一般不开启。</li>
+</ul>
+</li>
+</ul>
+<ul>
 <li><p><strong>HideAuxiliary</strong> <code>NO</code></p>
 <ul>
 <li>在tool下等具有Auxiliary并被开启的插件，补丁等是否需要被隐藏起来。</li>
@@ -1507,20 +1541,9 @@ Item 7
 <h3 id="2-5-4-Config–Misc–Entries"><a href="#2-5-4-Config–Misc–Entries" class="headerlink" title="2.5.4 Config–Misc–Entries"></a>2.5.4 Config–Misc–Entries</h3><p>这里是帮助我们添加一些你希望的引导路径，这个会在之后的进阶教程中讲，这里暂时略过不填写。</p>
 <hr>
 <h3 id="2-5-5-Config–Misc–Security"><a href="#2-5-5-Config–Misc–Security" class="headerlink" title="2.5.5 Config–Misc–Security"></a>2.5.5 Config–Misc–Security</h3><ul>
-<li><p><strong>AllowNvramReset</strong> <code>YES</code></p>
-<ul>
-<li>是否在开机引导项中加入重置 <code>NVRAM</code> 功能的选项。</li>
-</ul>
-</li>
 <li><p><strong>AllowSetDefault</strong> <code>YES</code></p>
 <ul>
 <li>选择 <code>yes</code> 后即可在开机选择系统页面中通过 <kbd>Ctrl</kbd>+<kbd>Enter</kbd> 键设置默认启动盘。</li>
-</ul>
-</li>
-<li><p><strong>AllowToggleSip</strong> <code>NO</code></p>
-<ul>
-<li>在开机界面中增加一个关闭或开启sip的选项。</li>
-<li></li>
 </ul>
 </li>
 <li><p><strong>ApECID</strong> <code>0</code></p>
@@ -1540,7 +1563,7 @@ Item 7
 </li>
 </ul>
 <ul>
-<li><p><strong>DmgLoading</strong> <code>Any</code></p>
+<li><p><strong>DmgLoading</strong> <code>Signed</code></p>
 <ul>
 <li>如果你没有开启安全启动，请填写 <code>Any</code>；如果使用安全启动，请填写 <code>Signed</code>（注意大小写）。</li>
 </ul>
@@ -1575,9 +1598,9 @@ Item 7
 <li>填0。我们也许会碰到开机的时候默认进入的系统永远是 WINDOWS，并无法更改，之后我们在进阶教程中讲述，如何让 MAC 盘排在第一个，让 WIN 排在后面。</li>
 </ul>
 </li>
-<li><p><strong>SecureBootModel</strong> <code>Disabled</code></p>
+<li><p><strong>SecureBootModel</strong> <code>Default</code></p>
 <ul>
-<li>是否开启安全启动模式，一般我们填写 <code>Disabled</code>（注意大小写）来关闭此功能。</li>
+<li>是否开启安全启动模式。</li>
 </ul>
 </li>
 <li><p><strong>Vault</strong> <code>Optional</code></p>
@@ -1587,7 +1610,19 @@ Item 7
 </li>
 </ul>
 <hr>
-<h3 id="2-5-6-Config–Misc–Tools"><a href="#2-5-6-Config–Misc–Tools" class="headerlink" title="2.5.6 Config–Misc–Tools"></a>2.5.6 Config–Misc–Tools</h3><p>用于运行 OC 调试工具, 例如验证 CFG 锁 (VerifyMsrE2)</p>
+<h3 id="2-5-6-Config–Misc–Serial"><a href="#2-5-6-Config–Misc–Serial" class="headerlink" title="2.5.6 Config–Misc–Serial"></a>2.5.6 Config–Misc–Serial</h3><ul>
+<li><p><strong>init</strong> <code>NO</code></p>
+<ul>
+<li>是否初始化串口设备</li>
+</ul>
+</li>
+<li><p><strong>Override</strong> <code>NO</code></p>
+<ul>
+<li>是否自定义串口设备，如果开启，请关注<code>CustomPciSerialDevice</code>选项，另自定义串口设备的选项请查阅官方说明文档，此文不展开描述。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-5-7-Config–Misc–Tools"><a href="#2-5-7-Config–Misc–Tools" class="headerlink" title="2.5.7 Config–Misc–Tools"></a>2.5.7 Config–Misc–Tools</h3><p>用于运行 OC 调试工具, 例如验证 CFG 锁 (VerifyMsrE2)</p>
 <ul>
 <li><strong>Arguments</strong><ul>
 <li>传递的参数</li>
@@ -1607,6 +1642,10 @@ Item 7
 </li>
 <li><strong>Flavour</strong> <code>Auto</code><ul>
 <li>当<code>PickerAttributes</code>设置成<code>0x0080</code>时适应主题需求</li>
+</ul>
+</li>
+<li><strong>FullNvramAccess</strong> <code>NO</code><ul>
+<li>是否关闭<code>OpenRuntime.efi</code>对NVRAM的保护，一般情况请关闭。</li>
 </ul>
 </li>
 <li><strong>Name</strong> <code>名称（如 openshell ）</code><ul>
@@ -1632,12 +1671,15 @@ Item 7
     DefaultBackgroundColor      Data       &lt;00000000&gt; //默认开机背景色为黑色
 
 7C436110-AB2A-4BBB-A880-FE41995C9F82
-    boot-args                   String     Slide=1 darkwake=0 -v //slide=1 表示从第一组内存开始连续注入；darkwake=0 代表一键唤醒机器并偏好设置中节能选项的小憩功能。如果你要用小憩功能请填8； -v 是跑代码，在没装好稳定的黑果前我建议加上，方便定位错误，弄完后再删除 -v
+    boot-args                   String    darkwake=0 -v //darkwake=0 代表一键唤醒机器并偏好设置中节能选项的小憩功能。如果你要用小憩功能请填8； -v 是跑代码，在没装好稳定的黑果前我建议加上，方便定位错误，弄完后再删除 -v
     csr-active-config           Data       &lt;e7030000&gt; //关闭 SIP 保护
     nvda_drv                    Data       &lt;31&gt; //对 10.13 系统之前的N卡的相关设置，我们不做讨论。
     prev-lang:kbd               Data       &lt;7a682d48616e733a323532&gt; //语言设置相关，记得改成这个，这个是中文
     ForceDisplayRotationInEFI   Number     0   开机的UEFI界面是否需要调整，比如你是竖屏的，可以填0,90,180,270。请同时开启AppleEg2Info
     7C436110-AB2A-4BBB-A880-FE41995C9F82 //默认就行，如果需要使用 RTC 屏蔽选项，具体参考RTC综述</code></pre>
+<blockquote>
+<p>当你的机型为带有内屏(e.g.iMac19.1)，并且你使用Navi系列显卡，请在boot-args中增加agdpmod=pikera</p>
+</blockquote>
 <hr>
 <h3 id="2-6-2-Config–NVRAM–Delete"><a href="#2-6-2-Config–NVRAM–Delete" class="headerlink" title="2.6.2 Config–NVRAM–Delete"></a>2.6.2 Config–NVRAM–Delete</h3><p>NVRAM的数据不可被覆盖，必须先被删除再添加，我们这里按默认设置不必理会。</p>
 <hr>
@@ -1646,11 +1688,9 @@ Item 7
 <pre><code class="bash">item 11     String      efi-boot-device
 item 12     String      efi-boot-device-data</code></pre>
 <hr>
-<h3 id="2-6-4-Config–NVRAM–LegacyEnable"><a href="#2-6-4-Config–NVRAM–LegacyEnable" class="headerlink" title="2.6.4 Config–NVRAM–LegacyEnable"></a>2.6.4 Config–NVRAM–LegacyEnable</h3><p>如果你的主板不支持原生 <code>NVRAM</code>，请一定要选择 <code>YES</code>，反之则选择 <code>NO</code>。</p>
+<h3 id="2-6-4-Config–NVRAM–WriteFlash"><a href="#2-6-4-Config–NVRAM–WriteFlash" class="headerlink" title="2.6.4 Config–NVRAM–WriteFlash"></a>2.6.4 Config–NVRAM–WriteFlash</h3><p>一般情况下我们需要选择 <code>YES</code> 来保证<code>启动磁盘</code>功能的正常使用，但开启后可能会在一段时间后导致 <code>CMOS</code> 被写满，主板无法经过自检。这样的问题请请参照<a href="https://blog.xjn819.com/post/rtc-issues-related-to-oc.html">RTC综述</a></p>
 <hr>
-<h3 id="2-6-5-Config–NVRAM–WriteFlash"><a href="#2-6-5-Config–NVRAM–WriteFlash" class="headerlink" title="2.6.5 Config–NVRAM–WriteFlash"></a>2.6.5 Config–NVRAM–WriteFlash</h3><p>一般情况下我们需要选择 <code>YES</code> 来保证<code>启动磁盘</code>功能的正常使用，但开启后可能会在一段时间后导致 <code>CMOS</code> 被写满，主板无法经过自检。这样的问题请请参照<a href="https://blog.xjn819.com/post/rtc-issues-related-to-oc.html">RTC综述</a></p>
-<hr>
-<h3 id="2-6-6-Config–NVRAM–LegacyOverwrite"><a href="#2-6-6-Config–NVRAM–LegacyOverwrite" class="headerlink" title="2.6.6 Config–NVRAM–LegacyOverwrite"></a>2.6.6 Config–NVRAM–LegacyOverwrite</h3><p>对模拟 <code>nvram</code> 用户来说，将 <code>nvram.plist</code> 写入硬件，我认为不管是原生 <code>nvram</code> 还是模拟 <code>nvram</code>，都选择 <code>NO</code>。</p>
+<h3 id="2-6-5-Config–NVRAM–LegacyOverwrite"><a href="#2-6-5-Config–NVRAM–LegacyOverwrite" class="headerlink" title="2.6.5 Config–NVRAM–LegacyOverwrite"></a>2.6.5 Config–NVRAM–LegacyOverwrite</h3><p>对模拟 <code>nvram</code> 用户来说，将 <code>nvram.plist</code> 写入硬件，我认为不管是原生 <code>nvram</code> 还是模拟 <code>nvram</code>，都选择 <code>NO</code>。</p>
 <hr>
 <h2 id="2-7-Config–PlatformInfo"><a href="#2-7-Config–PlatformInfo" class="headerlink" title="2.7 Config–PlatformInfo"></a>2.7 Config–PlatformInfo</h2><p>这里我们填合适的机型。对于最近一代的主板来说，一般的原则，只有核显的机器我们选Macmini8,1；只有独显的机器我们选择iMac Pro 1,1;有核显和独显的我们选择iMac 19,1。笔记本请按照对应的cpu型号来选择。</p>
 <hr>
@@ -1795,8 +1835,36 @@ item 12     String      efi-boot-device-data</code></pre>
 <li>设置UEFI界面键与键之间的延迟时间，5是50ms，此选项必须在<code>CustomDelays</code>=True时生效。</li>
 </ul>
 </li>
-</ul>
+<li><p><strong>PointerDwellClickTimeout</strong> <code>0</code></p>
 <ul>
+<li>设置UEFI界面中自动左键单击的时间，例如设置5则为指针设备悬停50ms后自动按下左键单击，0为关闭。</li>
+</ul>
+</li>
+<li><p><strong>PointerDwellDoubleClickTimeout</strong> <code>0</code></p>
+<ul>
+<li>设置UEFI界面中自动左键双击的时间，例如设置5则为指针设备悬停50ms后自动按下左键双击，0为关闭。</li>
+</ul>
+</li>
+<li><p><strong>PointerDwellRadius</strong> <code>0</code></p>
+<ul>
+<li>设置悬停的容忍度，此容忍度根据<code>UIScale</code>来确定。在容忍度内的值，则认为是指针设备悬停了，则触发<code>PointerDwellClickTimeout</code>和<code>PointerDwellDoubleClickTimeout</code>。</li>
+</ul>
+</li>
+<li><p><strong>PointerPollMask</strong> <code>-1</code></p>
+<ul>
+<li>轮询多少台指针设备，-1为所有，若需要限定，通过debug模式读取你想轮询设备的序号并添加，具体查阅官方文档。</li>
+</ul>
+</li>
+<li><p><strong>PointerPollMax</strong> <code>0</code></p>
+<ul>
+<li>轮询指针设备的最大时间。0为不更改。</li>
+</ul>
+</li>
+<li><p><strong>PointerPollMin</strong> <code>0</code></p>
+<ul>
+<li>轮询指针设备的最小时间。0为不更改。</li>
+</ul>
+</li>
 <li><p><strong>PointerSpeedDiv</strong> <code>1</code></p>
 <ul>
 <li>设置UEFI界面中，光标的跟踪速度版本，一般填1。</li>
@@ -1821,19 +1889,34 @@ item 12     String      efi-boot-device-data</code></pre>
 <li>填写你声卡的路径。这里我们填写<a href="#2.3.1">章节2.3.1</a>中寻找到的声卡路径。这里我填了 <code>PciRoot(0x0)/Pci(0x1f,0x3)</code>，请按你自己的实际情况填写。</li>
 </ul>
 </li>
-<li><p><strong>AudioOut</strong> <code>0</code></p>
+<li><p><strong>AudioOutMask</strong> <code>0</code></p>
 <ul>
 <li>音频声卡out节点。可以用 <code>PinConfigurator</code> 提取。</li>
 </ul>
 </li>
 <li><p><strong>AudioSupport</strong> <code>NO</code></p>
 <ul>
-<li>是否开启黑苹果的提示音支持。</li>
+<li>是否开启黑苹果的开机提示音支持。</li>
 </ul>
 </li>
-<li><p><strong>MinimumVolume</strong> <code>20</code></p>
+<li><p><strong>DisconnectHda</strong> <code>NO</code></p>
 <ul>
-<li>声音音量，范围在 <code>0-100</code> 之间。</li>
+<li>一些主板需要通过第三方驱动e.g. AudioDxe来接管音频设备，一般不开启。</li>
+</ul>
+</li>
+<li><p><strong>MaximumGain</strong> <code>-15</code></p>
+<ul>
+<li>UEFI声音音量的最大值。</li>
+</ul>
+</li>
+<li><p><strong>MinimumAssistGain</strong> <code>-30</code></p>
+<ul>
+<li>UEFI声音音量的最小值。</li>
+</ul>
+</li>
+<li><p><strong>MinimumAudibleGain</strong> <code>-128</code></p>
+<ul>
+<li>一些系统设置的音量低于了音频设备的最小音量，则即使播放了音乐也无法听到，这些声音会导致在UEFI中暂停，设置此项以避免这种情况。</li>
 </ul>
 </li>
 <li><p><strong>PlayChime</strong> <code>Auto</code></p>
@@ -1868,17 +1951,20 @@ item 12     String      efi-boot-device-data</code></pre>
        Arguments...........String .....
        Comment.............string...... HFSPlus
        Enabled.............Boolean..... Yes
+       LoadEarly...........Boolean..... No
        Path................String...... HfsPlus.efi
 
 ...  item1                          Dictionary
        Arguments...........String .....
        Comment.............string...... OpenRuntime
        Enabled.............Boolean..... Yes
+       LoadEarly...........Boolean..... No
        Path................String...... OpenRuntime.efi       
 ...  item2                         Dictionary
        Arguments...........String .....
        Comment.............string...... OpenCanopy.efi
        Enabled.............Boolean..... No (请参考PickerMode选项设置)
+       LoadEarly...........Boolean..... No
        Path................String...... OpenCanopy.efi    
 3 .................... </code></pre>
 <h3 id="2-8-6-Config–UEFI–Input"><a href="#2-8-6-Config–UEFI–Input" class="headerlink" title="2.8.6 Config–UEFI–Input"></a>2.8.6 Config–UEFI–Input</h3><p>此选项是原生 Apple 开机热键的选项，需要配合我们之前设置的 <code>PollAppleHotKeys = yes</code> 一起用。下面的设置完全按照默认情况就行了。</p>
@@ -2674,7 +2760,7 @@ sudo rm -rf $(sudo defaults read com.apple.loginwindow LogoutHook)
 # 清空 LogoutHook 的触发设置
 sudo defaults delete com.apple.loginwindow LogoutHook</code></pre>
 <ul>
-<li><p>删除EFI下的nvram.plist。</p>
+<li><p>删除EFI下的nvram.plist（若有）。</p>
 </li>
 <li><p>同时你需要对config.plist进行设置：</p>
 <ul>
@@ -2714,6 +2800,7 @@ sudo defaults delete com.apple.loginwindow LogoutHook</code></pre>
 <li><strong>DisableWatchdog</strong> <code>YES</code></li>
 <li><strong>Target</strong> <code>67</code></li>
 <li><strong>DisplayLevel</strong> <code>2147483714</code></li>
+<li><strong>LogModules</strong> <code>*</code>    </li>
 <li><strong>PickerMode</strong> <code>Builtin</code></li>
 </ul>
 <p>在Config.plist/NVRAM/7C436110-AB2A-4BBB-A880-FE41995C9F82/boot-args栏目中增加</p>
@@ -2781,6 +2868,7 @@ CpuFriendFriend/CPUFriendFriend.command</code></pre>
 </ul>
 <hr>
 <h3 id="4-2-5700-XT-Redeon-VII显卡的性能优化"><a href="#4-2-5700-XT-Redeon-VII显卡的性能优化" class="headerlink" title="4.2 5700/XT/Redeon VII显卡的性能优化"></a>4.2 5700/XT/Redeon VII显卡的性能优化</h3><p>此教程已经发于pcbeta:<a target="_blank" rel="noopener" href="http://bbs.pcbeta.com/viewthread-1836920-1-1.html">点此直达</a></p>
+<p>此文章以不再适用Big sur及后的系统。</p>
 
 	</div>
 
