@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-01-08T17:07:30.906Z">
+<meta property="article:modified_time" content="2023-01-08T17:29:13.233Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-9 1:07:30">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-9 1:29:13">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -651,20 +651,39 @@
 </br>
 
 <h2 id="1-1-非必选添置"><a href="#1-1-非必选添置" class="headerlink" title="1.1 非必选添置"></a>1.1 非必选添置</h2><ul>
-<li><p>今年夏天实在太热了，导致我的NAS只能满转吹来让硬盘温度稍微好一点，因此，我把原装的846机箱的4个8CM风扇卡槽换成了3个12CM的风扇卡槽，购买了3个追风者T30风扇。8CM兼顾PWM并且转速范围大，噪音低的实在太难买了，换成这款12CM的体验下来效果非常好！注意，此风扇需要拨动风扇中央的开关到ADVANCE模式才能让它的转速至高到3000转。卡槽是找淘宝用PETG材质3D打印的。打印文件<a target="_blank" rel="noopener" href="https://www.thetylergibson.com/supermicro-846-120mm-fan-shroud/">购买链接</a> 这是人家的劳动成果，我觉得免费分享给大家并不道义。</p>
-</li>
-<li><p>很早之前也购买了SAS3的背板+SAS3的HBA卡，这样在20个硬盘能勉强达到40GB。当然如果无法购买到，或者硬盘数量达不到，我认为购买1-2个SSD组成Raid0，并且写个脚本定期把Raid0的dataset通过<code>ZFS send</code>备份到主池的HDD中也是不错的选择。因为硬盘挖矿潮，超微846的仿冒机箱在淘宝闲鱼盛行，请务必辨别是否是原装！！！同样的，如果非原装846机箱，上面说的3D打印文件也不应该不适用的！</p>
+<li><p>今年夏天实在太热了，NAS只能满转来让硬盘温度稍微好一点，因此，我把原装的846机箱的4个8CM风扇卡槽换成了3个12CM的风扇卡槽，购买了3个追风者T30风扇。8CM兼顾PWM并且转速范围大，噪音低的实在太难买了，换成这款12CM的体验下来效果非常好。卡槽是找淘宝用PETG材质3D打印的。打印文件<a target="_blank" rel="noopener" href="https://www.thetylergibson.com/supermicro-846-120mm-fan-shroud/">购买链接</a> </p>
 <blockquote>
-<p>哎，硬盘矿潮之前，这些配件本来都很便宜，现在是原装买不到，仿冒的满大街=。=</p>
+<p>这是人家的劳动成果，我觉得免费分享给大家并不道义。</p>
+</blockquote>
+<blockquote>
+<p>追风者T30风扇需要拨动风扇中央的开关到ADVANCE模式才能达到3000转。</p>
 </blockquote>
 </li>
-<li><p>选购！ ATTO ThunderLink 40Gbps NQ3402 雷电网卡。这张卡是目前唯一一张支持到40Gbps并且受到最新系统支持的雷电网卡。价格太贵了，所以我就提一嘴。用了一下这张卡其实只能跑20Gbps，因为雷电的数据传输本身只有20GB。</p>
+</ul>
 </br>
+</br>
+
+<ul>
+<li><p>很早之前也购买了SAS3的背板+SAS3的HBA卡，这样在20个硬盘能勉强达到40GB。如果无法购买到或硬盘数量达不到，购买1-2个SSD组成Raid0，并写个脚本定期把Raid0的dataset通过<code>ZFS send</code>备份到主池的HDD中也是不错的选择。</p>
+<blockquote>
+<p>因为硬盘挖矿潮，超微846的仿冒机箱在淘宝闲鱼盛行，请务必辨别是否是原装！！！同样的，如果非原装846机箱，上面说的3D打印文件也不应该不适用的！</p>
+</blockquote>
+<blockquote>
+<p>哎，硬盘矿潮之前，这些配件本来都很便宜，现在是原装买不到，仿冒的满大街=。=</p>
+</br>
+</br>
+</blockquote>
+</li>
+<li><p>选购！ ATTO ThunderLink 40Gbps NQ3402 雷电网卡。这张卡是目前唯一一张支持到40Gbps并且受到最新MacOS支持的雷电网卡。价格太贵就提一嘴。这张卡其实只能跑20Gbps，因为雷电的数据传输本身只有20GB。</p>
+</br>
+</br>
+
 
 </li>
 </ul>
 <h1 id="2-管理SX6036"><a href="#2-管理SX6036" class="headerlink" title="2 管理SX6036"></a>2 管理SX6036</h1><p>通过RJ45网线连接交换机的mgt口，登陆其后台IP即可管理。若你不知道管理口IP，你需要用Console线（RJ45 to USB）连接，进入向导模式设置管理口IP等，这个可以看官网的说明书，这里不细说这些没用的了，说一下几个小坑。</p>
 <p>如果使用SFP光缆配合购物清单中的SFP to QSFP转换头，连接10Gbps交换机和SX6036，请在后台的WEB UI中将连接口的速率手动协商至10Gbps，不然无法通信。<br>如果你有一条QSFP一分四SFP的线，请根据说明书关闭其中一个口，才能使用。例如，我关闭了SX6036的1口，则4口可以插入这条QSFP一分四SFP的线，具体请查阅说明书来找到关闭对应口。关闭端口必须使用Console线连接才能更改！</p>
+</br>
 </br>
 
 <h2 id="2-2-更换SX6036交换机的风扇"><a href="#2-2-更换SX6036交换机的风扇" class="headerlink" title="2.2 更换SX6036交换机的风扇"></a>2.2 更换SX6036交换机的风扇</h2><p>此款交换机有一个可灵活拆卸的风扇盒，风扇盒中有4个4CM的风扇；电源中有一个4Cm的风扇，所有的风扇都是PWM的。我购买了5个猫头鹰NF-A4x20 FLX 3pin风扇，因为我觉得只要接地线和12v电源两个pin就够了，这风扇满转都听不到声音，我更加不会有心思登陆到SX6036的后台通过CLI更改风扇转速。<br>原装风扇接口不是像主板上一样的4pin，风扇盒的4pin定义如下：</p>
