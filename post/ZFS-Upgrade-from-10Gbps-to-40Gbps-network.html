@@ -3,24 +3,26 @@
 <html class="article-header-style-default">
 <head>
 	
-	<title>Apple TV小指南 - Xjn&#39;s Blog</title>
+	<title>ZFS:从10GbpsS升级到40Gbps网络 - Xjn&#39;s Blog</title>
 	<meta charset="utf-8">
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta name="description" content="背景Apple TV（下文简称TV）相比国内很多机顶盒，比较干净，适合看NAS上的电影视，以及各种流媒体。   相反，对爱优腾支持比较不好。当然因为我一直使用香港APPLE ID，是有优酷和爱奇艺的，自制剧内容都是同步的，甚至有更多专做海外的国语内容，却无法在国内过审的(e.g.逆局)；会员体系不一样，你买了后无法在国内的爱优上使用。提一句，IPTV有很多办法在TV上实现，这个不是问题，本文也">
+	<meta name="description" content="0 介绍自TrueNas Core更新至FreeBSD 13，TrueNas下的两大产品Scale和Core都已经使用上了OpenZFS。想着既然如此，就直接转投OpenZFS用上Linux了，但考虑到之前一直使用SolarisZFS，可能会对OpenZFS不太熟悉，就小心翼翼的先使用了一下TrueNAS Scale上手试试。体验下来我个人不是很喜欢用Docker，更加不会喜欢用K3S了，也没有L">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Apple TV小指南">
-<meta property="og:url" content="https://blog.xjn819.com/post/apple-tv-wee-guide.html">
+<meta property="og:title" content="ZFS:从10GbpsS升级到40Gbps网络">
+<meta property="og:url" content="https://blog.xjn819.com/post/ZFS-Upgrade-from-10Gbps-to-40Gbps-network.html">
 <meta property="og:site_name" content="Xjn&#39;s Blog">
-<meta property="og:description" content="背景Apple TV（下文简称TV）相比国内很多机顶盒，比较干净，适合看NAS上的电影视，以及各种流媒体。   相反，对爱优腾支持比较不好。当然因为我一直使用香港APPLE ID，是有优酷和爱奇艺的，自制剧内容都是同步的，甚至有更多专做海外的国语内容，却无法在国内过审的(e.g.逆局)；会员体系不一样，你买了后无法在国内的爱优上使用。提一句，IPTV有很多办法在TV上实现，这个不是问题，本文也">
+<meta property="og:description" content="0 介绍自TrueNas Core更新至FreeBSD 13，TrueNas下的两大产品Scale和Core都已经使用上了OpenZFS。想着既然如此，就直接转投OpenZFS用上Linux了，但考虑到之前一直使用SolarisZFS，可能会对OpenZFS不太熟悉，就小心翼翼的先使用了一下TrueNAS Scale上手试试。体验下来我个人不是很喜欢用Docker，更加不会喜欢用K3S了，也没有L">
 <meta property="og:locale">
-<meta property="article:published_time" content="2022-05-08T14:27:50.000Z">
-<meta property="article:modified_time" content="2022-11-28T09:00:55.968Z">
+<meta property="og:image" content="https://s2.loli.net/2023/01/08/friEK6GxgNmYF2T.jpg">
+<meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
+<meta property="article:modified_time" content="2023-01-08T14:06:39.164Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/01/08/friEK6GxgNmYF2T.jpg">
 
 	<meta name="theme-color" content="#212121">
 	<meta name="theme-color-rgb" content="33,33,33">
@@ -593,13 +595,13 @@
 	<article class="post post-full card bg-white shadow-sm border-0 ">
 	<header class="post-header text-center">
 		
-		<a class="post-title" href="/post/apple-tv-wee-guide.html">Apple TV小指南</a>
+		<a class="post-title" href="/post/ZFS-Upgrade-from-10Gbps-to-40Gbps-network.html">ZFS:从10GbpsS升级到40Gbps网络</a>
 		<div class="post-meta">
 			
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2022-5-8 22:27:50 | 编辑于 2022-11-28 17:00:55">2022-5-8 22:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-8 22:06:39">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -616,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							1.2k 字
+							1k 字
 						</div>
 					
 						
@@ -624,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							5 分钟
+							4 分钟
 						</div>
 					
 		</div>
@@ -632,127 +634,67 @@
 	</header>
 
 	<div class="post-content" id="post_content">
-		<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>Apple TV（下文简称TV）相比国内很多机顶盒，比较干净，适合看NAS上的电影视，以及各种流媒体。</p>
+		<h1 id="0-介绍"><a href="#0-介绍" class="headerlink" title="0 介绍"></a>0 介绍</h1><p>自TrueNas Core更新至FreeBSD 13，TrueNas下的两大产品Scale和Core都已经使用上了OpenZFS。想着既然如此，就直接转投OpenZFS用上Linux了，但考虑到之前一直使用SolarisZFS，可能会对OpenZFS不太熟悉，就小心翼翼的先使用了一下TrueNAS Scale上手试试。体验下来我个人不是很喜欢用Docker，更加不会喜欢用K3S了，也没有LXC，或者任何平替BSD Jail的东西，用着不是很舒服，等有空把这玩意换了。</p>
+<p>家里当时装修的时候是布置了MPO数据线的，当时有2条，但不知道为什么只有一条能通网络，导致我有段时间一直是NAS和MAC电脑端对端连着，用着也还行就没想太多。刚好早些时候拼车买了Mellanox SX6036，疫情闲赋在家就拿出来换了一套猫扇，NAS连接Mellanox SX6036再连接家里的10gb交换机Mikrotik CRS312，至此把40GB网络并入整个家庭内网。<br></br></p>
+<h1 id="1-硬件添置"><a href="#1-硬件添置" class="headerlink" title="1 硬件添置"></a>1 硬件添置</h1><ul>
+<li><p>SX6036交换机，这个交换机根据成新，国内闲鱼差不多2000-3000左右，但是海淘Ebay大概在800-1200左右，邮费非常贵，如果有拼车最好了，需要授权才能使用以太网ETH模式，这个可以找淘宝或者Ebay上购买License或者破解，不是很贵。</p>
+</li>
+<li><p>HP 544+ 40GB ETH 56GB IB QSFP网卡。这个卡闲鱼加转接卡一起卖大概在80-120之间，非常便宜。同样的，便宜一般来说带来了很多坑，等下会写这张卡的踩坑记录。</p>
+</li>
+<li><p>Chelsio T580 40GB 网卡。这张卡我之前800左右买的，闲鱼现在我看有的1500，有的1000，看运气吧。此卡是唯一一张可以在MacOS下驱动的40GB PCIE网卡。此卡目前的驱动只支持到MacOS Big Sur。因Monterey开始，苹果使用了DriverKit驱动，所以只能等Chelsio是否愿意去做DriverKit。</p>
+</li>
+<li><p>AOC 40GB QSFP网线。这个我闲鱼买的橘色的细线，价格大概在30-50元每米，比较方便理线，如果是DAC铜缆价格会更加便宜，但实在是太粗难以梳理。对了，这类线都带了模块的，你不需要再另购入模块。</p>
+</li>
+<li><p>Mellanox MAM1Q00A-QSA-655874-B21 QSFP to SFP+ 转接头。闲鱼价格在100-150之间。这个转接头方便你把10gb的SFP+DAC线的其中一个头转换成QSFP，从而将一台10GB交换机和40GB交换机相连。</p>
+</li>
+</ul>
 </br>
 
-<p>相反，对爱优腾支持比较不好。当然因为我一直使用香港APPLE ID，是有优酷和爱奇艺的，自制剧内容都是同步的，甚至有更多专做海外的国语内容，却无法在国内过审的(e.g.逆局)；会员体系不一样，你买了后无法在国内的爱优上使用。提一句，IPTV有很多办法在TV上实现，这个不是问题，本文也不会提及。</p>
-</br>
-
-
-<p>在我想好好使用TV的利益驱动下，这篇文章就打算写写怎么搞Dolby Vision以及各种声音拓展。</p>
+<h2 id="1-1-非必选添置"><a href="#1-1-非必选添置" class="headerlink" title="1.1 非必选添置"></a>1.1 非必选添置</h2><ul>
+<li><p>今年夏天实在太热了，导致我的NAS只能满转吹来让硬盘温度稍微好一点，因此，我把原装的846机箱的4个8CM风扇卡槽换成了3个12CM的风扇卡槽，购买了3个追风者T30风扇。8CM兼顾PWM并且转速范围大，噪音低的实在太难买了，换成这款12CM的体验下来效果非常好！注意，此风扇需要拨动风扇中央的开关到ADVANCE模式才能让它的转速至高到3000转。卡槽是找淘宝用PETG材质3D打印的。打印文件购买链接<a target="_blank" rel="noopener" href="https://www.thetylergibson.com/supermicro-846-120mm-fan-shroud/">https://www.thetylergibson.com/supermicro-846-120mm-fan-shroud/</a> 这是人家的劳动成果，我觉得免费分享给大家并不道义。</p>
+</li>
+<li><p>很早之前也购买了SAS3的背板+SAS3的HBA卡，这样在20个硬盘能勉强达到40GB。当然如果无法购买到，或者硬盘数量达不到，我认为购买1-2个SSD组成Raid0，并且写个脚本定期把Raid0的dataset通过<code>ZFS send</code>备份到主池的HDD中也是不错的选择。因为硬盘挖矿潮，超微846的仿冒机箱在淘宝闲鱼盛行，请务必辨别是否是原装！！！同样的，如果非原装846机箱，上面说的3D打印文件也不应该不适用的！</p>
 <blockquote>
-<p>此文中指的TV是2021年发布的Apple TV 4K。<br>2022年发布的新款TV除了支持三星的HDR10+之外，在功能性上与2021年发布的没有差异。但硬件和价格上的差别，请自行甄辨。</p>
+<p>哎，硬盘矿潮之前，这些配件本来都很便宜，现在是原装买不到，仿冒的满大街=。=</p>
 </blockquote>
-<h1 id="TV与电视机的适配"><a href="#TV与电视机的适配" class="headerlink" title="TV与电视机的适配"></a>TV与电视机的适配</h1><p>一般情况下TV只要电视有A/V或者HDMI接口既可以使用，但是你需要考虑如下问题：</p>
-<ul>
-<li>你是否认为TV和电视，甚至一个回音壁，三个遥控器太多太烦了。见<code>TV与电视CEC</code></li>
-<li>你是否需要通过TV播放单层的Dolby Vision(aka 杜比视界)。见<code>TV与Dolby Vision</code></li>
-<li>你是否需要通过TV播放超过5.1声道的音频(e.g. Dolby TrueHD 7.1)。见<code>TV与音频</code></li>
+</li>
+<li><p>选购！ ATTO ThunderLink 40GB 雷电网卡。这张卡是目前唯一一张支持到40GB，并且受到最新系统支持的雷电网卡。价格太贵了，所以我就提一嘴。用了一下这张卡其实只能跑20GB，因为雷电的数据传输本身只有20GB。</p>
+</br>
+
+</li>
 </ul>
-<h2 id="TV与电视CEC"><a href="#TV与电视CEC" class="headerlink" title="TV与电视CEC"></a>TV与电视CEC</h2><p>CEC功能是HDMI1.3b开始提出的一项功能，自行搜索具体原理，大概就是电视遥控器也能通过CEC功能口直机顶盒。因此，在标注有HDMI CEC功能的电视机上，你可以不再使用TV的遥控器。</p>
-<p>尽管CEC应该是一个比较标准的功能，各个厂家也许因自己利益驱使，或者技术上的问题，并不能完全体验一个遥控器控制所有设备(e.g.LG)。目前看来只有日本厂商在CEC上做的比较开放(e.g.Sony)。</p>
+<h1 id="2-管理SX6036"><a href="#2-管理SX6036" class="headerlink" title="2 管理SX6036"></a>2 管理SX6036</h1><p>通过rj45网线连接交换机的mgt口，登陆其后台IP即可管理。若你不知道管理口IP，你需要用Console线（rj45 to usb）连接，进入向导模式设置管理口ip等，这个可以看官网的说明书，这里不细说这些没用的了，说一下几个小坑。</p>
+<p>如果使用SFP光缆配合购物清单中的SFP to QSFP转换头，连接10gb交换机和SX6036，请在后台的WEB UI中将连接口的速率手动协商至10GB，不然无法通信。<br>如果你有一条QSFP一分四SFP的线，请根据说明书关闭其中一个口，才能使用。例如，我关闭了SX6036的1口，则4口可以插入这条QSFP一分四的线，具体请查阅说明书来找到关闭对应口。关闭端口必须使用Console线连接才能更改！</p>
+</br>
+
+<h2 id="2-2-更换SX6036交换机的风扇"><a href="#2-2-更换SX6036交换机的风扇" class="headerlink" title="2.2 更换SX6036交换机的风扇"></a>2.2 更换SX6036交换机的风扇</h2><p>此款交换机有一个可灵活拆卸的风扇盒，风扇盒中有4个4CM的风扇；电源中有一个4Cm的风扇，所有的风扇都是PWM的。我购买了5个猫头鹰NF-A4x20 FLX 3pin风扇，因为我觉得我只要接地线和12v电源两个pin就够了，这风扇满转都听不到声音，我更加不会有心思登陆到SX6036的后台通过CLI更改风扇转速。<br>原装风扇接口不是像主板上一样的4pin，风扇盒的4pin定义如下：</p>
+<p>|   红    |     +12v     |<br>|   蓝    |     RPM      |<br>|   黄    |     PWM      |<br>|   黑    |   Black GND  |</p>
+<p>我只把PLX版本猫头鹰的红黑两根针接上去了；如果你购买了PWM版本的猫头鹰风扇，这款猫扇的4pin定义如下：</p>
+<p>|   蓝    |     PWM      |<br>|   绿    |     RPM      |<br>|   黄    |     +12v     |<br>|   黑    |   Black GND  |</p>
+<p>是否更换PSU电源风扇请自行考虑安全性！！！个人主观认为300W的电源换个风扇问题不大，不做参考依据！电源上4pin定义如下：</p>
+<p>|   蓝    |     PWM      |<br>|   黄    |     RPM      |<br>|   红    |     +12v     |<br>|   黑    |   Black GND  |</p>
 <blockquote>
-<p>值得一提的是，TV支持红外学习，但是小米电视的遥控器是蓝牙的。</p>
+<p>猫头鹰的风扇螺丝孔和PSU的螺丝孔大小不一样，我直接用自带的橡皮固定了，见效果图。<br>此电源好像有其他几个版本，最好用电笔自己对照一下。</p>
 </blockquote>
-</br>
-
-
-<h2 id="TV与Dolby-Vision"><a href="#TV与Dolby-Vision" class="headerlink" title="TV与Dolby Vision"></a>TV与Dolby Vision</h2><p>一部支持Dolby Vision的电影，一般由BL+EL+RPU所组成。当视频中只含有BL+RPU，我们叫做单层杜比视界。这种视频一般通过杜比的Profile 5进行封装导出MKV格式（极少数蓝光原盘也有单层）。<br>目前，TV只支持BL+RPU的Dolby Vision，并且原生只支持profile 5封装的，当然一些App(e.g.Infuse)可以通过它自己的拓展播放Profile 7。</p>
+<p>若使用PWM的风扇可以在SSH或者Console界面输入如下命令来控制转速：</p>
+<pre><code class="bash">enable  #进入高级模式
+fae mlxi2c set_fan set_fan /FAN/FAN 1 65    #1代表FAN 1; 65为转速
+fae mlxi2c set_fan set_fan /PS1/FAN 1 65</code></pre>
 <blockquote>
-<p>目前在整个苹果生态里，Infuse可能是唯一一个能够播放Dolby Profile 5.2封装的软件。</p>
+<p>更换风扇后，你可能会看到sx6036的指示灯变红，其实不影响使用。若觉得不舒服，可以写个定时脚本，通过可以带密码的sshpass去后台清理掉关于风扇相关的报错。</p>
 </blockquote>
-<p>双层杜比则是指BL+EL+RPU所组成的杜比视频，目前看来，并没有机顶盒支持它，因为涉及到dolby私钥，也没啥好破解的。市面上说支持双层杜比的安卓机顶盒，大概率是通过双层转单层实现的（不能说死，万一这个安卓厂商愿意给杜比付钱呢）。</p>
-<p>总结：TV无法播放双层杜比，但是可以转回单层，你可能需要购买蓝光碟机来播放双层杜比。</p>
-<h2 id="TV与音频"><a href="#TV与音频" class="headerlink" title="TV与音频"></a>TV与音频</h2><p>音频种类非常繁杂，我尽可能概括，也许有错误，疏漏，时效性问题，请留言讨论（先甩锅）。</p>
-<p>电子音频被定义为Pulse Coded Modulation (PCM)，这是一种无损(lossless)，无压缩(uncompressed)，原始记录的一种电子音频格式。</p>
-<blockquote>
-<p>PCM可以与.bmp格式图片作为类比</p>
-</blockquote>
-</br>
+<p>效果图：<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://s2.loli.net/2023/01/08/friEK6GxgNmYF2T.jpg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="IMG_4217.jpg"></p>
 
-
-<p>我们现在的手机通话，是由声波(sound waves)转换成音频信号(analogue electrical audio signals)，这些信号再转换成PCM。</p>
-</br>
-
-<p>在信号到PCM的转换过程中，声波被分割成各种网格，网格中块状的数量，被定义成了bits(e.g.16-bits)，越多的bits代表着它能更精确的反应声音的原始程度，你可以参考4K图片比2K图片更加清晰是因为pixels更多。</p>
-<p>同样在转换的过程中，不断的重复抓取声音是为了更精确的抓住声音的改变，比如44,000次每秒的抓取，等于是44kHz。你可以参考电影或者游戏中的fps，60fps的电影，你能感觉到更加流畅的观感效果。</p>
-<p>综上所述，一个16bits+44kHz的音频，意味着在一个声道中704,000 bits每秒的输出。</p>
-</br>
-
-
-<p>相反，从电子音频格式到信号转换(Digital to Analog Converter;aka, DAC)，是把PCM重新转换成音频信号，我们打电话的时候才能听到。这种DAC装置可以是你的电视，可以是声卡。</p>
-<p>说到底，电子音频转换成PCM，再通过DAC装置让你听到，或者让电话另一头的人听到。</p>
-</br>
-
-
-<p>我们一般会下载到带多个声音文件的电影，这可能是为了兼容性，多语言，讲解等需求。尤其是多声道的情况下，这种无损音频所占据的空间和比特率可能会很大，类似于我们想把超级大的.bmp图片转换成.jpg。考虑到压缩可能带来损耗，因此就有了各种codec。<br>Codec包含了解码和编码两部分，比如你把一个文件通过ZIP压缩了，但解压可以是不同的7ZIP,好压等软件，类比于各种codec解码。<br>音频Codec压缩/解压缩主要分为两种：</p>
-<ul>
-<li><p>有损(compressed, lossy)：牺牲音频质量，来减少占用空间，主要是Dolby Digital(AC3)以及另一家Digital Theatre Systems (DTS)在使用。</p>
-</li>
-<li><p>无损(compressed, lossless)：保护原有的音频，但压缩率偏低，一般就是Dolby TrueHD 或者 DTS HD Master Audio (MA)在用。可以参考.png的无损压缩，或者直接把.bmp文件打包成zip。</p>
-</li>
-</ul>
-<p>电影文件中DTS-HD MA是被编码成DTS的，并且DTS-HD MA，作为拓展层被包含在一起。这样做的好处是，当你的设备支持DTS-HD MA则可以播放音频，如果不支持，则自动回落到DTS上。Dolby TrueHD同样用了这种拓展层的方法去解决兼容性问题。</p>
-<p>打个比方，一本电影中你可能看到如下的音频列表：</p>
-<ul>
-<li><p>#1 [uncompressed, lossless] PCM 5.1 (English)</p>
-</li>
-<li><p>#2 [compressed, lossless] DTS-HD Master Audio 5.1 (English)</p>
-</li>
-<li><p>#3 [compressed, lossy] Dolby Digital 5.1 (French)</p>
-</li>
-<li><p>#4 [compressed, lossy] Dolby Stereo 2.0 (Mandarin)</p>
-<ul>
-<li><p>#2/3/4是压缩的，需要被解码codec解压成PCM再发送到DAC装置，#1已经是PCM了，可以直接到DAC。</p>
-</li>
-<li><p>#1/2都是无损的，最终被转换成PCM的。那为什么要放两个无损的同一语言的5.1呢。也许是PCM 5.1占据的空间太大，所以它放了一个16bits/44 kHZ的PCM，然后DTS-HD MA占据的空间小，可以再放一个24-bits/96kHz的无损音频，用户就多了一个选择。</p>
-</li>
-</ul>
-</li>
-</ul>
-<p>接着我们来说一下主要的两大根据空间定位为依据的音频格式：Dolby Atmos 和 DTS:X。在电影中，如果有一声枪响，这类音频格式会根据本地音响的位置，比如左后方，上中下的某一个喇叭发出来，让用户有更好的场景代入感。<br>Dolby Atmos或者DTS:X都不是codec，也不是单独的音轨，他们是音频拓展层上的东西，像之前说的那样，旧设备不支持，则不播放，当支持时，使用这种空间定位的meta信息。一般来说，常见的拓展层有如下几个：</p>
-<ul>
-<li>Dolby TrueHD + Dolby Atmos - 常见于蓝光原盘或者REMUX</li>
-<li>DTS-HD Master Audio + DTS:X - 同样常见于蓝光原盘或者REMUX</li>
-<li>Dolby Digital Plus + Dolby Atmos - 常见于流媒体 (Netflix etc)</li>
-<li>Dolby MAT 2.0 + Dolby Atmos - 常见于游戏主机或者TV </li>
-</ul>
-<p>我们用TV打开一个视频时，它一定会检测音轨，通过解码器首先把声音还原成PCM，或者音轨就是PCM则不需要。这里要求TV有这样的Codec或者APP有，或者你的解码在服务端（e.g plex)。就像别人给你了一个.psd格式的图片，是你让你同事的电脑去打开后转换成你电脑上就有的格式(e.g png)给你，或者是你自己下载Photoshop。<br>根据标准，所有的DVD碟机，或者蓝光碟机，都必须拥有Dolby Digital的Codec，但DTS-HD MA则没有明文规定。理论上，我们支持用终端机器来观影，可以得到最好的音频体验，但更优质的音频，则需要更大的带宽，无论S/PDIF 接口 或者 HDMI ARC都受限于自身带宽，最多放出2声道的PCM，或者5.1声道压缩音频，具体来说，S/PDIF或者HDMI ARC</p>
-<ul>
-<li><p>支持</p>
-<ul>
-<li>PCM Stereo (2.0声道)</li>
-<li>Dolby Digital (5.1声道）</li>
-<li>Dolby Digital Plus (5.1声道 也许只有HDMI ARC支持)</li>
-<li>DTS (5.1声道)</li>
-</ul>
-</li>
-<li><p>不支持</p>
-<ul>
-<li>Dolby TrueHD </li>
-<li>DTS-HD Master Audio </li>
-</ul>
-</li>
-</ul>
-<p>在这种限制下，HDMI推出了eARC，在HDMI eARC模式下，你可以享受到更多7声道甚至11声道的体验，当然目前似乎并没有11声道的电影。TV在通过eARC后，可以播放出更多声道，因此，如果你还没有买电视，并且想用TV的话，请购买带有HDMI eARC的电视机。</p>
-<p>TV的工作机制如下：</p>
-<ul>
-<li>它原生支持的codec包括<ul>
-<li>Dolby Digital</li>
-<li>Dolby Digital Plus (包括 Atmos)</li>
-<li>Dolby TrueHD (但不支持带有Atmos的)</li>
-</ul>
-</li>
-<li>它原生不支持:<ul>
-<li>DTS 或者 DTS-HD MA，主要就是没买license。</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p>但一些APP自带了Codec来解决一些问题(e.g. Infuse)。</p>
-</blockquote>
-<p>当TV碰到这些不支持的格式，包括Dolby TrueHD Atmos或者带有DTS:X的DTS-HD MA，它会自动转成PCM然后通过2.0/5.1/7.1声道播放出来，丢弃空间Meta数据。</p>
-<p>总结一下，你需要一个支持eARC的音响(e.g Samsung Q950)，以及支持eARC的电视机，配合TV，播放出最高带有7.1声道的电影，并且无法享受到ATMOS或者DTS:X。</p>
+<p> 待传…..</p>
+<h2 id="3-网卡过坑"><a href="#3-网卡过坑" class="headerlink" title="3 网卡过坑"></a>3 网卡过坑</h2><p>说一下HP 544+和Chelsio T580这两张卡</p>
+<p>2.1 HP Mellanox 544+<br>先说一下，如果你不太想折腾，请购买原装卡，最好是还在维护的Mellanox 4代以上！</p>
+<p>待更新////////////////HP544+这张卡其实是Mellanox CX354a-FCCT的套娃卡，但这张卡并不能刷入原装固件，使用HP官网最新的固件在TrueNas下无法使用，请刷入这个老版本固件xxxxxxxxxxxxxxxxxxx以便在TrueNAS中使用。<br>另外即便你使用普通的Linux发行版，这张卡的驱动都已经deprecated了，插上后可以上网之类的，但是如果你想使用更高级的功能，必须下载Nvidia的OFED驱动进行编译。这个驱动看样子也不会再更新了，不知道哪天还能不能编译出来，但最烦的是每次LINUX内核升级，你都要重新编译。我这两天还在用他自带的SR-IOV功能，目前还没有问题出现。</p>
+<p>刷卡过程。。。</p>
+<p>卡改模式：</p>
+<p>2.2 Chelsio T580</p>
+<p>待更新///////////////</p>
+<p>这张卡直接在官网下载他的驱动，是一个PKG文件，在MacOS下通过命令：xxxxxxxxxxxxxx获得此包里的kext文件，其中xcgb则是这个卡的MacOS驱动了。如果是黑苹果，你可以通过OpenCore直接加载即可。注意此卡目前最高支持到Big Sur。</p>
+<p>这个卡有一个很大的坑就是超级超级超级热！我对温度其实不是很敏感，但这张卡温度过高会导致掉光模块或者掉卡就很烦了。目前看来，这张卡一个风扇都不够，你需要2-4个风扇全面覆盖它才可以，如果有条件的话，水冷。注意，拆卸此卡时小心灼伤！</p>
 
 	</div>
 
@@ -805,7 +747,7 @@
 				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
 			</button>
 		</a>
-		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://blog.xjn819.com/post/apple-tv-wee-guide.html&text=Apple TV小指南" tooltip="分享到 Telegram">
+		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://blog.xjn819.com/post/ZFS-Upgrade-from-10Gbps-to-40Gbps-network.html&text=ZFS:从10GbpsS升级到40Gbps网络" tooltip="分享到 Telegram">
 			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
 				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
 			</button>
@@ -822,11 +764,11 @@
 </div>
 <script type="text/javascript">
 	socialShare("#share", {
-	    title : 'Apple TV小指南',
-	    description : '背景Apple TV（下文简称TV）相比国内很多机顶盒，比较干净，适合看NAS上的电影视，以及各种...',
+	    title : 'ZFS:从10GbpsS升级到40Gbps网络',
+	    description : '0 介绍自TrueNas Core更新至FreeBSD 13，TrueNas下的两大产品Scale和...',
 	    wechatQrcodeTitle : "分享到微信",
 	    wechatQrcodeHelper : '微信扫描二维码',
-	    source : 'https://blog.xjn819.com/post/apple-tv-wee-guide.html'
+	    source : 'https://blog.xjn819.com/post/ZFS-Upgrade-from-10Gbps-to-40Gbps-network.html'
 	});
 	$("#share_show")[0].onclick = function(){
 		$("#share_container").addClass("opened");
@@ -890,7 +832,7 @@
 </div>
 
 
-<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"><span class="page-navigation-extra-text"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>上一篇</span><a href="/post/ZFS-Upgrade-from-10Gbps-to-40Gbps-network.html" rel="prev"> ZFS:从10GbpsS升级到40Gbps网络</a></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/post/Home-freenas-build.html" rel="next"> 家用万兆FreeNAS组建</a></div></div>
+<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/post/apple-tv-wee-guide.html" rel="next"> Apple TV小指南</a></div></div>
 
 
 
