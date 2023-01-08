@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-01-08T16:01:21.895Z">
+<meta property="article:modified_time" content="2023-01-08T16:11:31.358Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-9 0:01:21">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-9 0:11:31">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -667,7 +667,7 @@
 <p>如果使用SFP光缆配合购物清单中的SFP to QSFP转换头，连接10gb交换机和SX6036，请在后台的WEB UI中将连接口的速率手动协商至10GB，不然无法通信。<br>如果你有一条QSFP一分四SFP的线，请根据说明书关闭其中一个口，才能使用。例如，我关闭了SX6036的1口，则4口可以插入这条QSFP一分四的线，具体请查阅说明书来找到关闭对应口。关闭端口必须使用Console线连接才能更改！</p>
 </br>
 
-<h2 id="2-2-更换SX6036交换机的风扇"><a href="#2-2-更换SX6036交换机的风扇" class="headerlink" title="2.2 更换SX6036交换机的风扇"></a>2.2 更换SX6036交换机的风扇</h2><p>此款交换机有一个可灵活拆卸的风扇盒，风扇盒中有4个4CM的风扇；电源中有一个4Cm的风扇，所有的风扇都是PWM的。我购买了5个猫头鹰NF-A4x20 FLX 3pin风扇，因为我觉得我只要接地线和12v电源两个pin就够了，这风扇满转都听不到声音，我更加不会有心思登陆到SX6036的后台通过CLI更改风扇转速。<br>原装风扇接口不是像主板上一样的4pin，风扇盒的4pin定义如下：</p>
+<h2 id="2-2-更换SX6036交换机的风扇"><a href="#2-2-更换SX6036交换机的风扇" class="headerlink" title="2.2 更换SX6036交换机的风扇"></a>2.2 更换SX6036交换机的风扇</h2><p>此款交换机有一个可灵活拆卸的风扇盒，风扇盒中有4个4CM的风扇；电源中有一个4Cm的风扇，所有的风扇都是PWM的。我购买了5个猫头鹰NF-A4x20 FLX 3pin风扇，因为我觉得只要接地线和12v电源两个pin就够了，这风扇满转都听不到声音，我更加不会有心思登陆到SX6036的后台通过CLI更改风扇转速。<br>原装风扇接口不是像主板上一样的4pin，风扇盒的4pin定义如下：</p>
 <table>
 <thead>
 <tr>
@@ -692,7 +692,7 @@
 <td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Black GND&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
 </tr>
 </tbody></table>
-<p>我只把PLX版本猫头鹰的红黑两根针接上去了；如果你购买了PWM版本的猫头鹰风扇，这款猫扇的4pin定义如下：</p>
+<p>我只把PLX版本猫头鹰的红黑两根针接上去了；如果你购买了PWM版本的猫头鹰A4风扇，这款猫扇的4pin定义如下：</p>
 <table>
 <thead>
 <tr>
@@ -764,7 +764,7 @@ fae mlxi2c set_fan set_fan /PS1/FAN 1 65</code></pre>
 <ul>
 <li><p>从官网下载最新版的tar.gz压缩包</p>
 </li>
-<li><p>解压压缩包tar -zxvf ChelsioUwire-x.xx.x.x.tar.gz</p>
+<li><p>解压压缩包<code>tar -zxvf ChelsioUwire-x.xx.x.x.tar.gz</code></p>
 </li>
 <li><p>安装rpm <code>sudo apt install rpm</code></p>
 </li>
@@ -773,14 +773,14 @@ fae mlxi2c set_fan set_fan /PS1/FAN 1 65</code></pre>
 </li>
 <li><p>确认你kernel sources的路径，应该是<code>usr/src/linux-headers-5.xx.xx-x-pve/</code></p>
 </li>
-<li><p>回到刚才解压缩好的文件夹里，修改如下Makefile:</p>
+<li><p>回到刚才解压缩好的文件夹里，修改Makefile:</p>
 <pre><code class="bash">DEBIAN := 1
 PDEB := 1
 DISTRO := Debian</code></pre>
 </li>
 <li><p>在当前目录编译驱动 <code>make KDIR=/usr/src/linux-headers-5.xx.xx-x-pve/</code></p>
 </li>
-<li><p>完成后你可以使用此卡的高级功能例如SR-IOV等。</p>
+<li><p>完成后你可以使用此卡的高级功能 e.g.SR-IOV, etc.,</p>
 <blockquote>
 <p>每次更新PVE你都需要重新编译驱动。</p>
 </blockquote>
@@ -792,7 +792,7 @@ DISTRO := Debian</code></pre>
 </ul>
 <p>如果是黑苹果，你可以通过OpenCore直接加载即可。注意此卡目前最高支持到Big Sur。</p>
 <blockquote>
-<p>这个卡有一个很大的坑就是超级超级超级热！我对温度其实不是很敏感，但这张卡温度过高会导致掉光模块或者掉卡就很烦了。目前看来，这张卡一个风扇都不够，你需要2-4个风扇全面覆盖它才可以，如果有条件的话，水冷。注意，拆卸此卡时小心灼伤！</p>
+<p>这个卡超级超级超级热！温度过高会导致掉光模块或者掉卡就很烦了。这张卡一个风扇都不够，你需要2-4个风扇全面覆盖它才可以，如果有条件的话，水冷。<br>注意，拆卸此卡时小心灼伤！</p>
 </blockquote>
 
 	</div>
