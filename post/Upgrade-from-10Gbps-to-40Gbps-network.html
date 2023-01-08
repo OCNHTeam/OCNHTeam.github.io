@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-01-08T15:06:43.215Z">
+<meta property="article:modified_time" content="2023-01-08T16:01:21.895Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-8 23:06:43">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-9 0:01:21">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							2.6k 字
+							2.8k 字
 						</div>
 					
 						
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							12 分钟
+							13 分钟
 						</div>
 					
 		</div>
@@ -756,14 +756,44 @@ fae mlxi2c set_fan set_fan /PS1/FAN 1 65</code></pre>
 
 <p> 待传…..</p>
 <h2 id="3-网卡过坑"><a href="#3-网卡过坑" class="headerlink" title="3 网卡过坑"></a>3 网卡过坑</h2><p>说一下HP 544+和Chelsio T580这两张卡</p>
-<p>2.1 HP Mellanox 544+<br>先说一下，如果你不太想折腾，请购买原装卡，最好是还在维护的Mellanox 4代以上！</p>
+<h3 id="3-1-HP-Mellanox-544"><a href="#3-1-HP-Mellanox-544" class="headerlink" title="3.1 HP Mellanox 544+"></a>3.1 HP Mellanox 544+</h3><p>先说一下，如果你不太想折腾，请购买原装卡，最好是还在维护的Mellanox 4代以上！</p>
 <p>待更新////////////////HP544+这张卡其实是Mellanox CX354a-FCCT的套娃卡，但这张卡并不能刷入原装固件，使用HP官网最新的固件在TrueNas下无法使用，请刷入这个老版本固件xxxxxxxxxxxxxxxxxxx以便在TrueNAS中使用。<br>另外即便你使用普通的Linux发行版，这张卡的驱动都已经deprecated了，插上后可以上网之类的，但是如果你想使用更高级的功能，必须下载Nvidia的OFED驱动进行编译。这个驱动看样子也不会再更新了，不知道哪天还能不能编译出来，但最烦的是每次LINUX内核升级，你都要重新编译。我这两天还在用他自带的SR-IOV功能，目前还没有问题出现。</p>
 <p>刷卡过程。。。</p>
 <p>卡改模式：</p>
-<p>2.2 Chelsio T580</p>
-<p>待更新///////////////</p>
-<p>这张卡直接在官网下载他的驱动，是一个PKG文件，在MacOS下通过命令：xxxxxxxxxxxxxx获得此包里的kext文件，其中xcgb则是这个卡的MacOS驱动了。如果是黑苹果，你可以通过OpenCore直接加载即可。注意此卡目前最高支持到Big Sur。</p>
+<h3 id="3-2-Chelsio-T580"><a href="#3-2-Chelsio-T580" class="headerlink" title="3.2 Chelsio T580"></a>3.2 Chelsio T580</h3><p>Chelsio对FreeBSD的支持特别好，我想因此他们也愿意做一下MacOS。这张卡在linux下的驱动比较麻烦，随手写一下我在 Proxmox VE 7下面驱动此卡的方法：</p>
+<ul>
+<li><p>从官网下载最新版的tar.gz压缩包</p>
+</li>
+<li><p>解压压缩包tar -zxvf ChelsioUwire-x.xx.x.x.tar.gz</p>
+</li>
+<li><p>安装rpm <code>sudo apt install rpm</code></p>
+</li>
+<li><p>安装pve的linux headers </p>
+<pre><code class="bash">apt install pve-headers-`uname -r`</code></pre>
+</li>
+<li><p>确认你kernel sources的路径，应该是<code>usr/src/linux-headers-5.xx.xx-x-pve/</code></p>
+</li>
+<li><p>回到刚才解压缩好的文件夹里，修改如下Makefile:</p>
+<pre><code class="bash">DEBIAN := 1
+PDEB := 1
+DISTRO := Debian</code></pre>
+</li>
+<li><p>在当前目录编译驱动 <code>make KDIR=/usr/src/linux-headers-5.xx.xx-x-pve/</code></p>
+</li>
+<li><p>完成后你可以使用此卡的高级功能例如SR-IOV等。</p>
+<blockquote>
+<p>每次更新PVE你都需要重新编译驱动。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="3-2-1-Chelsio-T580在MacOS下的驱动。"><a href="#3-2-1-Chelsio-T580在MacOS下的驱动。" class="headerlink" title="3.2.1 Chelsio T580在MacOS下的驱动。"></a>3.2.1 Chelsio T580在MacOS下的驱动。</h3><p>这张卡直接在官网下载他的驱动，是一个PKG文件，点击安装就行了，最高只支持到Big Sur，如果遇到签名过期，断网修改时间试试。<br>当然如果你希望干净一点安装，在MacOS下通过命令<code>pkgutil --expand-full [pkg] [dir]</code>获得PKG内的KEXT，其中cxgb.kext是Chelsio T580的驱动，cxgb3.kext是T3xx系列的驱动。</p>
+<ul>
+<li>下载<a href="/tools/cxgb.kext.zip">cxgb.kext</a>，</li>
+</ul>
+<p>如果是黑苹果，你可以通过OpenCore直接加载即可。注意此卡目前最高支持到Big Sur。</p>
+<blockquote>
 <p>这个卡有一个很大的坑就是超级超级超级热！我对温度其实不是很敏感，但这张卡温度过高会导致掉光模块或者掉卡就很烦了。目前看来，这张卡一个风扇都不够，你需要2-4个风扇全面覆盖它才可以，如果有条件的话，水冷。注意，拆卸此卡时小心灼伤！</p>
+</blockquote>
 
 	</div>
 
