@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/friEK6GxgNmYF2T.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-01-08T14:06:39.164Z">
+<meta property="article:modified_time" content="2023-01-08T14:13:07.148Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-8 22:06:39">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-8 22:13:07">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							1k 字
+							1.1k 字
 						</div>
 					
 						
@@ -668,11 +668,80 @@
 </br>
 
 <h2 id="2-2-更换SX6036交换机的风扇"><a href="#2-2-更换SX6036交换机的风扇" class="headerlink" title="2.2 更换SX6036交换机的风扇"></a>2.2 更换SX6036交换机的风扇</h2><p>此款交换机有一个可灵活拆卸的风扇盒，风扇盒中有4个4CM的风扇；电源中有一个4Cm的风扇，所有的风扇都是PWM的。我购买了5个猫头鹰NF-A4x20 FLX 3pin风扇，因为我觉得我只要接地线和12v电源两个pin就够了，这风扇满转都听不到声音，我更加不会有心思登陆到SX6036的后台通过CLI更改风扇转速。<br>原装风扇接口不是像主板上一样的4pin，风扇盒的4pin定义如下：</p>
-<p>|   红    |     +12v     |<br>|   蓝    |     RPM      |<br>|   黄    |     PWM      |<br>|   黑    |   Black GND  |</p>
+<table>
+<thead>
+<tr>
+<th align="center">颜色</th>
+<th align="center">定义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">红</td>
+<td align="center">+12v</td>
+</tr>
+<tr>
+<td align="center">蓝</td>
+<td align="center">RPM</td>
+</tr>
+<tr>
+<td align="center">黄</td>
+<td align="center">PWM</td>
+</tr>
+<tr>
+<td align="center">黑</td>
+<td align="center">Black GND</td>
+</tr>
+</tbody></table>
 <p>我只把PLX版本猫头鹰的红黑两根针接上去了；如果你购买了PWM版本的猫头鹰风扇，这款猫扇的4pin定义如下：</p>
-<p>|   蓝    |     PWM      |<br>|   绿    |     RPM      |<br>|   黄    |     +12v     |<br>|   黑    |   Black GND  |</p>
+<table>
+<thead>
+<tr>
+<th align="center">颜色</th>
+<th align="center">定义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">蓝</td>
+<td align="center">PWM</td>
+</tr>
+<tr>
+<td align="center">绿</td>
+<td align="center">RPM</td>
+</tr>
+<tr>
+<td align="center">黄</td>
+<td align="center">+12v</td>
+</tr>
+<tr>
+<td align="center">黑</td>
+<td align="center">Black GND</td>
+</tr>
+</tbody></table>
 <p>是否更换PSU电源风扇请自行考虑安全性！！！个人主观认为300W的电源换个风扇问题不大，不做参考依据！电源上4pin定义如下：</p>
-<p>|   蓝    |     PWM      |<br>|   黄    |     RPM      |<br>|   红    |     +12v     |<br>|   黑    |   Black GND  |</p>
+<table>
+<thead>
+<tr>
+<th align="center">颜色</th>
+<th align="center">定义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">蓝</td>
+<td align="center">PWM</td>
+</tr>
+<tr>
+<td align="center">黄</td>
+<td align="center">RPM</td>
+</tr>
+<tr>
+<td align="center">红</td>
+<td align="center">+12v</td>
+</tr>
+<tr>
+<td align="center">黑</td>
+<td align="center">Black GND</td>
+</tr>
+</tbody></table>
 <blockquote>
 <p>猫头鹰的风扇螺丝孔和PSU的螺丝孔大小不一样，我直接用自带的橡皮固定了，见效果图。<br>此电源好像有其他几个版本，最好用电笔自己对照一下。</p>
 </blockquote>
