@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-01-08T17:34:25.731Z">
+<meta property="article:modified_time" content="2023-01-09T01:14:56.965Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-9 1:34:25">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-9 9:14:56">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -635,7 +635,7 @@
 
 	<div class="post-content" id="post_content">
 		<h1 id="0-介绍"><a href="#0-介绍" class="headerlink" title="0 介绍"></a>0 介绍</h1><p>自TrueNAS Core更新至FreeBSD 13，它的两大产品Scale和Core都已经使用上了OpenZFS。想着既然如此，就直接转投OpenZFS用上Linux了，但考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不太熟悉，就小心翼翼的先使用了一下TrueNAS Scale上手试试。体验下来我个人不是很喜欢用Docker，更加不会喜欢用K3S了，也没有LXC，或者任何平替BSD Jail的东西，用着不是很舒服，等有空把这玩意换了。</p>
-<p>家里当时装修的时候是布置了MPO数据线的，当时有2条，但不知道为什么只有一条能通网络，导致我有段时间一直是NAS和MAC电脑端对端连着，用着也还行就没想太多。刚好早些时候拼车买了Mellanox SX6036，疫情闲赋在家就拿出来换了一套猫扇，NAS连接Mellanox SX6036再连接家里的10Gbps交换机Mikrotik CRS312，至此把40Gbps网络并入整个家庭内网。<br></br></p>
+<p>家里装修时布置了2条MPO数据线的，但不知道为什么只有一条能通网络，导致我有段时间一直是NAS和MAC电脑端对端连着，用着也还行就没想太多。刚好早些时候拼车买了Mellanox SX6036，疫情闲赋在家就拿出来换了一套猫扇，NAS连接Mellanox SX6036再连接家里的10Gbps交换机Mikrotik CRS312，至此把40Gbps网络并入整个家庭内网。<br></br></p>
 <h1 id="1-硬件添置"><a href="#1-硬件添置" class="headerlink" title="1 硬件添置"></a>1 硬件添置</h1><ul>
 <li><p>Mellanox SX6036交换机，这个交换机根据成新，国内闲鱼差不多2000-3000左右，但是海淘Ebay大概在600-1200左右，邮费非常贵，如果有拼车最好了，需要授权才能使用以太网ETH模式，这个可以找淘宝或者Ebay上购买License或者破解，不是很贵。</p>
 </li>
@@ -664,12 +664,12 @@
 </br>
 
 <ul>
-<li><p>很早之前也购买了SAS3的背板+SAS3的HBA卡，这样在20个硬盘能勉强达到40GB。如果无法购买到或硬盘数量达不到，购买1-2个SSD组成Raid0，并写个脚本定期把Raid0的dataset通过<code>ZFS send</code>备份到主池的HDD中也是不错的选择。</p>
+<li><p>很早之前也购买了SAS3的背板+SAS3的HBA卡（具体请看以前那篇文章），这样在20个硬盘能勉强达到40GB。如果无法购买到或硬盘数量达不到，购买1-2个SSD组成Raid0，并写个脚本定期把Raid0的dataset通过<code>ZFS send</code>备份到主池的HDD中也是不错的选择。</p>
 <blockquote>
-<p>因为硬盘挖矿潮，超微846的仿冒机箱在淘宝闲鱼盛行，请务必辨别是否是原装！！！同样的，如果非原装846机箱，上面说的3D打印文件也不应该不适用的！</p>
+<p>硬盘挖矿潮后，超微846的仿冒机箱在淘宝闲鱼盛行，请务必辨别是否是原装！！！同样的，如果非原装846机箱，上面说的3D打印文件应该不适用的！</p>
 </blockquote>
 <blockquote>
-<p>哎，硬盘矿潮之前，这些配件本来都很便宜，现在是原装买不到，仿冒的满大街=。=</p>
+<p>硬盘矿潮之前，这些配件本来都很便宜，现在是原装买不到，仿冒的满大街=。=</p>
 </blockquote>
 </li>
 </ul>
@@ -684,11 +684,11 @@
 </li>
 </ul>
 <h1 id="2-管理SX6036"><a href="#2-管理SX6036" class="headerlink" title="2 管理SX6036"></a>2 管理SX6036</h1><p>通过RJ45网线连接交换机的mgt口，登陆其后台IP即可管理。若你不知道管理口IP，你需要用Console线（RJ45 to USB）连接，进入向导模式设置管理口IP等，这个可以看官网的说明书，这里不细说这些没用的了，说一下几个小坑。</p>
-<p>如果使用SFP光缆配合购物清单中的SFP to QSFP转换头，连接10Gbps交换机和SX6036，请在后台的WEB UI中将连接口的速率手动协商至10Gbps，不然无法通信。<br>如果你有一条QSFP一分四SFP的线，请根据说明书关闭其中一个口，才能使用。例如，我关闭了SX6036的1口，则4口可以插入这条QSFP一分四SFP的线，具体请查阅说明书来找到关闭对应口。关闭端口必须使用Console线连接才能更改！</p>
+<p>如果使用SFP光缆配合购物清单中的SFP to QSFP转换头，连接10Gbps交换机和SX6036，请在后台的WEB UI中将连接口的速率手动协商至10Gbps，不然无法通信。<br>如果你有一条QSFP一分四SFP的线，请根据说明书关闭其中一个口，才能使用。例如，我关闭了SX6036的1口，则4口可以插入这条QSFP一分四SFP的线，具体请查阅说明书来找到关闭对应口。关闭端口必须使用Console线连接才能更改。</p>
 </br>
 </br>
 
-<h2 id="2-2-更换SX6036交换机的风扇"><a href="#2-2-更换SX6036交换机的风扇" class="headerlink" title="2.2 更换SX6036交换机的风扇"></a>2.2 更换SX6036交换机的风扇</h2><p>此款交换机有一个可灵活拆卸的风扇盒，风扇盒中有4个4CM的风扇；电源中有一个4Cm的风扇，所有的风扇都是PWM的。我购买了5个猫头鹰NF-A4x20 FLX 3pin风扇，因为我觉得只要接地线和12v电源两个pin就够了，这风扇满转都听不到声音，我更加不会有心思登陆到SX6036的后台通过CLI更改风扇转速。<br>原装风扇接口不是像主板上一样的4pin，风扇盒的4pin定义如下：</p>
+<h2 id="2-2-更换SX6036交换机的风扇"><a href="#2-2-更换SX6036交换机的风扇" class="headerlink" title="2.2 更换SX6036交换机的风扇"></a>2.2 更换SX6036交换机的风扇</h2><p>此款交换机有一个可灵活拆卸的风扇盒，风扇盒中有4个4CM的风扇；电源中有一个4Cm的风扇，所有的风扇都是PWM的。我购买了5个猫头鹰NF-A4x20 FLX 3pin风扇，因为我觉得只要接地线和12v电源两个pin就够了，这风扇满转都听不到声音，我更加不会有心思登录到SX6036的后台通过CLI更改风扇转速。<br>原装风扇接口不是像主板上一样的4pin，风扇盒的4pin定义如下：</p>
 <table>
 <thead>
 <tr>
@@ -713,7 +713,7 @@
 <td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Black GND&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
 </tr>
 </tbody></table>
-<p>我只把PLX版本猫头鹰的红黑两根针接上去了；如果你购买了PWM版本的猫头鹰A4风扇，这款猫扇的4pin定义如下：</p>
+<p>我只把FLX版本猫头鹰的红黑两根针接上去了；如果你购买了PWM版本的猫头鹰A4风扇，这款猫扇的4pin定义如下：</p>
 <table>
 <thead>
 <tr>
@@ -764,7 +764,7 @@
 </tr>
 </tbody></table>
 <blockquote>
-<p>猫头鹰的风扇螺丝孔和PSU的螺丝孔大小不一样，我直接用自带的橡皮固定了，见效果图。<br>此电源好像有其他几个版本，最好用电笔自己对照一下。</p>
+<p>猫头鹰的风扇螺丝孔和PSU的螺丝孔大小不一样，我直接用自带的橡皮固定了，见效果图。<br>此电源好像有其他几个版本，最好用万用表自己对照一下。</p>
 </blockquote>
 <p>若使用PWM的风扇可以在SSH或者Console界面输入如下命令来控制转速：</p>
 <pre><code class="bash">enable  #进入高级模式
@@ -814,13 +814,13 @@ DISTRO := Debian</code></pre>
 </br>
 </br>
 
-<h3 id="3-2-1-Chelsio-T580在MacOS下的驱动。"><a href="#3-2-1-Chelsio-T580在MacOS下的驱动。" class="headerlink" title="3.2.1 Chelsio T580在MacOS下的驱动。"></a>3.2.1 Chelsio T580在MacOS下的驱动。</h3><p>这张卡直接在官网下载他的驱动点击安装就行了，最高只支持到Big Sur，如果遇到签名过期，断网修改本地时间试试。<br>当然如果你希望干净一点安装，在MacOS下通过命令<code>pkgutil --expand-full [pkg] [dir]</code>获得PKG内的KEXT，其中cxgb.kext是Chelsio T580的驱动，cxgb3.kext是T3xx系列的驱动。</p>
+<h3 id="3-2-1-Chelsio-T580在MacOS下的驱动。"><a href="#3-2-1-Chelsio-T580在MacOS下的驱动。" class="headerlink" title="3.2.1 Chelsio T580在MacOS下的驱动。"></a>3.2.1 Chelsio T580在MacOS下的驱动。</h3><p>这张卡直接在官网下载驱动安装就行，最高只支持到Big Sur，如遇签名过期，断网修改本地时间。<br>如果你希望干净一点安装，在MacOS下通过命令<code>pkgutil --expand-full [pkg] [dir]</code>获得PKG内的KEXT。其中cxgb.kext是Chelsio T580的驱动，cxgb3.kext是T3xx系列的驱动。</p>
 <ul>
 <li>下载<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/OCNHTeam/OCNHTeam.github.io/main/tools/cxgb.kext.zip">cxgb.kext</a>，</li>
 </ul>
-<p>如果是黑苹果，你可以通过OpenCore直接加载即可。</p>
+<p>如果是黑苹果，你可以通过OpenCore直接加载kext。</p>
 <blockquote>
-<p>这个卡超级超级超级热！温度过高会导致掉光模块或者掉卡就很烦了。这张卡一个风扇都不够，你需要2-4个风扇全面覆盖它才可以；条件允许，水冷。<br>注意，拆卸此卡时小心灼伤！</p>
+<p>这个卡超级超级超级热！温度过高会导致掉光模块或者掉卡。一个风扇不够，你需要2-4个风扇全面覆盖它才可以；条件允许，水冷。<br>注意，拆卸此卡时小心灼伤！</p>
 </blockquote>
 </br>
 </br>
