@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-01-14T15:43:01.099Z">
+<meta property="article:modified_time" content="2023-01-14T17:01:21.568Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-14 23:43:01">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-15 1:01:21">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -665,7 +665,7 @@
 <ul>
 <li><p>很早之前购买了SAS3的背板+SAS3的HBA卡（这个卡的小坑请看以前那篇文章），这样在20个硬盘能达到40Gbps，当然4k小文件就别想了。如果无法购买到或硬盘数量达不到，购买1-2个SSD组成Raid0，并写个脚本定期把Raid0的dataset通过<code>ZFS send</code>备份到主池的HDD中也是不错的选择。</p>
 <blockquote>
-<p>硬盘矿潮后，超微846的仿冒机箱在淘宝闲鱼盛行，请务必辨别是否是原装.如果非原装846机箱，上面说的3D打印文件应该不适用的！我也没买过那些啥x鑫的牌子，不知道那些连个电容都没的背板性能怎么样，哎以前闲鱼除了超微就是浪潮。我认为24盘原装或者浪潮SAS3 846机箱的价位应该在2000元左右。最可怕的是我还见过机箱是原装的，电源背板全是仿冒的，请务必辨别。<br>我的NAS RAID是两组10盘Z2，并把两组Z2 Stripe为一组，可以说是Raid60。另外四个盘位随便放了两个ZFS Hot Spare盘热备换用。</p>
+<p>硬盘矿潮后，超微846的仿冒机箱在淘宝闲鱼盛行，请务必辨别是否是原装.如果非原装846机箱，上面说的3D打印文件应该不适用的！我也没买过那些牌子，不知道那些连个电容都没的背板性能怎么样，哎以前闲鱼除了超微就是浪潮。我认为24盘原装或者浪潮SAS3 846机箱的价位应该在2000元左右。最可怕的是我还见过机箱是原装的，电源背板全是仿冒的，请务必辨别。<br>我的NAS RAID是两组10盘Z2，并把两组Z2 Stripe为一组，可以说是Raid60。另外四个盘位随便放了两个ZFS Hot Spare盘热备换用。</p>
 </br>
 </blockquote>
 </li>
@@ -853,7 +853,7 @@ DISTRO := Debian</code></pre>
 </br>
 </br>
 
-<h3 id="3-2-1-Chelsio-T580在MacOS下的驱动。"><a href="#3-2-1-Chelsio-T580在MacOS下的驱动。" class="headerlink" title="3.2.1 Chelsio T580在MacOS下的驱动。"></a>3.2.1 Chelsio T580在MacOS下的驱动。</h3><p>这张卡直接在官网下载驱动安装就行，最高只支持到Big Sur，如遇签名过期，断网修改本地时间。<br>如果你希望干净一点安装，在MacOS下通过命令<code>pkgutil --expand-full [pkg] [dir]</code>获得PKG内的KEXT。其中cxgb.kext是Chelsio T580的驱动，cxgb3.kext是T3xx系列的驱动。</p>
+<h3 id="3-2-1-Chelsio-T580在MacOS下的驱动"><a href="#3-2-1-Chelsio-T580在MacOS下的驱动" class="headerlink" title="3.2.1 Chelsio T580在MacOS下的驱动"></a>3.2.1 Chelsio T580在MacOS下的驱动</h3><p>这张卡直接在官网下载驱动安装就行，最高只支持到Big Sur，如遇签名过期，断网修改本地时间。<br>如果你希望干净一点安装，在MacOS下通过命令<code>pkgutil --expand-full [pkg] [dir]</code>获得PKG内的KEXT。其中cxgb.kext是Chelsio T580的驱动，cxgb3.kext是T3xx系列的驱动。</p>
 <ul>
 <li>下载<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/OCNHTeam/OCNHTeam.github.io/main/tools/cxgb.kext.zip">cxgb.kext</a></li>
 </ul>
@@ -882,11 +882,11 @@ DISTRO := Debian</code></pre>
 <p>MacOS依然没有更新NFS版本，并且因为<code>Foundation API</code>在Finder中通过版本<code>NFS v4.0</code>连接NAS会出现断连的情况，而在macOS的Terminal中使用POSIX权限则没有这样的现象。<br>但在MacOS中，无论使用什么40Gbps卡，你都只能在UI界面环境中获得20Gbps的连接速度，这也许是因为协议层太过老旧而用户无从选择。</p>
 <p>如果是Samba的话，我无法给出一个标准答案，这完全取决于你CPU的单核心能力，毕竟只有上传和下载两个线程。又或者说你希望使用<code>SMB Multi-Channels</code>功能来解决这个问题。</p>
 <blockquote>
-<p>话说回来，微软那边已经支持SMB作为服务端（也就是你必须用Win SERVER）而客户端用新的社区Samba版本，也可以多线程了。</p>
+<p>话说回来，微软那边已经支持SMB作为服务端（也就是你必须用Win SERVER）而客户端用新的社区Samba版本，也可以多线程了。不知道微软和Samba弄到啥时候去，这玩意实在太畸形了，作为用户我唯一的权利就是选择不用。</p>
 </blockquote>
 <h3 id="6-ZFS-Send"><a href="#6-ZFS-Send" class="headerlink" title="6 ZFS Send"></a>6 ZFS Send</h3><p>无论如何，机械SATA硬盘都无法与现代的SSD比肩4k类的读写，尤其是在<code>IO Depth</code>方面。<code>OpenZFS</code>提供之前提到的<code>Meta devs</code>功能来提高4k的写入，但我依然认为这是多一个故障点。因此我单独使用了一块Samsung 983ZET硬盘做日常的使用，并且设置了<code>ZFS Send</code>按天回传数据到HDD池中。</p>
 <blockquote>
-<p>你也可以找一块很快的SSD(e.g.一百多元的64G 800p)搭配慢一点的大容量SSD做Meta的<code>Fusion Pool</code>。</p>
+<p>你也可以找一块很快的SSD(e.g.一百元的32G Optane 800p)搭配慢一点的大容量SSD做Meta的<code>Fusion Pool</code>。</p>
 </blockquote>
 <pre><code class="bash">zfs send SSD/works@3 | zfs recv Home/test</code></pre>
 <p>ZFS send必须先建立快照，其中<code>3</code>代表快照名，而后的Home/test则为机械硬盘池。同样，你可以使用TrueNas自带的<code>Replication Task</code>来完成类似的操作。</p>
