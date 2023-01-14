@@ -22,7 +22,7 @@
 <meta property="og:image" content="https://i.loli.net/2021/10/02/BXdfPDqb6OvxnAh.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/14/GrqjvK2TtW93gnC.png">
 <meta property="article:published_time" content="2021-04-03T14:27:50.000Z">
-<meta property="article:modified_time" content="2022-11-28T09:03:46.933Z">
+<meta property="article:modified_time" content="2023-01-14T04:29:06.412Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -606,7 +606,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2022-11-28 17:03:46">2021-4-3 22:27
+							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2023-1-14 12:29:06">2021-4-3 22:27
 							</time>
 						</div>
 					
@@ -623,7 +623,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							2.7k 字
+							2.8k 字
 						</div>
 					
 						
@@ -631,7 +631,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							12 分钟
+							13 分钟
 						</div>
 					
 		</div>
@@ -698,15 +698,19 @@
 </li>
 </ul>
 <ul>
-<li><p>SAS卡：LSI SAS 9217-8i 这款卡是给SAS2用的，有两个模式，自己刷成it模式，可以找淘宝店主直接帮你刷好。如果你买的是SAS3的背板，你需要购买LSI SAS 9300-8i，这卡好像本来就是it模式（以防万一，我会写一下刷IT模式的教程）。 闲鱼100元</p>
+<li>SAS卡：LSI SAS 9217-8i 这款卡是给SAS2用的，有两个模式，自己刷成it模式，可以找淘宝店主直接帮你刷好。如果你买的是SAS3的背板，你需要购买LSI SAS 9300-8i，这卡好像本来就是it模式（以防万一，我会写一下刷IT模式的教程）。 闲鱼100元<blockquote>
+<p>LSI的9300系列卡在TrueNAS下对于HGST品牌的硬盘有很严重的性能问题，TrueNas官网出了一个与Broadcom合作的固件，这个固件没有在官网释放，你需要去TrueNAS下载：<a target="_blank" rel="noopener" href="https://www.truenas.com/community/resources/lsi-9300-xx-firmware-update.145/">下载链接</a></p>
+</blockquote>
 </li>
+</ul>
+<ul>
 <li><p>SAS线：MINI-SAS线SFF-8087 X2，SAS2的线，80CM的。如果是买的SAS3背板请购买相应的线，两根46元</p>
 </li>
 <li><p>万兆网卡：Intel 82599 万兆光口网卡 这张卡其实是我用黑苹果多余出来的。你可以买光口寨卡，82599或者mellanox的，都支持。但如果你购买万兆电口的话，尽可能购买原厂卡！（之前买的万兆寨卡一热就掉速） 闲鱼包含光模块250元（寨光卡）</p>
 </li>
 </ul>
 <ul>
-<li><p>机械硬盘：自己看着办（HGST的固件降速策略似乎不太兼容FREEBSD）。</p>
+<li><p>机械硬盘：自己看着办</p>
 </li>
 <li><p>固态硬盘：intel s3510 1T 购买固态硬盘不是为了让他成为缓存什么的，因为ZFS的特殊性，尽可能设置PT软件（e.g. transmission）先把文件下载到固态，再自动转移到机械硬盘的池里，这主要是因为ZFS的特殊性而考虑。为什么买S3510呢？便宜吧，最主要是MLC，如果你用TLC做这个事，很快就会坏了的。1000元</p>
 </li>
@@ -748,7 +752,12 @@
 
 
 <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>安装包括硬件和系统，首先是把SAS卡LSI SAS 9217-8i刷成it模式，再讲FreeNas的安装。<br></br></p>
-<h2 id="LSI-SAS-9217-8i-刷成it模式"><a href="#LSI-SAS-9217-8i-刷成it模式" class="headerlink" title="LSI SAS 9217-8i 刷成it模式"></a>LSI SAS 9217-8i 刷成it模式</h2><p>在家用FreeNas环境我没有推荐用阵列模式，一来是这个是家用而已，二来ZFS已经足够健壮了，把卡刷成直通的it模式就行了。</p>
+<h2 id="LSI-SAS-9217-8i-刷成it模式"><a href="#LSI-SAS-9217-8i-刷成it模式" class="headerlink" title="LSI SAS 9217-8i 刷成it模式"></a>LSI SAS 9217-8i 刷成it模式</h2><p>在家用FreeNas环境我没有推荐用阵列模式，一来是这个是家用而已，二来ZFS已经足够健壮并自带了整一套的整列解决方案，把卡刷成直通的it模式就行了。</p>
+<p>如果不刷rom，只刷bin文件，则在TrueNAS系统下输入：</p>
+<pre><code class="bash">sas2flash -o -f SAS9217_xx_IT.bin   #这个是刷9217的
+sas3flash -o -f SAS9300_xx_IT.bin   #这个是刷9300的</code></pre>
+<p>刷完后记得重启<br></br></p>
+<p>如若要刷新BIN和ROM固件，根据流程：</p>
 <ul>
 <li><p>下载如下软件</p>
 <ul>
@@ -970,7 +979,7 @@ aio write size = 1</code></pre>
 <p>买来先测一下硬盘的stroke和速度，</p>
 <pre><code class="bash">diskinfo -ctv /dev/daX
 #X为你的硬盘编号，在管理页面的storage/disks下按照序列号对照过去</code></pre>
-<p>这是我刚用手机测的一块ST EXOS X16 12T的硬盘，刚好达到230MB的速度，stroke也很棒。HGST固件似乎在FREEBSD下有兼容问题。<br>顺便提一下希捷酷狼pro这个系列，我测出来的一些数据完全跟exos x16一模一样，不知道除了酷狼pro提供一次免费数据修复之外，还有啥区别。</p>
+<p>这是我刚用手机测的一块ST EXOS X16 12T的硬盘，刚好达到230MB的速度，stroke也很棒。HGST固件似乎在FREEBSD下有兼容问题，刷固件不知道能否修复。<br>顺便提一下希捷酷狼pro这个系列，我测出来的一些数据完全跟exos x16一模一样，不知道除了酷狼pro提供一次免费数据修复之外，还有啥区别。</p>
 <p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2021/04/14/GrqjvK2TtW93gnC.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="IMG_2776.PNG"></p>
 
 <ul>
