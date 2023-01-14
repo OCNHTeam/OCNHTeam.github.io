@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+
+<html class="article-header-style-default">
+<head>
+	
+	<title>ZFS:从10Gbps升级到40Gbps网络 - Xjn&#39;s Blog</title>
+	<meta charset="utf-8">
+	
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	
+	<meta name="description" content="0 介绍自TrueNAS Core更新至FreeBSD 13，它的两大产品Scale和Core都已经使用上了OpenZFS。想着既然如此，就直接转投OpenZFS用上Linux了，但考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不太熟悉，就小心翼翼的先使用了一下TrueNAS Scale试手。体验下来我个人不是很喜欢用K3S Containerd，也没有LXC，或者任">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZFS:从10Gbps升级到40Gbps网络">
+<meta property="og:url" content="https://blog.xjn819.com/post/Upgrade-from-10Gbps-to-40Gbps-network.html">
+<meta property="og:site_name" content="Xjn&#39;s Blog">
+<meta property="og:description" content="0 介绍自TrueNAS Core更新至FreeBSD 13，它的两大产品Scale和Core都已经使用上了OpenZFS。想着既然如此，就直接转投OpenZFS用上Linux了，但考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不太熟悉，就小心翼翼的先使用了一下TrueNAS Scale试手。体验下来我个人不是很喜欢用K3S Containerd，也没有LXC，或者任">
+<meta property="og:locale">
+<meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
+<meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
+<meta property="article:modified_time" content="2023-01-14T14:51:16.779Z">
+<meta property="article:author" content="Seon">
+<meta property="article:tag" content="NAS">
+<meta property="article:tag" content="Hardware">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
+
+	<meta name="theme-color" content="#212121">
+	<meta name="theme-color-rgb" content="33,33,33">
+	<meta name="theme-color-origin" content="#212121">
+	<meta name="argon-enable-custom-theme-color" content="false">
+	<meta name="theme-card-radius" content="4">
+	<meta name="theme-version" content="1.0.1">
+	<link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="/assets/img/favicon.ico" type="image/x-icon">
+
+	
+<link rel="stylesheet" href="/assets/argon_css_merged.css">
+
+	
+<link rel="stylesheet" href="/style.css">
+
+	
+<link rel="stylesheet" href="//fonts.loli.net/css?family=Open+Sans:300,400,600,700|Noto+Serif+SC:300,600&display=swap.css">
+
+	
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+	
+<script src="/assets/argon_js_merged.js"></script>
+
+	
+<script src="/assets/js/argon.min.js"></script>
+
+	
+<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+	
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+	<script>
+		var argonConfig = {
+			language: "zh_CN",
+			
+				zoomify: {
+					duration: 200,
+					easing: "cubic-bezier(0.4,0,0,1)",
+					scale: 0.9
+				},
+			
+			pangu: "true",
+			
+				lazyload: {
+					threshold: 800,
+					effect: "fadeIn"
+				},
+			
+			disable_pjax: false,
+			headroom: true
+		}
+	</script>
+	<script>
+		var darkmodeAutoSwitch = "false";
+		function setDarkmode(enable){
+			if (enable == true){
+				$("html").addClass("darkmode");
+			}else{
+				$("html").removeClass("darkmode");
+			}
+			$(window).trigger("scroll");
+		}
+		function toggleDarkmode(){
+			if ($("html").hasClass("darkmode")){
+				setDarkmode(false);
+				sessionStorage.setItem("Argon_Enable_Dark_Mode", "false");
+			}else{
+				setDarkmode(true);
+				sessionStorage.setItem("Argon_Enable_Dark_Mode", "true");
+			}
+		}
+		if (sessionStorage.getItem("Argon_Enable_Dark_Mode") == "true"){
+			setDarkmode(true);
+		}
+		function toggleDarkmodeByPrefersColorScheme(media){
+			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
+				return;
+			}
+			if (media.matches){
+				setDarkmode(true);
+			}else{
+				setDarkmode(false);
+			}
+		}
+		function toggleDarkmodeByTime(){
+			if (sessionStorage.getItem('Argon_Enable_Dark_Mode') == "false" || sessionStorage.getItem('Argon_Enable_Dark_Mode') == "true"){
+				return;
+			}
+			let hour = new Date().getHours();
+			if (hour < 7 || hour >= 22){
+				setDarkmode(true);
+			}else{
+				setDarkmode(false);
+			}
+		}
+		if (darkmodeAutoSwitch == 'system'){
+			var darkmodeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+			darkmodeMediaQuery.addListener(toggleDarkmodeByPrefersColorScheme);
+			toggleDarkmodeByPrefersColorScheme(darkmodeMediaQuery);
+		}
+		if (darkmodeAutoSwitch == 'time'){
+			toggleDarkmodeByTime();
+		}
+		if (darkmodeAutoSwitch == 'alwayson'){
+			setDarkmode(true);
+		}
+
+		function toggleAmoledDarkMode(){
+			$("html").toggleClass("amoled-dark");
+			if ($("html").hasClass("amoled-dark")){
+				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "true");
+			}else{
+				localStorage.setItem("Argon_Enable_Amoled_Dark_Mode", "false");
+			}
+		}
+		if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "true"){
+			$("html").addClass("amoled-dark");
+		}else if (localStorage.getItem("Argon_Enable_Amoled_Dark_Mode") == "false"){
+			$("html").removeClass("amoled-dark");
+		}
+	</script>
+	<script>
+		if (navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("Chrome") === -1){
+			$("html").addClass("using-safari");
+		}
+	</script>
+
+	
+		
+<script src="/assets/vendor/smoothscroll/smoothscroll1.js"></script>
+
+	
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/feed.xml" title="Xjn's Blog" type="application/atom+xml">
+</head>
+
+
+
+<style id="themecolor_css">
+	
+	:root{
+		--themecolor: #212121;
+		--themecolor-dark0: #1B1B1B;
+		--themecolor-dark: #141414;
+		--themecolor-dark2: #080808;
+		--themecolor-dark3: #000000;
+		--themecolor-light: #3B3B3B;
+		--themecolor-rgbstr: 33,33,33;
+		--themecolor-gradient: linear-gradient(150deg,var(--themecolor-light) 15%, var(--themecolor) 70%, var(--themecolor-dark0) 94%);
+
+	}
+</style>
+<style id="theme_cardradius_css">
+	:root{
+		--card-radius: 4px;
+	}
+</style>
+
+<body>
+<div id="toolbar">
+	<header class="header-global">
+		<nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light bg-primary headroom--not-bottom headroom--not-top headroom--pinned">
+			<div class="container">
+				
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<a class="navbar-brand" href="/">Xjn&#39;s Blog</a>
+				<div class="navbar-collapse collapse" id="navbar_global">
+					<div class="navbar-collapse-header">
+						<div class="row">
+							<div class="col-6 collapse-brand"></div>
+							<div class="col-6 collapse-close">
+								<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
+									<span></span>
+									<span></span>
+								</button>
+							</div>
+						</div>
+					</div>
+					<ul id="navbar_search_btn_mobile" class="navbar-nav align-items-lg-center ml-lg-auto">
+						<li class="nav-item" data-toggle="modal" data-target="#argon_search_modal" style="padding-left: 5px;">
+							<a class="nav-link nav-link-icon">
+								<i class="fa fa-search"></i>
+								<span class="nav-link-inner--text d-lg-none">搜索</span>
+							</a>
+						</li>
+					</ul>
+					
+							<ul class='navbar-nav navbar-nav-hover align-items-lg-center'>
+								
+										<li class='nav-item'>
+											<a href='/' class='nav-link' >
+												<i class='ni ni-book-bookmark d-lg-none'></i>
+												<span class='nav-link-inner--text'>首页</span>
+											</a>
+											
+										</li>
+									
+										<li class='nav-item'>
+											<a href='/archives' class='nav-link' >
+												<i class='ni ni-book-bookmark d-lg-none'></i>
+												<span class='nav-link-inner--text'>归档</span>
+											</a>
+											
+										</li>
+									
+										<li class='nav-item'>
+											<a href='/feed.xml' class='nav-link' >
+												<i class='ni ni-book-bookmark d-lg-none'></i>
+												<span class='nav-link-inner--text'>订阅</span>
+											</a>
+											
+										</li>
+									
+							</ul>
+						
+					<ul class="navbar-nav align-items-lg-center ml-lg-auto">
+						<li class="nav-item" data-toggle="modal" data-target="#argon_search_modal" id="navbar_search_btn_pc">
+							<a class="nav-link nav-link-icon">
+								<i class="fa fa-search"></i>
+								<span class="nav-link-inner--text d-lg-none">搜索</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+				
+				<div id="navbar_menu_mask" data-toggle="collapse" data-target="#navbar_global"></div>
+			</div>
+		</nav>
+	</header>
+</div>
+<div class="modal fade" id="argon_search_modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">搜索</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<!-- TODO -->
+<div class="form-group mb-3">
+	<div class="input-group input-group-alternative">
+		<div class="input-group-prepend">
+			<span class="input-group-text"><i class="fa fa-search"></i></span>
+		</div>
+		<input id="local-search-input" class="form-control" placeholder="搜索什么..." type="text"  autocomplete="off" data-search.path="search.xml" data-config.root="/">
+	</div>
+	<div id="local-search-result"></div>
+</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--Banner-->
+<section id="banner" class="banner section section-lg section-shaped">
+	<div class="shape  shape-primary">
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+		<span></span>
+	</div>
+
+	
+	<div id="banner_container" class="banner-container container text-center">
+		
+			<div class="banner-title text-white"><span class="banner-title-inner">Xjn´s Blog</span>
+		
+		</div>
+	</div>
+	
+		<style>
+			section.banner{
+				background-image: url(/assets/img/banner.jpg) !important;
+			}
+		</style>
+	
+</section>
+
+
+	<style>
+		#content:before {
+			content: '';
+			display: block;
+			position: fixed;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			z-index: -2;
+			background: url(/assets/img/banner.jpg);
+			background-position: center;
+			background-size: cover;
+			background-repeat: no-repeat;
+			opacity: 1;
+			transition: opacity .5s ease;
+		}
+		html.darkmode #content:before{
+			filter: brightness(0.65);
+		}
+		
+			#content:after {
+				content: '';
+				display: block;
+				position: fixed;
+				left: 0;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				z-index: -2;
+				background: url(/assets/img/banner.jpg);
+				background-position: center;
+				background-size: cover;
+				background-repeat: no-repeat;
+				opacity: 0;
+				transition: opacity .5s ease;
+			}
+			html.darkmode #content:after {
+				opacity: 1;
+			}
+			html.darkmode #content:before {
+				opacity: 0;
+			}
+		
+		
+			#banner, #banner .shape {
+				background: transparent !important;
+			}
+		
+	</style>
+
+
+
+
+<div id="float_action_buttons" class="float-action-buttons fabtns-unloaded">
+	<button id="fabtn_toggle_sides" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip-move-to-left="移至左侧" tooltip-move-to-right="移至右侧">
+		<span class="btn-inner--icon fabtn-show-on-right"><i class="fa fa-caret-left"></i></span>
+		<span class="btn-inner--icon fabtn-show-on-left"><i class="fa fa-caret-right"></i></span>
+	</button>
+	<button id="fabtn_back_to_top" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Back To Top" tooltip="回到顶部">
+		<span class="btn-inner--icon"><i class="fa fa-angle-up"></i></span>
+	</button>
+	<button id="fabtn_go_to_comment" class="btn btn-icon btn-neutral fabtn shadow-sm d-none" type="button" <-% theme.fab_show_gotocomment_button ? "" : "style='display: none;'"  aria-label="Comment" tooltip="评论">
+		<span class="btn-inner--icon"><i class="fa fa-comment-o"></i></span>
+	</button>
+	<button id="fabtn_toggle_darkmode" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" <-% theme.fab_show_darkmode_button ? "" : "style='display: none;'"  aria-label="Toggle Darkmode" tooltip-darkmode="夜间模式" tooltip-blackmode="暗黑模式" tooltip-lightmode="日间模式">
+		<span class="btn-inner--icon"><i class="fa fa-moon-o"></i><i class='fa fa-lightbulb-o'></i></span>
+	</button>
+	<button id="fabtn_toggle_blog_settings_popup" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" <-% theme.fab_show_settings_button ? "" : "style='display: none;'"  aria-label="Open Blog Settings Menu" tooltip="设置">
+		<span class="btn-inner--icon"><i class="fa fa-cog"></i></span>
+	</button>
+	<div id="fabtn_blog_settings_popup" class="card shadow-sm" style="opacity: 0;" aria-hidden="true">
+		<div id="close_blog_settings"><i class="fa fa-close"></i></div>
+		<div class="blog-setting-item mt-3">
+			<div style="transform: translateY(-4px);"><div id="blog_setting_toggle_darkmode_and_amoledarkmode" tooltip-switch-to-darkmode="切换到夜间模式" tooltip-switch-to-blackmode="切换到暗黑模式"><span>夜间模式</span><span>暗黑模式</span></div></div>
+			<div style="flex: 1;"></div>
+			<label id="blog_setting_darkmode_switch" class="custom-toggle">
+				<span class="custom-toggle-slider rounded-circle"></span>
+			</label>
+		</div>
+		<div class="blog-setting-item mt-3">
+			<div style="flex: 1;">字体</div>
+			<div>
+				<button id="blog_setting_font_sans_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-left">Sans Serif</button><button id="blog_setting_font_serif" type="button" class="blog-setting-font btn btn-outline-primary blog-setting-selector-right">Serif</button>
+			</div>
+		</div>
+		<div class="blog-setting-item mt-3">
+			<div style="flex: 1;">阴影</div>
+			<div>
+				<button id="blog_setting_shadow_small" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-left">浅阴影</button><button id="blog_setting_shadow_big" type="button" class="blog-setting-shadow btn btn-outline-primary blog-setting-selector-right">深阴影</button>
+			</div>
+		</div>
+		<div class="blog-setting-item mt-3 mb-3">
+			<div style="flex: 1;">滤镜</div>
+			<div id="blog_setting_filters" class="ml-3">
+				<button id="blog_setting_filter_off" type="button" class="blog-setting-filter-btn ml-0" filter-name="off">关闭</button>
+				<button id="blog_setting_filter_sunset" type="button" class="blog-setting-filter-btn" filter-name="sunset">日落</button>
+				<button id="blog_setting_filter_darkness" type="button" class="blog-setting-filter-btn" filter-name="darkness">暗化</button>
+				<button id="blog_setting_filter_grayscale" type="button" class="blog-setting-filter-btn" filter-name="grayscale">灰度</button>
+			</div>
+		</div>
+		<div class="blog-setting-item mb-3">
+			<div id="blog_setting_card_radius_to_default" style="cursor: pointer;" tooltip="恢复默认">圆角</div>
+			<div style="flex: 1;margin-left: 20px;margin-right: 8px;transform: translateY(2px);">
+				<div id="blog_setting_card_radius"></div>
+			</div>
+		</div>
+		
+	</div>
+	<button id="fabtn_open_sidebar" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-label="Open Sidebar Menu" tooltip="菜单">
+		<span class="btn-inner--icon"><i class="fa fa-bars"></i></span>
+	</button>
+	<button id="fabtn_reading_progress" class="btn btn-icon btn-neutral fabtn shadow-sm" type="button" aria-hidden="true" tooltip="阅读进度">
+		<div id="fabtn_reading_progress_bar" style="width: 0%;"></div>
+		<span id="fabtn_reading_progress_details">0%</span>
+	</button>
+</div>
+
+<div id="content" class="site-content">
+
+
+<div class="page-information-card-container">
+	
+</div>
+
+<div id="sidebar_mask"></div>
+<aside id="leftbar" class="leftbar widget-area" role="complementary">
+		
+		<div id="leftbar_part1" class="widget widget_search card bg-white shadow-sm border-0">
+			<div class="leftbar-banner card-body">
+				<span class="leftbar-banner-title text-white">Xjn´s Blog</span>
+				
+				
+			</div>
+			
+			
+				<ul id='leftbar_part1_menu' class='leftbar-menu'>
+					
+				</ul>
+			
+			<div class="card-body text-center leftbar-search-button">
+				<button id="leftbar_search" class="btn btn-secondary btn-lg active btn-sm btn-block border-0" role="button" data-toggle="modal" data-target="#argon_search_modal" >
+					<i class="menu-item-icon fa fa-search mr-0"></i> 搜索
+				</button>
+			</div>
+		</div>
+		<div id="leftbar_part2" class="widget widget_search card bg-white shadow-sm border-0">
+			<div id="leftbar_part2_inner" class="card-body">
+				
+				<div class="nav-wrapper" style="padding-top: 5px;">
+	                <ul class="nav nav-pills nav-fill" role="tablist">
+						
+							<li class="nav-item sidebar-tab-switcher">
+								<a class="active show" id="leftbar_tab_catalog_btn" data-toggle="tab" href="#leftbar_tab_catalog" role="tab" aria-controls="leftbar_tab_catalog" no-pjax>文章目录</a>
+							</li>
+						
+						<li class="nav-item sidebar-tab-switcher">
+							<a class="" id="leftbar_tab_overview_btn" data-toggle="tab" href="#leftbar_tab_overview" role="tab" aria-controls="leftbar_tab_overview" no-pjax>站点概览</a>
+						</li>
+	                </ul>
+				</div>
+				<div>
+					<div class="tab-content" style="padding: 10px 10px 0 10px;">
+						
+							<div class="tab-pane fade active show" id="leftbar_tab_catalog" role="tabpanel" aria-labelledby="leftbar_tab_catalog_btn">
+								<div id="leftbar_catalog"></div>
+								<script type="text/javascript">
+									$(function () {
+										$(document).headIndex({
+											articleWrapSelector: '#post_content',
+											indexBoxSelector: '#leftbar_catalog',
+											subItemBoxClass: "index-subItem-box",
+											itemClass: "index-item",
+											linkClass: "index-link",
+											offset: 80,
+										});
+									})
+								</script>
+								
+							</div>
+						
+						<div class="tab-pane fade text-center" id="leftbar_tab_overview" role="tabpanel" aria-labelledby="leftbar_tab_overview_btn">
+							<img id="leftbar_overview_author_image" src="/assets/img/auther.jpg" class="img-fluid rounded-circle shadow-sm" style="width: 100px;" alt="avatar">
+							<h6 id="leftbar_overview_author_name">xjn819</h6>
+							<nav class="site-state">
+								<div class="site-state-item site-state-posts">
+									<a href="/archives">
+										<span class="site-state-item-count">6</span>
+										<span class="site-state-item-name">文章</span>
+									</a>
+								</div>
+								<div class="site-state-item site-state-categories">
+									<a data-toggle="modal" data-target="#blog_categories">
+										<span class="site-state-item-count">2</span>
+										<span class="site-state-item-name">分类</span>
+									</a>
+								</div>      
+								<div class="site-state-item site-state-tags">
+									<a data-toggle="modal" data-target="#blog_tags">
+										<span class="site-state-item-count">4</span>
+										<span class="site-state-item-name">标签</span>
+									</a>
+								</div>
+							</nav>
+							
+									<div class="site-author-links">
+										
+									</div>
+								
+							
+									<div class='site-friend-links'>
+										<div class='site-friend-links-title'><i class='fa fa-fw fa-link'></i> Links</div>
+										<ul class='site-friend-links-ul'>
+											
+												<li class='site-friend-links-item'>
+													<a href='https://blog.daliansky.net' rel='noopener' target='_blank'>黑果小兵的部落阁</a>
+												</li>
+											
+												<li class='site-friend-links-item'>
+													<a href='https://blog.tlhub.cn/' rel='noopener' target='_blank'>套陆的部落阁</a>
+												</li>
+											
+												<li class='site-friend-links-item'>
+													<a href='https://www.bugprogrammer.me/' rel='noopener' target='_blank'>Bugprogrammer的博客</a>
+												</li>
+											
+												<li class='site-friend-links-item'>
+													<a href='https://www.insanelymac.com/' rel='noopener' target='_blank'>InsanelyMac</a>
+												</li>
+											
+												<li class='site-friend-links-item'>
+													<a href='https://hyejeong.cn/' rel='noopener' target='_blank'>针针小站</a>
+												</li>
+											
+										</ul>
+									</div>
+								
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+</aside>
+<div class="modal fade" id="blog_categories" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">分类</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<a class="badge badge-secondary tag" href="/categories/Hackintosh/" rel="tag">Hackintosh <span class="tag-num">3</span></a><a class="badge badge-secondary tag" href="/categories/Hardware/" rel="tag">Hardware <span class="tag-num">3</span></a>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="blog_tags" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">标签</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<a class="badge badge-secondary tag" href="/tags/Hackintosh/" rel="tag">Hackintosh <span class="tag-num">3</span></a><a class="badge badge-secondary tag" href="/tags/Hardware/" rel="tag">Hardware <span class="tag-num">3</span></a><a class="badge badge-secondary tag" href="/tags/NAS/" rel="tag">NAS <span class="tag-num">3</span></a><a class="badge badge-secondary tag" href="/tags/OpenCore/" rel="tag">OpenCore <span class="tag-num">3</span></a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="primary" class="content-area">
+	<main id="main" class="site-main" role="main">
+		
+		
+			
+	<article class="post post-full card bg-white shadow-sm border-0 ">
+	<header class="post-header text-center">
+		
+		<a class="post-title" href="/post/Upgrade-from-10Gbps-to-40Gbps-network.html">ZFS:从10Gbps升级到40Gbps网络</a>
+		<div class="post-meta">
+			
+						
+						<div class="post-meta-detail post-meta-detail-time">
+							<i class="fa fa-clock-o" aria-hidden="true"></i>
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-14 22:51:16">2023-1-8 20:27
+							</time>
+						</div>
+					
+						
+							<div class="post-meta-devide">|</div>
+						
+						<div class="post-meta-detail post-meta-detail-categories">
+							<i class="fa fa-bookmark-o" aria-hidden="true"></i>
+							<a class="post-meta-detail-catagory-link" href="/categories/Hardware/">Hardware</a>
+						</div>
+					
+						
+							<div class="post-meta-devide">|</div>
+						
+						<div class="post-meta-detail post-meta-detail-words">
+							<i class="fa fa-file-word-o" aria-hidden="true"></i>
+							3.9k 字
+						</div>
+					
+						
+							<div class="post-meta-devide">|</div>
+						
+						<div class="post-meta-detail post-meta-detail-readingtime">
+							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
+							18 分钟
+						</div>
+					
+		</div>
+		
+	</header>
+
+	<div class="post-content" id="post_content">
+		<h1 id="0-介绍"><a href="#0-介绍" class="headerlink" title="0 介绍"></a>0 介绍</h1><p>自TrueNAS Core更新至FreeBSD 13，它的两大产品Scale和Core都已经使用上了OpenZFS。想着既然如此，就直接转投OpenZFS用上Linux了，但考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不太熟悉，就小心翼翼的先使用了一下TrueNAS Scale试手。体验下来我个人不是很喜欢用K3S Containerd，也没有LXC，或者任何平替BSD Jail的东西，用着不是很舒服，等有空把这玩意换了。</p>
+<p>家里装修时布置了2条MPO数据线的，但不知道为什么只有一条能通网络，导致我有段时间一直是NAS和MAC电脑端对端连着，用着也还行就没想太多。刚好早些时候拼车买了Mellanox SX6036，疫情闲赋在家就拿出来换了一套猫扇，NAS连接Mellanox SX6036再连接家里的10Gbps交换机Mikrotik CRS312，至此把40Gbps网络并入整个家庭内网。<br></br></p>
+<h1 id="1-硬件添置"><a href="#1-硬件添置" class="headerlink" title="1 硬件添置"></a>1 硬件添置</h1><ul>
+<li><p>Mellanox SX6036交换机，这个交换机根据成新，闲鱼差不多2000-3000左右，但是海淘Ebay大概在600-1200左右，邮费非常贵，如果有拼车最好了，需要授权才能使用以太网ETH模式，这个可以找淘宝或者Ebay上购买License或者破解，不是很贵。</p>
+</li>
+<li><p>HP 544+ 40Gbps ETH 56Gbps IB QSFP网卡。这个卡闲鱼加转接卡一起卖大概在80-120之间，非常便宜。同样的，便宜一般来说带来了很多坑，等下会写这张卡的踩坑记录。</p>
+</li>
+<li><p>Chelsio T580 40Gbps 网卡。这张卡我之前800左右买的，闲鱼现在我看有的1500，有的1000，看运气吧。此卡是唯一一张可以在MacOS下驱动的40Gbps PCIE网卡。此卡目前的驱动只支持到MacOS Big Sur。Monterey开始，苹果使用了DriverKit驱动，只能等Chelsio去做DriverKit。</p>
+</li>
+<li><p>AOC 40Gbps QSFP网线。这个我闲鱼买的橘色的细线，价格大概在30-50元每米，比较方便理线，如果是DAC铜缆价格会更加便宜，但实在是太粗难以梳理。对了，这类线都带了模块的，你不需要再另购入模块。</p>
+</li>
+<li><p>Mellanox MAM1Q00A-QSA-655874-B21 QSFP to SFP+ 转接头。闲鱼价格在100-150之间。这个转接头方便你把10Gbps的SFP+DAC线的其中一个头转换成QSFP，从而将一台10Gbps交换机和40Gbps交换机相连。</p>
+</li>
+</ul>
+</br>
+
+<h2 id="1-1-非必选添置"><a href="#1-1-非必选添置" class="headerlink" title="1.1 非必选添置"></a>1.1 非必选添置</h2><ul>
+<li><p>今年夏天实在太热了，NAS只能满转来让硬盘温度稍微好一点，因此，我把原装的846机箱的4个8CM风扇卡槽换成了3个12CM的风扇卡槽，购买了3个追风者T30风扇。8CM兼顾PWM并且转速范围大，噪音低的实在太难买了，换成这款12CM的体验下来效果非常好。卡槽是找淘宝用PETG材质3D打印的。打印文件<a target="_blank" rel="noopener" href="https://www.thetylergibson.com/supermicro-846-120mm-fan-shroud/">购买链接</a> </p>
+<blockquote>
+<p>这是人家的劳动成果，我觉得免费分享给大家并不道义。</p>
+</blockquote>
+<blockquote>
+<p>追风者T30风扇需要拨动风扇中央的开关到ADVANCE模式才能达到3000转。</p>
+</blockquote>
+</li>
+</ul>
+</br>
+</br>
+
+<ul>
+<li><p>很早之前也购买了SAS3的背板+SAS3的HBA卡（具体请看以前那篇文章），这样在20个硬盘能勉强达到40GB。如果无法购买到或硬盘数量达不到，购买1-2个SSD组成Raid0，并写个脚本定期把Raid0的dataset通过<code>ZFS send</code>备份到主池的HDD中也是不错的选择。</p>
+<blockquote>
+<p>硬盘矿潮后，超微846的仿冒机箱在淘宝闲鱼盛行，请务必辨别是否是原装.如果非原装846机箱，上面说的3D打印文件应该不适用的！</p>
+</blockquote>
+</li>
+</ul>
+</br>
+</br>
+
+<ul>
+<li>选购！ ATTO ThunderLink 40Gbps NQ3402 雷电网卡。这张卡是目前唯一一张支持到40Gbps并且受到最新MacOS支持的雷电网卡。价格太贵就提一嘴。这张卡其实只能跑20Gbps，因为雷电的数据传输本身只有20GB。</br>
+</br>
+
+
+</li>
+</ul>
+<h1 id="2-管理SX6036"><a href="#2-管理SX6036" class="headerlink" title="2 管理SX6036"></a>2 管理SX6036</h1><p>通过RJ45网线连接交换机的mgt口，登陆其后台IP即可管理。若你不知道管理口IP，你需要用Console线（RJ45 to USB）连接，进入向导模式设置管理口IP等，这个可以看官网的说明书，这里不细说这些没用的了，说一下几个小坑。</p>
+<p>如果使用SFP光缆配合购物清单中的SFP to QSFP转换头，连接10Gbps交换机和SX6036，请在后台的WEB UI中将连接口的速率手动协商至10Gbps，不然无法通信。<br>如果你有一条QSFP一分四SFP的线，需关闭其中一个口才能使用。例如，我关闭了SX6036的1口，则4口可以插入这条QSFP一分四SFP的线，具体请查阅说明书来找到关闭对应口。关闭端口必须使用Console线连接才能更改。</p>
+</br>
+</br>
+
+<h2 id="2-2-更换SX6036交换机的风扇"><a href="#2-2-更换SX6036交换机的风扇" class="headerlink" title="2.2 更换SX6036交换机的风扇"></a>2.2 更换SX6036交换机的风扇</h2><p>此款交换机有一个可灵活拆卸的风扇盒，风扇盒中有4个4CM的风扇；电源中有一个4CM的风扇，所有的风扇都是PWM的。我购买了5个猫头鹰NF-A4x20 FLX 3pin风扇，因为我觉得只要接地线和12v电源两个pin就够了，这风扇满转都听不到声音，我更加不会有心思登录到SX6036的后台通过CLI更改风扇转速。<br>原装风扇接口不是像主板上一样的4pin，风扇盒的4pin定义如下：</p>
+<table>
+<thead>
+<tr>
+<th align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;颜色&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</th>
+<th align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;定义&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;红&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;+12v&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+</tr>
+<tr>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;蓝&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;RPM&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+</tr>
+<tr>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;黄&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;PWM&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+</tr>
+<tr>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;黑&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Black GND&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+</tr>
+</tbody></table>
+<p>我只把FLX版本猫头鹰的红黑两根针接上去了；如果你购买了PWM版本的猫头鹰A4风扇，这款猫扇的4pin定义如下：</p>
+<table>
+<thead>
+<tr>
+<th align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;颜色&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</th>
+<th align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;定义&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;蓝&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;PWM&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+</tr>
+<tr>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;绿&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;RPM&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+</tr>
+<tr>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;黄&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;+12v&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+</tr>
+<tr>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;黑&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Black GND&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+</tr>
+</tbody></table>
+<p>更换PSU电源风扇请自行考虑安全性！！个人主观认为300W的电源换个风扇问题不大，不做参考依据！电源上4pin定义如下：</p>
+<table>
+<thead>
+<tr>
+<th align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;颜色&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</th>
+<th align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;定义&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;蓝&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;PWM&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+</tr>
+<tr>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;黄&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;RPM&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+</tr>
+<tr>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;红&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;+12v&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+</tr>
+<tr>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;黑&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td align="center">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Black GND&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>猫头鹰的风扇螺丝孔和PSU的螺丝孔大小不一样，我直接用自带的橡皮固定了，见效果图。<br>此电源好像有其他几个版本，最好用万用表自己对照一下。</p>
+</blockquote>
+<p>若使用PWM的风扇可以在SSH或者Console界面输入如下命令来控制转速：</p>
+<pre><code class="bash">enable  #进入高级模式
+fae mlxi2c set_fan set_fan /FAN/FAN 1 65    #1代表FAN 1; 65为转速
+fae mlxi2c set_fan set_fan /PS1/FAN 1 65</code></pre>
+<blockquote>
+<p>更换风扇后，sx6036的指示灯变红，不影响使用。若觉得不舒服，写个定时脚本，通过可以带密码的sshpass去后台清理掉关于风扇相关的报错。</p>
+</blockquote>
+<p>效果图：<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="IMG_4217.jpg"></p>
+
+<p> 待传…..</p>
+<h2 id="3-网卡过坑"><a href="#3-网卡过坑" class="headerlink" title="3 网卡过坑"></a>3 网卡过坑</h2><p>说一下HP 544+和Chelsio T580这两张卡。</p>
+<h3 id="3-1-HP-Mellanox-544"><a href="#3-1-HP-Mellanox-544" class="headerlink" title="3.1 HP Mellanox 544+"></a>3.1 HP Mellanox 544+</h3><p>如果你不太想折腾，请购买原装原厂的Mellanox卡，最好是还在维护的Mellanox 4代以上。我买了两张，一张给NAS主板用，一张给Proxmox的计算服务器用。<br>HP544+这张卡是Mellanox CX354a-FCCT的套娃卡，并不能刷入原装固件。使用HPE官网最新的固件在TrueNas使用的话，你必须找另一台电脑把此网卡的SR-IOV功能关闭，不然可能连开机都开不了。</p>
+<pre><code class="bash">mstconfig -d 03:00.00 set SR_IOV=0</code></pre>
+<blockquote>
+<p>通过BIOS Legacy模式在开机引导此固件Rom的时候也可以直接进入Setup界面关闭SR-IOV，这样无需安装别的软件来设置</p>
+</blockquote>
+<p>我在Proxmox VE中习惯使用SR-IOV，若需要此功能，请到HPE官网下载并刷入<code>fw-ConnectX3Pro-rel-2_40_5072-764285-B21_Ax-CLP-8025-UEFI-14.11.42-FlexBoot-3.4.747.bin</code>这个老版本固件。</p>
+<p>即便你使用普通的Linux发行版，驱动都已经deprecated了，插上后可以上网之类的，但是如果你想使用更高级的功能，必须下载Nvidia的OFED驱动进行编译。这个驱动看样子也不会再更新了，不知道哪天还能不能编译出来，但最烦的是每次LINUX内核升级，你都要重新编译。下载对应的OFED编译，方式跟下面Chelsio的差不多就不写了。另外，这张卡通过我的观察，即便IOMMU分组已经分开两个口的IRQ了，但是PCI地址还是一个，所以他无法将两个口分别直通给两个不同的Guests。如果可以，请告知。</p>
+<p>我这两天还在用tree上自带的驱动并使用SR-IOV，暂时还没出现问题，就先观察一下，有问题的话下面内容我会直接删了。<br>安装mstflint,以Proxmox VE为例：</p>
+<pre><code class="bash">apt update &amp;&amp; apt install mstflint</code></pre>
+<p>通过<code>lspci</code>获得Mellanox网卡的设备号并设置，例如：</p>
+<pre><code class="bash">lspci |grep Mellanox
+
+03:00.0 Ethernet controller: Mellanox Technologies MT27520 Family [ConnectX-3 Pro]
+
+mstflint -d 03:00.00 query   #获得固件信息
+mstflint -d 03:00.00 -i 固件路径 b  #刷入固件
+mstconfig -d 03:00.00 query    #获取设备设置信息
+mstconfig -d 03:00.00 set SR_IOV=1 NUM_OF_VFS=8  #开启SR-IOV以及设置VF总数为8个；确保主板已开通sr-iov，Proxmox VE已完成虚拟化等设置
+mstconfig -d 03:00.00 set LINK_TYPE_P1=ETH  #设置p1端口为ETH模式</code></pre>
+<p>创建一个/etc/modprobe.d/mlx4_core.conf填入：</p>
+<pre><code class="bash">options mlx4_core port_type_array=2,2 num_vfs=4,0,2 probe_vf=4,0,2</code></pre>
+<ul>
+<li>port_type_array=2,2 意味着两个端口都是ETH模式</li>
+<li>num_vfs 是VF数量，格式是a,b,c。a和b分别代表端口1和2的VF量，而C是总量。注意C不是<code>a+b</code>，而是a和b的数量去掉PF数量。</li>
+<li>probe_vf 格式同上；为Proxmox下ip link中能得到的数量</li>
+<li>这里我让第一个口做了4个VF给各种虚拟机和LXC用，第二个口不动我拿来给PVE用了。</li>
+</ul>
+<p>设置完后记得<code>update-initramfs -u</code><br>写一个<code>systemd unit</code>来让VF开机 Link UP并分配固定MAC地址，请自行搜索，懒得写了，或者有空补一下吧。</p>
+<p>最后提一嘴，我其实非常不明白这卡到底怎么在Windows的VM下驱动，想着基本不用windows，就没多弄了。我别的虚拟机全是LXC所以很方便通过PF或者VF。通过修改/etc/pve/lxc/xxx.conf文件，加入你想要通过去的VF即可了：</p>
+<pre><code class="bash">lxc.net.1.type: phys
+lxc.net.1.flags: up
+lxc.net.1.link: enp3s0v0
+lxc.net.1.hwaddr: ae:54:1c:2b:c0:00
+lxc.net.1.name: eth11
+lxc.net.0.type: phys
+lxc.net.0.flags: up
+lxc.net.0.link: enp3s0v1
+lxc.net.0.hwaddr: ae:54:1c:2b:c0:01
+lxc.net.0.name: eth2
+
+####下面这部分是我的这个NixOS LXC使用proxmox主板的核心显卡，跟主题无关，当个小彩蛋吧。
+lxc.cgroup2.devices.allow: c 226:0 rwm
+lxc.cgroup2.devices.allow: c 226:128 rwm
+lxc.cgroup2.devices.allow: c 29:0 rwm
+lxc.mount.entry: /dev/dri dev/dri none bind,optional,create=dir
+lxc.mount.entry: /dev/fb0 dev/fb0 none bind,optional,create=file
+lxc.autodev: 1
+lxc.hook.autodev: sh -c &quot;chmod -R 666 /dev/dri/card*; chmod -R 666 /dev/dri/render*&quot;</code></pre>
+<blockquote>
+<p>我通两个VF是因为有一个eth11我是给transmission下载PT用的，transmission的config.json中可以设置<code>bind-address-ipv4</code>，这样我在路由器上就可以更方便的管理transmission.,e.g.定时限速，是否走特殊的流量代理。</p>
+</blockquote>
+</br>
+</br>
+
+<h3 id="3-2-Chelsio-T580"><a href="#3-2-Chelsio-T580" class="headerlink" title="3.2 Chelsio T580"></a>3.2 Chelsio T580</h3><p>Chelsio对FreeBSD的支持特别好，我想因此他们也愿意做一下MacOS的驱动。这张卡在linux下的驱动比较麻烦，随手写一下我在 Proxmox VE 7下面驱动此卡的方法：</p>
+<ul>
+<li><p>从官网下载最新版的tar.gz压缩包</p>
+</li>
+<li><p>解压压缩包<code>tar -zxvf ChelsioUwire-x.xx.x.x.tar.gz</code></p>
+</li>
+<li><p>安装rpm <code>sudo apt install rpm</code></p>
+</li>
+<li><p>安装pve的linux headers </p>
+<pre><code class="bash">sudo apt install pve-headers-`uname -r`</code></pre>
+</li>
+<li><p>确认你kernel sources的路径，应该是<code>usr/src/linux-headers-5.xx.xx-x-pve/</code></p>
+</li>
+<li><p>回到刚才解压缩好的文件夹里，修改Makefile:</p>
+<pre><code class="bash">DEBIAN := 1
+PDEB := 1
+DISTRO := Debian</code></pre>
+</li>
+<li><p>在当前目录编译驱动 <code>make KDIR=/usr/src/linux-headers-5.xx.xx-x-pve/</code></p>
+</li>
+<li><p>完成后你可以使用此卡的高级功能 e.g.SR-IOV, etc.</p>
+<blockquote>
+<p>每次更新PVE内核你都需要重新编译驱动。</p>
+</blockquote>
+</li>
+</ul>
+</br>
+</br>
+
+<h3 id="3-2-1-Chelsio-T580在MacOS下的驱动。"><a href="#3-2-1-Chelsio-T580在MacOS下的驱动。" class="headerlink" title="3.2.1 Chelsio T580在MacOS下的驱动。"></a>3.2.1 Chelsio T580在MacOS下的驱动。</h3><p>这张卡直接在官网下载驱动安装就行，最高只支持到Big Sur，如遇签名过期，断网修改本地时间。<br>如果你希望干净一点安装，在MacOS下通过命令<code>pkgutil --expand-full [pkg] [dir]</code>获得PKG内的KEXT。其中cxgb.kext是Chelsio T580的驱动，cxgb3.kext是T3xx系列的驱动。</p>
+<ul>
+<li>下载<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/OCNHTeam/OCNHTeam.github.io/main/tools/cxgb.kext.zip">cxgb.kext</a></li>
+</ul>
+<p>如果是黑苹果，你可以通过OpenCore直接加载kext。</p>
+<ul>
+<li>这个卡超级超级超级热！温度过高会导致掉光模块或者掉卡。一个风扇不够，你需要2-4个风扇全面覆盖它才可以；条件允许，水冷。<blockquote>
+<p>注意，拆卸此卡时小心灼伤！</p>
+</blockquote>
+</li>
+</ul>
+</br>
+</br>
+
+<h3 id="4-ZFS-Tuning"><a href="#4-ZFS-Tuning" class="headerlink" title="4 ZFS Tuning"></a>4 ZFS Tuning</h3><p>ZFS Tuning的教程好像没办法写，即便是跟我买完全一模一样的机器，你拿回去使用场景不同，都不能tuning一样的。老老实实看OpenZFS的Manual吧，没有捷径。但我可以说一下我自己的一些40Gbps网路下的Tuning思路。</p>
+<ul>
+<li>在内存有限的情况下使用<code>L2arc</code>提高读取速度。L2arc还是一个高性价比的选择。</li>
+<li>L2arc的容量尽可能匹配内存arc容量的4-5倍之间，超过容量后的那部分tuning非常繁琐且不切实际。</li>
+<li>一般不做单个大文件的读写，这种情况实际使用场景很少，如果有，注意<code>dirty data</code>。</li>
+<li>考虑<code>OpenZFS meta fusion pool</code>这个功能。值得注意的是<code>Meta vdev</code>的损坏会导致整个Pool损坏，即便机械池连一个坏道都没有。因此我认为哪怕Mirror的Optane池做Meta Devs也只是多一个故障点。</li>
+<li>最后提一嘴，所有的Tuning都是有代价的。</li>
+</ul>
+</br>
+</br>
+
+<h3 id="5-NFS-Tuning"><a href="#5-NFS-Tuning" class="headerlink" title="5 NFS Tuning"></a>5 NFS Tuning</h3><p>NFS对于小文件的读写是不理想的，有条件的话尽可能使用ISCSI。<br>NFS version ≥ 4.1，并且在NFS SEVER 设置中把线程设置成24个或者更高（看你CPU），链接NAS是可以大文件跑满40Gbps的。如果是4k小文件请调小NAS服务端的Block Size，同样客户端的<code>wsize</code> <code>rsize</code>都理应调小。另外MTU 9000对于4k是至关重要的，条件允许，开启。</p>
+<p>MacOS依然没有更新NFS版本，并且因为<code>Foundation API</code>在Finder中通过版本<code>NFS v4</code>连接NAS会出现断连的情况，而在macOS的Terminal中使用POSIX权限则没有这样的现象。<br>但在MacOS中，无论使用什么40Gbps卡，你都只能在UI界面环境中获得20Gbps的连接速度，这也许是因为协议层太过老旧而用户无从选择。</p>
+<p>如果是SMB的话，我无法给出一个标准答案，这完全取决于你CPU的单核心能力，毕竟只有上传和下载两个线程。又或者说你希望使用SMB <code>Multi-Channels</code>功能来解决这个问题。</p>
+<h3 id="6-ZFS-Send"><a href="#6-ZFS-Send" class="headerlink" title="6 ZFS Send"></a>6 ZFS Send</h3><p>无论如何，机械SATA硬盘都无法与现代的SSD比肩4k类的读写，尤其是在<code>IO Depth</code>方面。<code>OpenZFS</code>提供之前提到的<code>Meta devs</code>功能来提高4k的写入，但我依然认为这是多一个故障点。因此我单独使用了一块Samsung 983ZET硬盘做日常的使用，并且设置了<code>ZFS Send</code>按天回传数据到HDD池中。</p>
+<blockquote>
+<p>你也可以找一块很快的SSD(e.g.一百多元的64G 800p)搭配慢一点的大容量SSD做Meta的<code>Fusion Pool</code>。</p>
+</blockquote>
+<pre><code class="bash">zfs send SSD/works@3 | zfs recv Home/test</code></pre>
+<p>ZFS send必须先建立快照，其中<code>3</code>代表快照名，而后的Home/test则为机械硬盘池。同样，你可以使用TrueNas自带的<code>Replication Task</code>来完成类似的操作。</p>
+<h3 id="7-性能测试"><a href="#7-性能测试" class="headerlink" title="7 性能测试"></a>7 性能测试</h3><h3 id="8-一些题外话"><a href="#8-一些题外话" class="headerlink" title="8 一些题外话"></a>8 一些题外话</h3><p>非常喜欢用网卡ipxe+Ventoy这套东西装系统，最近发现Mikrotik ROS系统在DHCP SERVER选项中增加了一个<code>Option Matcher</code>的功能。配合Option 93可以根据主板的架构分配不同的引导文件e.g.ArmUEFI,LegacyBIOS,x86UEFI.</p>
+
+	</div>
+
+	
+
+	
+
+	
+		<div class="post-tags">
+			<i class="fa fa-tags" aria-hidden="true"></i>
+			<a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/Hardware/" rel="tag">Hardware</a><a class="tag badge badge-secondary post-meta-detail-tag -none-link" href="/tags/NAS/" rel="tag">NAS</a>
+		</div>
+	
+</article>
+
+	<div id="share_container">
+	<div id="share" data-initialized="true">
+		<a class="no-pjax icon-wechat" tooltip="分享到微信">
+			<button class="btn btn-icon btn-success">
+				<span class="btn-inner--icon"><i class="fa fa-weixin"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-douban" tooltip="分享到豆瓣">
+			<button class="btn btn-icon btn-primary" style="background: #209261;border: none;">
+				豆
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-qq" tooltip="分享到 QQ">
+			<button class="btn btn-icon btn-primary" style="background: #2196f3;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-qq"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-qzone" tooltip="分享到 QQ 空间">
+			<button class="btn btn-icon btn-primary" style="background: #ffc107;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-star"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-weibo" tooltip="分享到微博">
+			<button class="btn btn-icon btn-warning">
+				<span class="btn-inner--icon"><i class="fa fa-weibo"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-facebook" tooltip="分享到 Facebook">
+			<button class="btn btn-icon btn-primary" style="background: #283593;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-facebook"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-twitter" tooltip="分享到 Twitter">
+			<button class="btn btn-icon btn-primary" style="background: #03a9f4;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-twitter"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-telegram" href="https://telegram.me/share/url?url=https://blog.xjn819.com/post/Upgrade-from-10Gbps-to-40Gbps-network.html&text=ZFS:从10Gbps升级到40Gbps网络" tooltip="分享到 Telegram">
+			<button class="btn btn-icon btn-primary" style="background: #42a5f5;border: none;">
+				<span class="btn-inner--icon"><i class="fa fa-telegram"></i></span>
+			</button>
+		</a>
+		<a target="_blank" class="no-pjax icon-copy-link" id="share_copy_link" tooltip="复制链接">
+			<button class="btn btn-icon btn-default">
+				<span class="btn-inner--icon"><i class="fa fa-link"></i></span>
+			</button>
+		</a>
+	</div>
+	<button id="share_show" class="btn btn-icon btn-primary" tooltip="分享">
+		<span class="btn-inner--icon"><i class="fa fa-share"></i></span>
+	</button>
+</div>
+<script type="text/javascript">
+	socialShare("#share", {
+	    title : 'ZFS:从10Gbps升级到40Gbps网络',
+	    description : '0 介绍自TrueNAS Core更新至FreeBSD 13，它的两大产品Scale和Core都已经...',
+	    wechatQrcodeTitle : "分享到微信",
+	    wechatQrcodeHelper : '微信扫描二维码',
+	    source : 'https://blog.xjn819.com/post/Upgrade-from-10Gbps-to-40Gbps-network.html'
+	});
+	$("#share_show")[0].onclick = function(){
+		$("#share_container").addClass("opened");
+	};
+	$("#share_copy_link")[0].onclick = function(){
+		let input = document.createElement('input');
+		document.body.appendChild(input);
+		input.setAttribute("value", window.location.href);
+		input.setAttribute("readonly", "readonly");
+		input.setAttribute("style", "opacity: 0;mouse-events:none;");
+		input.select();
+		if (document.execCommand('copy')){
+			iziToast.show({
+				title: '链接已复制',
+				message: "链接已复制到剪贴板",
+				class: 'shadow',
+				position: 'topRight',
+				backgroundColor: '#2dce89',
+				titleColor: '#ffffff',
+				messageColor: '#ffffff',
+				iconColor: '#ffffff',
+				progressBarColor: '#ffffff',
+				icon: 'fa fa-check',
+				timeout: 5000
+			});
+		}else{
+			iziToast.show({
+				title: '复制失败',
+				message: "请手动复制链接",
+				class: 'shadow',
+				position: 'topRight',
+				backgroundColor: '#f5365c',
+				titleColor: '#ffffff',
+				messageColor: '#ffffff',
+				iconColor: '#ffffff',
+				progressBarColor: '#ffffff',
+				icon: 'fa fa-close',
+				timeout: 5000
+			});
+		}
+		document.body.removeChild(input);
+	};
+</script>
+
+
+<div id="post_comment" class="card shadow-sm">
+	<div id="gitalk-container"></div>
+<script type="text/javascript">
+	var gitalk = new Gitalk({
+		clientID: '86a6322e810d06834891',
+		clientSecret: 'eaf77d01ffaddf2f06a2a4bbac944d8cca3d0c91',
+		repo: 'OCNHTeam.github.io',
+		owner: 'OCNHTeam',
+		admin: ['SeonMe'],
+		id: location.pathname,
+		distractionFreeMode: false
+	})
+	gitalk.render('gitalk-container');
+</script>
+
+</div>
+
+
+<div class="post-navigation card shadow-sm"><div class="post-navigation-item post-navigation-pre"></div><div class="post-navigation-item post-navigation-next"><span class="page-navigation-extra-text">下一篇 <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span><a href="/post/apple-tv-wee-guide.html" rel="next"> Apple TV小指南</a></div></div>
+
+
+
+		
+		
+		
+		
+
+					<footer id="footer" class="site-footer card shadow-sm border-0">
+						
+						<div>Theme <a target="_blank" rel="noopener" href="https://github.com/solstice23/hexo-theme-argon"><strong>Argon</strong></a> | Powered by Hexo</div>
+						<span id="busuanzi_container_site_uv">
+							本站访客数 <span id="busuanzi_value_site_uv"></span> 人次
+						</span>
+					</footer>
+				</main>
+			</div>
+		</div>
+		
+<script src="/argontheme.js"></script>
+
+		
+		
+		
+
+		
+			<script>
+				var argonEnableCodeHighlight = true;
+			</script>
+			
+<link rel="stylesheet" href="/assets/vendor/highlight/styles/vs2015.css">
+
+		
+
+	</div>
+</div>
+<noscript>
+	<style>
+		article img.lazyload[src^="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPg"]{display: none;}
+		.comment-item-text .comment-sticker.lazyload{display: none;}
+	</style>
+</noscript>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0SS4LFYBFR"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0SS4LFYBFR');
+</script>
+</body>
+
+
+
+</html>
+
