@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-01-14T12:13:22.746Z">
+<meta property="article:modified_time" content="2023-01-14T13:23:18.519Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-14 20:13:22">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-14 21:23:18">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -778,6 +778,9 @@ fae mlxi2c set_fan set_fan /PS1/FAN 1 65</code></pre>
 <p>HP544+这张卡是Mellanox CX354a-FCCT的套娃卡，并不能刷入原装固件。使用HPE官网最新的固件在TrueNas下无法使用，请刷入HPE官网的<code>fw-ConnectX3Pro-rel-2_40_5072-764285-B21_Ax-CLP-8025-UEFI-14.11.42-FlexBoot-3.4.747.bin</code>这个老版本固件以便在TrueNAS中使用。</p>
 <p>即便你使用普通的Linux发行版，驱动都已经deprecated了，插上后可以上网之类的，但是如果你想使用更高级的功能，必须下载Nvidia的OFED驱动进行编译。这个驱动看样子也不会再更新了，不知道哪天还能不能编译出来，但最烦的是每次LINUX内核升级，你都要重新编译。下载对应的OFED编译，方式跟下面Chelsio的差不多就不写了。</p>
 <p>另外，这张卡通过我的观察，即便IOMMU分组已经分开两个口的IRQ了，但是PCI地址还是一个，所以他无法将两个口分别直通给两个不同的Guests。如果可以，请告知。</p>
+<blockquote>
+<p>我其实非常不明白这卡到底怎么在Windows的VM下驱动，想着基本不用windows，就没多弄了。我别的虚拟机全是LXC所以很方便直通PF或者VF。</p>
+</blockquote>
 <p>我这两天还在用tree上自带的驱动并使用SR-IOV，暂时还没出现问题，就先观察一下，有问题的话下面内容我会直接删了。<br>安装mstflint,以Proxmox VE为例：</p>
 <pre><code class="bash">apt update &amp;&amp; apt install mstflint</code></pre>
 <p>通过<code>lspci</code>获得Mellanox网卡的设备号并设置，例如：</p>
@@ -792,9 +795,12 @@ mstconfig -d 03:00.00 set SR_IOV=1 NUM_OF_VFS=8  #开启SR-IOV以及设置VF总�
 mstconfig -d 03:00.00 set LINK_TYPE_P1=ETH  #设置p1端口为ETH模式</code></pre>
 <p>创建一个/etc/modprobe.d/mlx4_core.conf填入：</p>
 <pre><code class="bash">options mlx4_core port_type_array=2,2 num_vfs=4,0,2 probe_vf=4,0,2</code></pre>
-<blockquote>
-<p>port_type_array=2,2 意味着两个端口都是ETH模式<br>num_vfs 是VF数量，格式是a,b,c。a和b分别代表端口1和2的VF量，而C是总量。注意C不是<code>a+b</code>，而是a和b的数量去掉PF数量。<br>probe_vf 格式同上；为Proxmox下ip link中能得到的数量<br>这里我让第一个口做了4个VF给各种虚拟机和LXC用，第二个口不动我拿来给PVE用了。</p>
-</blockquote>
+<ul>
+<li>port_type_array=2,2 意味着两个端口都是ETH模式</li>
+<li>num_vfs 是VF数量，格式是a,b,c。a和b分别代表端口1和2的VF量，而C是总量。注意C不是<code>a+b</code>，而是a和b的数量去掉PF数量。</li>
+<li>probe_vf 格式同上；为Proxmox下ip link中能得到的数量</li>
+<li>这里我让第一个口做了4个VF给各种虚拟机和LXC用，第二个口不动我拿来给PVE用了。</li>
+</ul>
 <p>设置完后记得<code>update-initramfs -u</code><br>写一个<code>systemd unit</code>来让VF开机 Link UP并分配固定MAC地址，请自行搜索，懒得写了。</p>
 </br>
 </br>
@@ -830,19 +836,26 @@ DISTRO := Debian</code></pre>
 
 <h3 id="3-2-1-Chelsio-T580在MacOS下的驱动。"><a href="#3-2-1-Chelsio-T580在MacOS下的驱动。" class="headerlink" title="3.2.1 Chelsio T580在MacOS下的驱动。"></a>3.2.1 Chelsio T580在MacOS下的驱动。</h3><p>这张卡直接在官网下载驱动安装就行，最高只支持到Big Sur，如遇签名过期，断网修改本地时间。<br>如果你希望干净一点安装，在MacOS下通过命令<code>pkgutil --expand-full [pkg] [dir]</code>获得PKG内的KEXT。其中cxgb.kext是Chelsio T580的驱动，cxgb3.kext是T3xx系列的驱动。</p>
 <ul>
-<li>下载<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/OCNHTeam/OCNHTeam.github.io/main/tools/cxgb.kext.zip">cxgb.kext</a>，</li>
+<li>下载<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/OCNHTeam/OCNHTeam.github.io/main/tools/cxgb.kext.zip">cxgb.kext</a></li>
 </ul>
 <p>如果是黑苹果，你可以通过OpenCore直接加载kext。</p>
-<blockquote>
-<p>这个卡超级超级超级热！温度过高会导致掉光模块或者掉卡。一个风扇不够，你需要2-4个风扇全面覆盖它才可以；条件允许，水冷。<br>注意，拆卸此卡时小心灼伤！</p>
+<ul>
+<li>这个卡超级超级超级热！温度过高会导致掉光模块或者掉卡。一个风扇不够，你需要2-4个风扇全面覆盖它才可以；条件允许，水冷。<blockquote>
+<p>注意，拆卸此卡时小心灼伤！</p>
 </blockquote>
+</li>
+</ul>
 </br>
 </br>
 
 <h3 id="4-ZFS-Tuning"><a href="#4-ZFS-Tuning" class="headerlink" title="4 ZFS Tuning"></a>4 ZFS Tuning</h3><p>ZFS Tuning的教程好像没办法写，即便是跟我买完全一模一样的机器，你拿回去使用场景不同，都不能tuning一样的。老老实实看OpenZFS的Manual吧，没有捷径。但我可以说一下我自己的一些40Gbps网路下的Tuning思路。</p>
-<blockquote>
-<p>在内存有限的情况下使用<code>L2arc</code>提高读取速度。L2arc还是一个高性价比的选择。<br>L2arc的容量尽可能匹配内存arc容量的4-5倍之间，超过容量后的那部分tuning非常繁琐且不切实际。<br>一般不做单个大文件的读写，这种情况实际使用场景很少，如果有，注意<code>dirty data</code>。<br>考虑<code>OpenZFS meta fusion pool</code>这个功能。值得注意的是<code>Meta vdev</code>的损坏会导致整个Pool损坏，即便机械池连一个坏道都没有。因此我认为哪怕Mirror的Optane池做Meta Devs也只是多一个故障点。<br>最后提一嘴，所有的Tuning都是有代价的。</p>
-</blockquote>
+<ul>
+<li>在内存有限的情况下使用<code>L2arc</code>提高读取速度。L2arc还是一个高性价比的选择。</li>
+<li>L2arc的容量尽可能匹配内存arc容量的4-5倍之间，超过容量后的那部分tuning非常繁琐且不切实际。</li>
+<li>一般不做单个大文件的读写，这种情况实际使用场景很少，如果有，注意<code>dirty data</code>。</li>
+<li>考虑<code>OpenZFS meta fusion pool</code>这个功能。值得注意的是<code>Meta vdev</code>的损坏会导致整个Pool损坏，即便机械池连一个坏道都没有。因此我认为哪怕Mirror的Optane池做Meta Devs也只是多一个故障点。</li>
+<li>最后提一嘴，所有的Tuning都是有代价的。</li>
+</ul>
 </br>
 </br>
 
