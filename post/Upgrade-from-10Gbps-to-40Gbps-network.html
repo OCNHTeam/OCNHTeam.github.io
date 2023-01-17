@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-01-14T18:10:18.201Z">
+<meta property="article:modified_time" content="2023-01-17T19:11:09.708Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-15 2:10:18">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-18 3:11:09">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							4.1k 字
+							4.2k 字
 						</div>
 					
 						
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							18 分钟
+							19 分钟
 						</div>
 					
 		</div>
@@ -871,8 +871,8 @@ DISTRO := Debian</code></pre>
 <ul>
 <li>在内存有限的情况下使用<code>L2arc</code>提高读取速度。L2arc还是一个高性价比的选择。</li>
 <li>L2arc的容量尽可能匹配内存arc容量的4-5倍之间，超过容量后的那部分tuning非常繁琐且不切实际。</li>
-<li>一般不做单个大文件的读写，这种情况实际使用场景很少，如果有，注意<code>dirty data</code>。</li>
-<li>考虑<code>OpenZFS meta fusion pool</code>这个功能。值得注意的是<code>Meta vdev</code>的损坏会导致整个Pool损坏，即便机械池连一个坏道都没有。因此我认为哪怕Mirror的Optane池做Meta Devs也只是多一个故障点。</li>
+<li><code>dirty data</code>的设置需要花时间观察的，因为不同场景下的值不是一样的，也不是越大越好，因为需要花费大量时间观察调整，再观察调整循序渐进，没吃太饱的话还是保持默认吧。</li>
+<li>考虑<code>OpenZFS meta fusion pool</code>这个功能。值得注意的是<code>Meta vdev</code>的损坏会导致整个Pool损坏，即便机械池连一个坏道都没有。因此我认为哪怕Mirror的Optane池做Meta Devs也只是多一个故障点。想象一下如果optane坏了，走保修起码也得一个月吧，然后这一个月内如果你的另一个optane也坏了？是不是该买3个optane？</li>
 <li>最后提一嘴，所有的Tuning都是有代价的。</li>
 </ul>
 </br>
@@ -890,7 +890,13 @@ DISTRO := Debian</code></pre>
 </blockquote>
 <pre><code class="bash">zfs send SSD/works@3 | zfs recv Home/test</code></pre>
 <p>ZFS send必须先建立快照，其中<code>3</code>代表快照名，而后的Home/test则为机械硬盘池。同样，你可以使用TrueNas自带的<code>Replication Task</code>来完成类似的操作。</p>
-<h3 id="7-性能测试"><a href="#7-性能测试" class="headerlink" title="7 性能测试"></a>7 性能测试</h3><h3 id="8-一些题外话"><a href="#8-一些题外话" class="headerlink" title="8 一些题外话"></a>8 一些题外话</h3><p>非常喜欢用网卡ipxe+Ventoy这套东西装系统，最近发现Mikrotik ROS系统在DHCP SERVER选项中增加了一个<code>Option Matcher</code>的功能。配合Option 93可以根据主板的架构分配不同的引导文件e.g.ArmUEFI,LegacyBIOS,x86UEFI.</p>
+<h3 id="7-性能测试"><a href="#7-性能测试" class="headerlink" title="7 性能测试"></a>7 性能测试</h3><h3 id="8-一些题外话"><a href="#8-一些题外话" class="headerlink" title="8 一些题外话"></a>8 一些题外话</h3><ul>
+<li><p>非常喜欢用网卡ipxe+Ventoy这套东西装系统，最近发现Mikrotik ROS系统在DHCP SERVER选项中增加了一个<code>Option Matcher</code>的功能。配合Option 93可以根据主板的架构分配不同的引导文件e.g.ArmUEFI,LegacyBIOS,x86UEFI.</p>
+</li>
+<li><p>MTU 9000, AKA <code>Jumbo Frames</code>, 你需要慎重去考虑你整个网络内的所有设备通信，这个东西带来的收益其实远比它带来的问题多，如果你家里有很多无线智能设备的话，考虑尽可能用vlan去划分。网络inbound的话，需要修正mss。Mikrotik ROS则加一条mangle：</p>
+<pre><code class="bash">/ip firewall mangle add action=change-mss chain=forward new-mss=clamp-to-pmtu passthrough=yes protocol=tcp tcp-flags=syn</code></pre>
+</li>
+</ul>
 
 	</div>
 
