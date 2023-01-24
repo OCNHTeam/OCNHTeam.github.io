@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-01-18T14:27:43.443Z">
+<meta property="article:modified_time" content="2023-01-24T11:15:52.842Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-18 22:27:43">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-24 19:15:52">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							4.2k 字
+							4.3k 字
 						</div>
 					
 						
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							19 分钟
+							20 分钟
 						</div>
 					
 		</div>
@@ -871,7 +871,8 @@ DISTRO := Debian</code></pre>
 </br>
 
 
-<h3 id="4-OpenZFS"><a href="#4-OpenZFS" class="headerlink" title="4. OpenZFS"></a>4. OpenZFS</h3><p>我也才从SolarisZFS切换到OpenZFS，容我啃一段时间的文档。。。</p>
+<h3 id="4-OpenZFS"><a href="#4-OpenZFS" class="headerlink" title="4. OpenZFS"></a>4. OpenZFS</h3><p>对于FreeBSD而言，SolarisZFS和OpenZFS的差别不是那么大。但是在Linux上实现OpenZFS我暂时没明白怎么用，OpenZFS的实现固然很有用，但是在BSD里物理硬盘与VDEV是依赖于Geom去实现的，Geom提供<code>providers</code>给OpenZFS来做成VDEV，则完成整一套的虚拟-物理设备之间的通信。我对Linux的OpenZFS一无所知，甚至不懂没了Geom怎么实现block的<code>check sum</code>和<code>data healing</code>，想着不懂，我就不用了吧。<br>打个比方，通过Geom的gnop模块，我们可以简单的创建一个ZFS device。用这个device作为<code>provider</code>成为VDEV的一员，则ZFS会采用这个4k的sector size存储数据到VDEV中，那在linux中这到底怎么实现呢我就不知道了。</p>
+<pre><code class="bash">gnop create -S 4096 /dev/gpt/zfs0</code></pre>
 <h4 id="4-1-Ashift"><a href="#4-1-Ashift" class="headerlink" title="4.1 Ashift"></a>4.1 Ashift</h4><h4 id="4-2-Meta-vdevs"><a href="#4-2-Meta-vdevs" class="headerlink" title="4.2 Meta vdevs"></a>4.2 Meta vdevs</h4><h4 id="4-3-Dedup-vdevs"><a href="#4-3-Dedup-vdevs" class="headerlink" title="4.3 Dedup vdevs"></a>4.3 Dedup vdevs</h4><h4 id="4-4-Slog"><a href="#4-4-Slog" class="headerlink" title="4.4 Slog"></a>4.4 Slog</h4><h4 id="4-5-L2arc"><a href="#4-5-L2arc" class="headerlink" title="4.5 L2arc"></a>4.5 L2arc</h4><h4 id="4-6-HDD-Storage-Pool"><a href="#4-6-HDD-Storage-Pool" class="headerlink" title="4.6 HDD Storage Pool"></a>4.6 HDD Storage Pool</h4><h4 id="4-7-OpenZFS-tuning"><a href="#4-7-OpenZFS-tuning" class="headerlink" title="4.7 OpenZFS tuning"></a>4.7 OpenZFS tuning</h4><p>ZFS 的使用优化是没有参照的，即便是跟我买完全一模一样的机器，拿回去使用场景不同都不能tuning一样的。老老实实看OpenZFS的Manual吧，没有捷径。但我可以说一下我自己的一些40Gbps网路下的Tuning思路。</p>
 <ul>
 <li>在内存<font color="#660000">有限</font>的情况下使用<code>L2arc</code>提高读取速度。L2arc还是一个高性价比的选择。在内存arc仍然growing的情况下强行使用l2arc只会让你的读取速度变慢，按现代计算机架构来看，没有啥SSD是比内存更快的。</li>
