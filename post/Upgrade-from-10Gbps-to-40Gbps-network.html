@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-01-27T13:44:22.192Z">
+<meta property="article:modified_time" content="2023-01-29T03:41:16.828Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-27 21:44:22">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-29 11:41:16">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -640,7 +640,7 @@
 </blockquote>
 <p>家里装修时布置了2条MPO数据线的，但不知道为什么只有一条能通网络，导致我有段时间一直是NAS和MAC电脑端对端连着，用着也还行就没想太多。刚好早些时候拼车买了Mellanox SX6036，疫情闲赋在家就拿出来换了一套猫扇，NAS连接Mellanox SX6036再连接家里的10Gbps交换机Mikrotik CRS312，至此把40Gbps网络并入整个家庭内网。<br></br></p>
 <h1 id="1-硬件添置"><a href="#1-硬件添置" class="headerlink" title="1 硬件添置"></a>1 硬件添置</h1><ul>
-<li><p>Mellanox SX6036交换机。这个交换机根据成新，闲鱼差不多2000-3000左右，但是海淘Ebay大概在600-1200左右，邮费非常贵，如果有拼车最好了，需要授权才能使用以太网ETH模式，这个可以找淘宝或者Ebay上购买License或者破解，不是很贵。</p>
+<li><p>Mellanox SX6036交换机。闲鱼差不多2000-3000左右，但是海淘Ebay大概在600-1200左右，邮费非常贵，如果有拼车最好了，需要授权才能使用以太网ETH模式，这个可以找淘宝或者Ebay上购买License或者破解，不是很贵。</p>
 </li>
 <li><p>HP 544+ 40Gbps ETH 56Gbps IB QSFP网卡。这个卡闲鱼加转接卡一起卖大概在80-120之间，非常便宜。便宜一般来说带来了很多坑，等下会写这张卡的踩坑记录。</p>
 </li>
@@ -656,7 +656,7 @@
 <h2 id="1-1-非必选添置"><a href="#1-1-非必选添置" class="headerlink" title="1.1 非必选添置"></a>1.1 非必选添置</h2><ul>
 <li><p>今年夏天实在太热了，NAS风扇只能满转来让硬盘温度稍微好一点，因此，我把原装的846机箱的4个8CM风扇卡槽换成了3个12CM的风扇卡槽，购买了3个追风者T30风扇。8CM兼顾PWM并且转速范围大，噪音低的实在太难买了，换成这款12CM的体验下来效果非常好。卡槽是找淘宝用PETG材质3D打印的。打印文件<a target="_blank" rel="noopener" href="https://www.thetylergibson.com/supermicro-846-120mm-fan-shroud/">购买链接</a> </p>
 <blockquote>
-<p>这是人家的劳动成果，我觉得免费分享给大家并不道义。</p>
+<p>人家的劳动成果，免费分享并不道义。</p>
 </blockquote>
 <blockquote>
 <p>追风者T30风扇需要拨动风扇中央的开关到Advance模式才能达到3000转。</p>
@@ -669,17 +669,17 @@
 <li><p>很早之前购买了超微SAS3的背板+SAS3的HBA卡（这个卡的小坑请看以前那篇文章），这样在20个硬盘能达到40Gbps的顺序读写，当然4k小文件就别想提高了。如果无法购买到或硬盘数量达不到，购买1-2个SSD组成Raid0，并写个脚本定期把Raid0的dataset通过<code>ZFS send</code>备份到主池的HDD中也是不错的选择。</p>
 <blockquote>
 <p>硬盘矿潮后，超微846的仿冒机箱在淘宝闲鱼盛行，务必辨别原装。非原装或者浪潮的846机箱，上面说的3D打印文件应该不适用的！我也没买过那些牌子，不知道那些连个电容都没的背板性能怎么样。我认为24盘原装或者浪潮SAS3 846机箱的价位应该在2500元左右。可怕的是我还见过机箱是原装的，电源背板全是仿冒的，请务必辨别。<br>我的NAS RAID是两组10盘Z2，并把两组Z2 Stripe为一组，可以说是Raid60。另外四个盘位随便放了两个ZFS Hot Spare盘热备换用。</p>
-</br>
 </blockquote>
 </li>
-<li><p>选购！ ATTO ThunderLink 40Gbps NQ3402 雷电网卡。这张卡是目前唯一一张支持到40Gbps并且受到最新MacOS支持的雷电网卡。价格太贵就提一嘴。这张卡其实只能跑20Gbps，因为雷电的数据传输本身只有20GB。</p>
-</br>
+</ul>
+<ul>
+<li>选购！ ATTO ThunderLink 40Gbps NQ3402 雷电网卡。这张卡是目前唯一一张支持到40Gbps并且受到最新MacOS支持的雷电网卡。价格太贵就提一嘴。这张卡其实只能跑20Gbps，因为雷电的数据传输本身只有20GB。</br>
 </br>
 
 
 </li>
 </ul>
-<h1 id="2-管理SX6036"><a href="#2-管理SX6036" class="headerlink" title="2 管理SX6036"></a>2 管理SX6036</h1><p>通过RJ45网线连接交换机的mgt口，登陆其后台IP即可管理。若你不知道管理口IP，你需要用Console线（RJ45 to USB）连接，进入向导模式设置管理口IP等，这个可以看官网的说明书，这里不细说这些没用的了，说一下几个小坑。</p>
+<h1 id="2-管理SX6036"><a href="#2-管理SX6036" class="headerlink" title="2 管理SX6036"></a>2 管理SX6036</h1><p>通过RJ45网线连接交换机的mgt口，登陆其后台IP即可管理。若你不知道管理口IP，需要用Console线（RJ45 to USB）连接，进入向导模式设置管理口IP等，这个可以看官网的说明书，这里不细说这些没用的了，说一下几个小坑。</p>
 <p>如果使用SFP光缆配合购物清单中的SFP to QSFP转换头，连接10Gbps交换机和SX6036，请在后台的WEB UI中将连接口的速率手动协商至10Gbps，不然无法通信。<br>如果你有一条QSFP一分四SFP的线，需关闭其中一个口才能使用。例如，我关闭了SX6036的1口，则4口可以插入这条QSFP一分四SFP的线，具体请查阅说明书来找到关闭对应口。关闭端口必须使用Console线连接才能更改。</p>
 </br>
 </br>
@@ -779,8 +779,10 @@ fae mlxi2c set_fan set_fan /PS1/FAN 1 65</code></pre>
 <p>通过BIOS Legacy模式在开机引导此固件Rom的时候也可以直接进入Setup界面关闭SR-IOV，这样无需安装别的软件来设置</p>
 </blockquote>
 <p>暂时不懂怎么在TrueNAS下修改一些内核相关的东西，并且SR-IOV在我的TrueNAS主板上不是必需品，如果你会用，则刷入下面的老固件。</p>
-<p>我在Proxmox VE中习惯使用SR-IOV，请到HPE官网下载并刷入<code>fw-ConnectX3Pro-rel-2_40_5072-764285-B21_Ax-CLP-8025-UEFI-14.11.42-FlexBoot-3.4.747.bin</code>这个老版本固件。<br>即便你使用普通的Linux发行版，驱动都已经deprecated了，插上后可以上网之类的，但是如果你想使用更高级的功能，必须下载Nvidia的OFED驱动进行编译。这个驱动看样子也不会再更新了，不知道哪天还能不能编译出来，但最烦的是每次LINUX内核升级，你都要重新编译。下载对应的OFED编译，方式跟下面Chelsio的差不多就不写了。另外通过我的观察，即便IOMMU分组已经分开两个口的IRQ了，但是PCI地址还是一个，所以无法将两个口分别直通给两个不同的VM Guests。如果可以，请告知。</p>
-<p>尽管搜索国外论坛提示如果不用OFED可能会在使用SR-IOV或者Pause帧中遇到问题，我这两天还是试用tree上自带的驱动并使用SR-IOV，暂时还没出现问题，就先观察一下，有问题的话下面内容我会直接删了再把OFED的东西补一下。<br>安装mstflint,以Proxmox VE为例：</p>
+<p>我在Proxmox VE中习惯使用SR-IOV，请到HPE官网下载并刷入<code>fw-ConnectX3Pro-rel-2_40_5072-764285-B21_Ax-CLP-8025-UEFI-14.11.42-FlexBoot-3.4.747.bin</code>这个老版本固件。<br>即便你使用普通的Linux发行版，驱动都已经deprecated了，插上后可以上网之类的，但是如果你想使用更高级的功能，必须下载Nvidia的OFED驱动进行编译。这个驱动看样子也不会再更新了，不知道哪天还能不能编译出来。下载对应的OFED编译，方式跟下面Chelsio的差不多就不写了。另外通过我的观察，即便IOMMU分组已经分开两个口的IRQ了，但是PCI地址还是一个，所以无法将两个口分别直通给两个不同的VM Guests。如果可以，请告知。</p>
+<blockquote>
+</blockquote>
+<p>尽管搜索国外论坛提示如果不用OFED可能会在使用SR-IOV或者Pause帧中遇到问题，我这两天还是试用tree上自带的驱动并使用SR-IOV，暂时还没出现问题，就先观察一下，有问题的话下面内容我会直接删了再把OFED的东西补一下。我没有编译过OFED，pve用的是Ubuntu LTS的内核，随便看了一下好像还行，但是能用in-the-tree的驱动就不想动了。<br>安装mstflint,以Proxmox VE为例：</p>
 <pre><code class="bash">apt update &amp;&amp; apt install mstflint</code></pre>
 <p>通过<code>lspci</code>获得Mellanox网卡的设备号并设置，例如：</p>
 <pre><code class="bash">lspci |grep Mellanox
@@ -871,13 +873,13 @@ DISTRO := Debian</code></pre>
 </br>
 
 
-<h1 id="4-OpenZFS"><a href="#4-OpenZFS" class="headerlink" title="4. OpenZFS"></a>4. OpenZFS</h1><p>对于FreeBSD而言，SolarisZFS和OpenZFS使用上差别不是那么大。但是在Linux上实现OpenZFS我暂时没明白，OpenZFS的实现固然很有用，但是在BSD里物理硬盘与VDEV是依赖于Geom去实现的，Geom提供<code>providers</code>给OpenZFS来做成VDEVs，则完成整一套的虚拟-物理设备之间的通信。因不懂没了Geom怎么实现block的<code>check sum</code>和<code>data healing</code>，既然不懂，我就不用了吧。</p>
+<h1 id="4-OpenZFS"><a href="#4-OpenZFS" class="headerlink" title="4 OpenZFS"></a>4 OpenZFS</h1><p>对于FreeBSD而言，SolarisZFS和OpenZFS使用上差别不是那么大。但是在Linux上实现OpenZFS我暂时没明白，OpenZFS的实现固然很有用，但是在BSD里物理硬盘与VDEV是依赖于Geom去实现的，Geom提供<code>providers</code>给OpenZFS来做成VDEVs，则完成整一套的虚拟-物理设备之间的通信。因不懂没了Geom怎么实现block的<code>check sum</code>和<code>data healing</code>，既然不懂，我就不用了吧。</p>
 <h2 id="4-1-Ashift"><a href="#4-1-Ashift" class="headerlink" title="4.1 Ashift"></a>4.1 Ashift</h2><h2 id="4-2-Meta-Vdevs"><a href="#4-2-Meta-Vdevs" class="headerlink" title="4.2 Meta Vdevs"></a>4.2 Meta Vdevs</h2><h2 id="4-3-Dedup-Vdevs"><a href="#4-3-Dedup-Vdevs" class="headerlink" title="4.3 Dedup Vdevs"></a>4.3 Dedup Vdevs</h2><h2 id="4-4-Slog"><a href="#4-4-Slog" class="headerlink" title="4.4 Slog"></a>4.4 Slog</h2><h2 id="4-5-L2arc"><a href="#4-5-L2arc" class="headerlink" title="4.5 L2arc"></a>4.5 L2arc</h2><h2 id="4-6-HDD-Storage-Pool"><a href="#4-6-HDD-Storage-Pool" class="headerlink" title="4.6 HDD Storage Pool"></a>4.6 HDD Storage Pool</h2><h2 id="4-7-OpenZFS-tuning"><a href="#4-7-OpenZFS-tuning" class="headerlink" title="4.7 OpenZFS tuning"></a>4.7 OpenZFS tuning</h2><p>ZFS 的使用优化是没有参照的，即便是跟我买完全一模一样的机器，拿回去使用场景不同都不能tuning一样的。老老实实看OpenZFS的Manual吧，没有捷径。但我可以说一下我自己的一些40Gbps网路下的Tuning思路。</p>
 <ul>
 <li>在内存<font color="#660000">有限</font>的情况下使用<code>L2arc</code>提高读取速度。L2arc还是一个高性价比的选择。在内存arc仍然growing的情况下强行使用l2arc只会让你的读取速度变慢，按现代计算机架构来看，没有啥SSD是比内存更快的。</li>
-<li>L2arc的容量尽可能匹配内存arc容量的4-5倍之间，超过容量后的那部分tuning不切实际。</li>
+<li><code>L2arc</code>的容量尽可能匹配内存<code>arc</code>容量的4-5倍之间，超过容量后的那部分tuning不切实际。</li>
 <li><code>dirty data</code>的设置需要花时间观察的，因为不同场景下的值不是一样的，也不是越大越好，因为需要花费大量时间观察调整，再观察调整循序渐进，没吃太饱的话还是保持默认吧。</li>
-<li>考虑<code>OpenZFS meta fusion pool</code>这个功能。值得注意的是<code>Meta vdev</code>的损坏会导致整个Pool损坏，即便机械池连一个坏道都没有。<code>Meta vdev</code>是一个存储池用于存放metadata，它不是cache盘，所以它不能坏。想象一下如果optane坏了，走保修起码也得一个月吧，然后这一个月内如果你的另一个optane也坏了？是不是该买3个optane？</li>
+<li>慎重考虑<code>OpenZFS meta fusion pool</code>这个功能。</li>
 <li>最后提一嘴，所有的Tuning都是有代价的。</li>
 </ul>
 </br>
@@ -897,8 +899,9 @@ DISTRO := Debian</code></pre>
 </blockquote>
 <p>这里并没有可支持TrueNAS的<code>iSCSI Provider</code>。你需要使用<a target="_blank" rel="noopener" href="https://github.com/TheGrandWazoo/freenas-proxmox">这个</a>插件来连接TrueNAS。</p>
 <blockquote>
-<p>这个插件的<code>API Password</code>就是root的登陆密码，不是<code>API Key</code>。<br>使用<a target="_blank" rel="noopener" href="https://github.com/Corsinvest/cv4pve-autosnap">这个</a>工具可以对VM Guest自动化操作snapshot。这里的快照是使用<code>ZFS Snapshot</code>的，可以完全利用到ZFS的功能了。链接中有好多个视频操作演示教程，这里就不赘述了。</p>
+<p>这个插件的<code>API Password</code>就是root的登陆密码，不是<code>API Key</code>。</p>
 </blockquote>
+<p>使用<a target="_blank" rel="noopener" href="https://github.com/Corsinvest/cv4pve-autosnap">这个</a>工具可以对VM Guest自动化操作snapshot。这里的快照是使用<code>ZFS Snapshot</code>的，可以完全利用到ZFS的功能了。链接中有好多个视频操作演示教程，这里就不赘述了。</p>
 <h1 id="8-性能测试"><a href="#8-性能测试" class="headerlink" title="8 性能测试"></a>8 性能测试</h1><h1 id="9-一些题外话"><a href="#9-一些题外话" class="headerlink" title="9 一些题外话"></a>9 一些题外话</h1><ul>
 <li><p>非常喜欢用网卡ipxe+Ventoy这套东西跑系统，最近发现Mikrotik ROS系统在DHCP Server选项中增加了一个<code>Option Matcher</code>的功能。配合Option 93可以根据主板的架构分配不同的引导文件e.g.ArmUEFI,LegacyBIOS,x86UEFI.</p>
 </li>
