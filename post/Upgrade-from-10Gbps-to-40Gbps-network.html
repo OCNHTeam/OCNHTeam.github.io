@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-01-29T03:41:16.828Z">
+<meta property="article:modified_time" content="2023-01-29T06:59:21.346Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-29 11:41:16">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-1-29 14:59:21">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -876,9 +876,9 @@ DISTRO := Debian</code></pre>
 <h1 id="4-OpenZFS"><a href="#4-OpenZFS" class="headerlink" title="4 OpenZFS"></a>4 OpenZFS</h1><p>对于FreeBSD而言，SolarisZFS和OpenZFS使用上差别不是那么大。但是在Linux上实现OpenZFS我暂时没明白，OpenZFS的实现固然很有用，但是在BSD里物理硬盘与VDEV是依赖于Geom去实现的，Geom提供<code>providers</code>给OpenZFS来做成VDEVs，则完成整一套的虚拟-物理设备之间的通信。因不懂没了Geom怎么实现block的<code>check sum</code>和<code>data healing</code>，既然不懂，我就不用了吧。</p>
 <h2 id="4-1-Ashift"><a href="#4-1-Ashift" class="headerlink" title="4.1 Ashift"></a>4.1 Ashift</h2><h2 id="4-2-Meta-Vdevs"><a href="#4-2-Meta-Vdevs" class="headerlink" title="4.2 Meta Vdevs"></a>4.2 Meta Vdevs</h2><h2 id="4-3-Dedup-Vdevs"><a href="#4-3-Dedup-Vdevs" class="headerlink" title="4.3 Dedup Vdevs"></a>4.3 Dedup Vdevs</h2><h2 id="4-4-Slog"><a href="#4-4-Slog" class="headerlink" title="4.4 Slog"></a>4.4 Slog</h2><h2 id="4-5-L2arc"><a href="#4-5-L2arc" class="headerlink" title="4.5 L2arc"></a>4.5 L2arc</h2><h2 id="4-6-HDD-Storage-Pool"><a href="#4-6-HDD-Storage-Pool" class="headerlink" title="4.6 HDD Storage Pool"></a>4.6 HDD Storage Pool</h2><h2 id="4-7-OpenZFS-tuning"><a href="#4-7-OpenZFS-tuning" class="headerlink" title="4.7 OpenZFS tuning"></a>4.7 OpenZFS tuning</h2><p>ZFS 的使用优化是没有参照的，即便是跟我买完全一模一样的机器，拿回去使用场景不同都不能tuning一样的。老老实实看OpenZFS的Manual吧，没有捷径。但我可以说一下我自己的一些40Gbps网路下的Tuning思路。</p>
 <ul>
-<li>在内存<font color="#660000">有限</font>的情况下使用<code>L2arc</code>提高读取速度。L2arc还是一个高性价比的选择。在内存arc仍然growing的情况下强行使用l2arc只会让你的读取速度变慢，按现代计算机架构来看，没有啥SSD是比内存更快的。</li>
+<li>在内存<font color="#660000">有限</font>的情况下使用<code>L2arc</code>提高读取速度。<code>L2arc</code>是一个高性价比的选择。在内存arc仍然growing的情况下强行使用l2arc只会让你的读取速度变慢，按现代计算机架构来看，没有啥SSD是比内存更快的。</li>
 <li><code>L2arc</code>的容量尽可能匹配内存<code>arc</code>容量的4-5倍之间，超过容量后的那部分tuning不切实际。</li>
-<li><code>dirty data</code>的设置需要花时间观察的，因为不同场景下的值不是一样的，也不是越大越好，因为需要花费大量时间观察调整，再观察调整循序渐进，没吃太饱的话还是保持默认吧。</li>
+<li><code>dirty data</code>的设置需要花时间观察的，因为不同场景下的值不是一样的，也不是越大越好，需要花费大量时间观察调整，再观察调整循序渐进，没吃太饱的话还是保持默认吧。</li>
 <li>慎重考虑<code>OpenZFS meta fusion pool</code>这个功能。</li>
 <li>最后提一嘴，所有的Tuning都是有代价的。</li>
 </ul>
