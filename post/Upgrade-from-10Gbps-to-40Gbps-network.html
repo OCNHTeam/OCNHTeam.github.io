@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-02-05T06:55:31.001Z">
+<meta property="article:modified_time" content="2023-02-08T13:37:26.945Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-5 14:55:31">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-8 21:37:26">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							4.5k 字
+							5.1k 字
 						</div>
 					
 						
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							20 分钟
+							23 分钟
 						</div>
 					
 		</div>
@@ -680,7 +680,7 @@
 </li>
 </ul>
 <h1 id="2-管理SX6036"><a href="#2-管理SX6036" class="headerlink" title="2 管理SX6036"></a>2 管理SX6036</h1><p>通过RJ45网线连接交换机的mgt口，登陆其后台IP即可管理。若你不知道管理口IP，需要用Console线（RJ45 to USB）连接，进入向导模式设置管理口IP等，这个可以看官网的说明书，这里不细说这些没用的了，说一下几个小坑。</p>
-<p>如果使用SFP光缆配合购物清单中的SFP to QSFP转换头，连接10Gbps交换机和SX6036，请在后台的WEB UI中将连接口的速率手动协商至10Gbps，不然无法通信。<br>如果你有一条QSFP一分四SFP的线，需关闭其中一个口才能使用。例如，我关闭了SX6036的1口，则4口可以插入这条QSFP一分四SFP的线，具体请查阅说明书来找到关闭对应口。关闭端口必须使用Console线连接才能更改。</p>
+<p>如果使用SFP光缆配合购物清单中的SFP to QSFP转换头，连接10Gbps交换机和SX6036，请在后台的WEB UI中将连接口的速率手动协商至10Gbps，不然无法通信。<br>如果你有一条QSFP一分四SFP的线，需关闭其中一个口才能使用。例如，我关闭了SX6036的1口，则4口可以插入这条QSFP一分四SFP的线，具体请查阅说明书来找到关闭对应口。关闭端口必须使用Console线连接才能更改。如果要使用IB模式，线的说法比较多了，自行搜索。</p>
 </br>
 </br>
 
@@ -779,10 +779,11 @@ fae mlxi2c set_fan set_fan /PS1/FAN 1 65</code></pre>
 <p>通过BIOS Legacy模式在开机引导此固件Rom的时候也可以直接进入Setup界面关闭SR-IOV，这样无需安装别的软件来设置</p>
 </blockquote>
 <p>暂时不懂怎么在TrueNAS下修改一些内核相关的东西，并且SR-IOV在我的TrueNAS主板上不是必需品，如果你会用，则刷入下面的老固件。</p>
-<p>我在Proxmox VE中习惯使用SR-IOV，请到HPE官网下载并刷入<code>fw-ConnectX3Pro-rel-2_40_5072-764285-B21_Ax-CLP-8025-UEFI-14.11.42-FlexBoot-3.4.747.bin</code>这个老版本固件。<br>即便你使用普通的Linux发行版，驱动都已经deprecated了，插上后可以上网之类的，但是如果你想使用更高级的功能，必须下载Nvidia的OFED驱动进行编译。这个驱动看样子也不会再更新了，不知道哪天还能不能编译出来。下载对应的OFED编译，方式跟下面Chelsio的差不多就不写了。另外通过我的观察，即便IOMMU分组已经分开两个口的IRQ了，但是PCI地址还是一个，所以无法将两个口分别直通给两个不同的VM Guests。如果可以，请告知。</p>
-<blockquote>
-</blockquote>
-<p>尽管搜索国外论坛提示如果不用OFED可能会在使用SR-IOV或者Pause帧中遇到问题，我这两天还是试用tree上自带的驱动并使用SR-IOV，暂时还没出现问题，就先观察一下，有问题的话下面内容我会直接删了再把OFED的东西补一下。我没有编译过OFED，pve用的是Ubuntu LTS的内核，随便看了一下好像还行，但是能用in-the-tree的驱动就不想动了。<br>安装mstflint,以Proxmox VE为例：</p>
+<p>我在Proxmox VE中习惯使用SR-IOV，请到HPE官网下载并刷入<code>fw-ConnectX3Pro-rel-2_40_5072-764285-B21_Ax-CLP-8025-UEFI-14.11.42-FlexBoot-3.4.747.bin</code>这个老版本固件。<br>即便你使用普通的Linux发行版，驱动都已经deprecated了，插上后可以上网之类的，但是如果你想使用更高级的功能，可能需要下载Nvidia的OFED驱动进行编译。这个驱动看样子也不会再更新了，不知道哪天还能不能编译出来。下载对应的OFED编译，方式跟下面Chelsio的差不多就不写了。另外通过我的观察，即便IOMMU分组已经分开两个口的IRQ了，但是PCI地址还是一个，所以无法将两个口分别直通给两个不同的VM Guests。如果可以，请告知。</p>
+</br>
+</br>
+
+<p>尽管搜索国外论坛提示如果不用OFED可能会在使用SR-IOV或者Pause帧中遇到问题，我这两天还是试用tree上自带的驱动并使用SR-IOV，暂时还没出现问题，就先观察一下，有问题的话下面内容我会直接删了再把OFED的东西补一下。我没有编译过OFED，PVE用的是Ubuntu LTS的内核，随便看了一下好像还行，但是能用in-the-tree的驱动就不想动了。<br>安装<code>mstflint</code>,以Proxmox VE为例：</p>
 <pre><code class="bash">apt update &amp;&amp; apt install mstflint</code></pre>
 <p>通过<code>lspci</code>获得Mellanox网卡的设备号并设置，例如：</p>
 <pre><code class="bash">lspci |grep Mellanox
@@ -792,7 +793,7 @@ fae mlxi2c set_fan set_fan /PS1/FAN 1 65</code></pre>
 mstflint -d 03:00.00 query   #获得固件信息
 mstflint -d 03:00.00 -i 固件路径 b  #刷入固件
 mstconfig -d 03:00.00 query    #获取设备设置信息
-mstconfig -d 03:00.00 set SRIOV_EN=1 NUM_OF_VFS=8  #开启SR-IOV以及设置VF总数为8个；确保主板已开通sr-iov，Proxmox VE已完成虚拟化等设置
+mstconfig -d 03:00.00 set SRIOV_EN=1 NUM_OF_VFS=8  #开启SR-IOV以及设置VF总数为8个；确保主板已开通sr-iov，Proxmox VE已开通虚拟化等设置
 mstconfig -d 03:00.00 set LINK_TYPE_P1=ETH  #设置p1端口为ETH模式</code></pre>
 <p>创建一个/etc/modprobe.d/mlx4_core.conf填入：</p>
 <pre><code class="bash">options mlx4_core port_type_array=2,2 num_vfs=4,0,2 probe_vf=4,0,2</code></pre>
@@ -803,7 +804,20 @@ mstconfig -d 03:00.00 set LINK_TYPE_P1=ETH  #设置p1端口为ETH模式</code></
 <li>这里我让第一个口做了4个VF给各种虚拟机和LXC用，第二个口不动我拿来给PVE用了。</li>
 </ul>
 <p>设置完后记得<code>update-initramfs -u</code><br>写一个<code>systemd unit</code>来让VF开机 Link UP并分配固定MAC地址，请自行搜索，懒得写了，或者有空补一下吧。</p>
-<p>最后提一嘴，Windows的VM使用这个VF的话要么用proxmox的kernel patch，要么安装OFED，具体参考<a target="_blank" rel="noopener" href="https://forums.servethehome.com/index.php?threads/help-with-connectx-3-sr-iov-with-linux-host-and-windows-guest-via-kvm.28956/page-1">这里</a>。我别的虚拟机全是LXC所以很方便通过PF或者VF。通过修改/etc/pve/lxc/xxx.conf文件，加入你想要通过去的VF即可了：</p>
+<p>如果要用Windows的VM，则尽可能使用Windows的LTSC版本。在PVE内核大于Linux 5.13的情况下，使用3代网卡的VF直通到Windows你要对Proxmox的kernel进行patch，不然Windows Guest的设备管理器里，这个VF会报错code 43。具体参考<a target="_blank" rel="noopener" href="https://forums.servethehome.com/index.php?threads/help-with-connectx-3-sr-iov-with-linux-host-and-windows-guest-via-kvm.28956/page-1">这里</a>。 有空我把我自己patch好的传到Github上去。当然OFED也可以解决，但是3代卡的OFED驱动也就只支持到5.13的内核，还是自己编译驱动。最后一种办法是安装proxmox-ve_7.1-2.iso这个版本，然后pin内核。</p>
+<pre><code class="bash">uname -a #查看内核版本
+apt update
+apt search pve-kernel|grep pve-kernel- #查看可以安装的内核
+apt install pve-kernel-5.xxxxxx-pve #安装特定版本内核，当然初次安装的是新的内核切回去旧的太麻烦了，还不如重装。
+proxmox-boot-tool kernel list #查看pve下有的的内核
+proxmox-boot-tool kernel pin 5.13.19-6-pve #pin住内核</code></pre>
+<blockquote>
+<p>说实在的，Windows下我都不知道怎么跑40Gbps，文件管理器是单线程的，SMB是单线程的，ISCSI在较新的windows 10版本中也是单线程的=。=。RDMA？跟这篇文章主题无关。</p>
+</blockquote>
+</br>
+
+
+<p>我别的虚拟机全是LXC所以很方便通过PF或者VF。通过修改/etc/pve/lxc/xxx.conf文件，加入你想要通过去的VF即可了：</p>
 <pre><code class="bash">lxc.net.1.type: phys
 lxc.net.1.flags: up
 lxc.net.1.link: enp3s0v0
@@ -850,9 +864,8 @@ DISTRO := Debian</code></pre>
 <li><p>在当前目录编译驱动 <code>make KDIR=/usr/src/linux-headers-x.xx.xx-x-pve/</code></p>
 </li>
 <li><p>完成后你可以使用此卡的高级功能 e.g.SR-IOV, etc.</p>
-<blockquote>
-<p>每次更新PVE内核你都需要重新编译驱动。</p>
-</blockquote>
+</li>
+<li><p>每次更新PVE内核你都需要重新编译驱动。</p>
 </li>
 </ul>
 </br>
@@ -874,12 +887,41 @@ DISTRO := Debian</code></pre>
 
 
 <h1 id="4-OpenZFS"><a href="#4-OpenZFS" class="headerlink" title="4 OpenZFS"></a>4 OpenZFS</h1><p>对于FreeBSD而言，SolarisZFS和OpenZFS使用上差别不是那么大。但是在Linux上实现OpenZFS我暂时没明白，OpenZFS的实现固然很有用，但是在BSD里物理硬盘与VDEV是依赖于Geom去实现的，Geom提供<code>providers</code>给OpenZFS来做成VDEVs，则完成整一套的虚拟-物理设备之间的通信。因不懂没了Geom怎么实现block的<code>check sum</code>和<code>data healing</code>，既然不懂，我就不用了吧。</p>
+</br>
+</br>
+
 <h2 id="4-1-Ashift"><a href="#4-1-Ashift" class="headerlink" title="4.1 Ashift"></a>4.1 Ashift</h2><p>Ashift是设置物理硬盘的<code>Block size</code>的。例如，Seagate EXOS 16T的7200转SATA机械硬盘默认是一个logic Sector默认为512B，physcial sector默认是4k。在老的FreeNAS版本中，通过UI建立存储池默认给的Ashift是9，代表着512B。而现代的TrueNAS默认给的是0，代表自动辨别。一般来说，设置成9(512B)会带来一个问题：写入一个4K文件，它会切割成8份，那会对服务器带来一定的压力，但尽量减少空间损失。而如果设置成更大，则会浪费空间。书籍中建议设置成Ashift=12，则是block size=4k。这样会尽力减小服务器压力，而浪费的空间则可以通过compression来减少损失。通过如下命令确认自己的Ashift：</p>
 <pre><code class="bash">zpool get all PoolName |grep ashift</code></pre>
 <blockquote>
 <p>为什么是9和12? 2^9=512;2^12=4096</p>
 </blockquote>
-<h2 id="4-2-Meta-Vdevs"><a href="#4-2-Meta-Vdevs" class="headerlink" title="4.2 Meta Vdevs"></a>4.2 Meta Vdevs</h2><h2 id="4-3-Dedup-Vdevs"><a href="#4-3-Dedup-Vdevs" class="headerlink" title="4.3 Dedup Vdevs"></a>4.3 Dedup Vdevs</h2><h2 id="4-4-Slog"><a href="#4-4-Slog" class="headerlink" title="4.4 Slog"></a>4.4 Slog</h2><h2 id="4-5-L2arc"><a href="#4-5-L2arc" class="headerlink" title="4.5 L2arc"></a>4.5 L2arc</h2><h2 id="4-6-HDD-Storage-Pool"><a href="#4-6-HDD-Storage-Pool" class="headerlink" title="4.6 HDD Storage Pool"></a>4.6 HDD Storage Pool</h2><h2 id="4-7-OpenZFS-tuning"><a href="#4-7-OpenZFS-tuning" class="headerlink" title="4.7 OpenZFS tuning"></a>4.7 OpenZFS tuning</h2><p>ZFS 的使用优化是没有参照的，即便是跟我买完全一模一样的机器，拿回去使用场景不同都不能tuning一样的。老老实实看OpenZFS的Manual吧，没有捷径。但我可以说一下我自己的一些40Gbps网路下的Tuning思路。</p>
+</br>
+</br>
+
+
+<h2 id="4-2-Meta-Vdevs"><a href="#4-2-Meta-Vdevs" class="headerlink" title="4.2 Meta Vdevs"></a>4.2 Meta Vdevs</h2><p>Meta Vdevs是近几年新出的一个功能。这个Vdev并不是一个缓存，而是一个Storage，因此，你需要确保这个Vdev有较高的安全性，比如两个optane硬盘组成一个Mirror，如果这组Vdev坏了，在同一个Pool下的机械池数据也同样丢失。请不要想着<code>试试看能不能用</code>，操作不可逆。</p>
+</br>
+
+<p>Meta Vdevs解决了两个问题。</p>
+<ul>
+<li>如果你的pool存在很多小文件，那读取或者写入都会牵扯到机械硬盘的stroke时间和io depth等问题。那么，如果把pool的Metadata放在了Optane上，则至少可以减少storke的时间，这对小文件多线程是很有帮助的。</li>
+<li>你同样可以对Meta Vdev进行设置。把特定的<code>Block size</code>文件存于Optane中，而没有命中规则的文件，则放入原来的机械存储池中。<br>TrueNas的Pool—-dataset–option中，可以看到你对这个池的<code>Record size</code>，比如我的是128K，然后我在下面的<code>Metadata (speical) small block size</code>中设置一个值，比如是64k。那么当一个文件≤ 64k，那么这个文件会自动存入Optane中。那么当<code>Metadata (speical) small block size</code>=<code>Record size</code>，则所有文件全会存入optane中，显然这样做，还不如单独用optane建立一个池。<br>这里会碰到两个问题：1.如果Optane存满了，我该怎么办？2.我应该选择多大的optane来存放？</br>
+</br>
+
+</li>
+</ul>
+<h3 id="如果Optane作为Meta-Vdev存满了，我该怎么办？"><a href="#如果Optane作为Meta-Vdev存满了，我该怎么办？" class="headerlink" title="如果Optane作为Meta Vdev存满了，我该怎么办？"></a>如果Optane作为Meta Vdev存满了，我该怎么办？</h3><p>根据手册的说法，Meta Vdev存满了，则会根据算法自动将使用频率少的文件回落到机械硬盘。我没有触发过，不清楚到底是怎么个情况。<br></br></p>
+<h3 id="我应该选择多大的optane来存放？"><a href="#我应该选择多大的optane来存放？" class="headerlink" title="我应该选择多大的optane来存放？"></a>我应该选择多大的optane来存放？</h3><p>我们可以看一下你之前的一些比较具有代表性的小文件池来观察估算:</p>
+<pre><code class="bash">cd /mnt/poolname/test #cd到你想测试的dataset下
+find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2)); if (n&lt;10) &#123; n=10; &#125; size[n]++ &#125; END &#123; for (i in size) printf(&quot;%d %d\n&quot;, 2^i, size[i]) &#125;&#39; | sort -n | awk &#39;function human(x) &#123; x[1]/=1024; if (x[1]&gt;=1024) &#123; x[2]++; human(x) &#125; &#125; &#123; a[1]=$1; a[2]=0; human(a); printf(&quot;%3d%s: %6d\n&quot;, a[1],substr(&quot;kMGTEPYZ&quot;,a[2]+1,1),$2) &#125;&#39;
+</code></pre>
+<p>看一下你的这个dataset下文件的整个block size分布，按比例预估。<br>另外通过<code>zdb -LbbbA -U /data/zfs/zpool.cache &lt;poolname&gt;</code>也可以看到整个pool的情况。具体的一些估算以及应用方法请参考<a target="_blank" rel="noopener" href="https://forum.level1techs.com/t/zfs-metadata-special-device-z/159954">这里</a>。</p>
+</br>
+</br>
+
+<h2 id="4-3-Dedup-Vdevs"><a href="#4-3-Dedup-Vdevs" class="headerlink" title="4.3 Dedup Vdevs"></a>4.3 Dedup Vdevs</h2><p>一般来说，开启了Dedup功能的Dataset能做到文件去重复的作用，也就是一模一样的文件只占用一份文件的容量，以前用内存来做，代价是用内存换硬盘，现在即便是可以用Dedup Vdev来换空间，也不推荐，Meta Vdevs存储了dedup datasheet，同样做到了Dedup功能，不如用Meta Dev。<br>开启了Dedup的dataset是不可逆的，关了很危险，请把已经开启dedup的dataset通过<code>zfs send</code>到新的dataset里，再删除旧的。<br></br><br></br></p>
+<h2 id="4-4-Slog"><a href="#4-4-Slog" class="headerlink" title="4.4 Slog"></a>4.4 Slog</h2><p>草，写不完了啊！好烦</p>
+<h2 id="4-5-L2arc"><a href="#4-5-L2arc" class="headerlink" title="4.5 L2arc"></a>4.5 L2arc</h2><h2 id="4-6-HDD-Storage-Pool"><a href="#4-6-HDD-Storage-Pool" class="headerlink" title="4.6 HDD Storage Pool"></a>4.6 HDD Storage Pool</h2><h2 id="4-7-OpenZFS-tuning"><a href="#4-7-OpenZFS-tuning" class="headerlink" title="4.7 OpenZFS tuning"></a>4.7 OpenZFS tuning</h2><p>ZFS 的使用优化是没有参照的，即便是跟我买完全一模一样的机器，拿回去使用场景不同都不能tuning一样的。老老实实看OpenZFS的Manual吧，没有捷径。但我可以说一下我自己的一些40Gbps网路下的Tuning思路。</p>
 <ul>
 <li>在内存<font color="#660000">有限</font>的情况下使用<code>L2arc</code>提高读取速度。<code>L2arc</code>是一个高性价比的选择。在内存arc仍然growing的情况下强行使用l2arc只会让你的读取速度变慢，按现代计算机架构来看，没有啥SSD是比内存更快的。</li>
 <li><code>L2arc</code>的容量尽可能匹配内存<code>arc</code>容量的4-5倍之间，超过容量后的那部分tuning不切实际。</li>
