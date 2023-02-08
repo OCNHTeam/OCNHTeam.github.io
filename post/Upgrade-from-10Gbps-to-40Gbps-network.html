@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-02-08T13:37:26.945Z">
+<meta property="article:modified_time" content="2023-02-08T13:59:19.697Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-8 21:37:26">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-8 21:59:19">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							5.1k 字
+							5.2k 字
 						</div>
 					
 						
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							23 分钟
+							24 分钟
 						</div>
 					
 		</div>
@@ -774,7 +774,7 @@ fae mlxi2c set_fan set_fan /PS1/FAN 1 65</code></pre>
 <p> 待传…..</p>
 <h1 id="3-网卡过坑"><a href="#3-网卡过坑" class="headerlink" title="3 网卡过坑"></a>3 网卡过坑</h1><p>说一下HP 544+和Chelsio T580这两张卡。</p>
 <h2 id="3-1-HP-Mellanox-544"><a href="#3-1-HP-Mellanox-544" class="headerlink" title="3.1 HP Mellanox 544+"></a>3.1 HP Mellanox 544+</h2><p>如果你不太想折腾，请购买原装原厂的Mellanox卡，最好是还在维护的Mellanox 4代以上。我买了两张，说明一下情况，我的NAS和计算是彻底分开的两台机器，NAS是真的只做存储，而乱七八糟玩的是一台Proxmox VE，因此买两张分别给两台机器。<br>HP544+这张卡是Mellanox CX354a-FCCT的套娃卡，并不能刷入原装固件。HPE官网最新的固件在TrueNas使用的话，必须把此网卡的SR-IOV功能关闭，不然可能连开机都开不了。</p>
-<pre><code class="bash">mstconfig -d 03:00.00 set SR_IOV=0</code></pre>
+<pre><code class="bash">mstconfig -d 03:00.00 set SRIOV_EN=0</code></pre>
 <blockquote>
 <p>通过BIOS Legacy模式在开机引导此固件Rom的时候也可以直接进入Setup界面关闭SR-IOV，这样无需安装别的软件来设置</p>
 </blockquote>
@@ -809,7 +809,7 @@ mstconfig -d 03:00.00 set LINK_TYPE_P1=ETH  #设置p1端口为ETH模式</code></
 apt update
 apt search pve-kernel|grep pve-kernel- #查看可以安装的内核
 apt install pve-kernel-5.xxxxxx-pve #安装特定版本内核，当然初次安装的是新的内核切回去旧的太麻烦了，还不如重装。
-proxmox-boot-tool kernel list #查看pve下有的的内核
+proxmox-boot-tool kernel list #查看pve下已经有的内核
 proxmox-boot-tool kernel pin 5.13.19-6-pve #pin住内核</code></pre>
 <blockquote>
 <p>说实在的，Windows下我都不知道怎么跑40Gbps，文件管理器是单线程的，SMB是单线程的，ISCSI在较新的windows 10版本中也是单线程的=。=。RDMA？跟这篇文章主题无关。</p>
@@ -899,27 +899,24 @@ DISTRO := Debian</code></pre>
 </br>
 
 
-<h2 id="4-2-Meta-Vdevs"><a href="#4-2-Meta-Vdevs" class="headerlink" title="4.2 Meta Vdevs"></a>4.2 Meta Vdevs</h2><p>Meta Vdevs是近几年新出的一个功能。这个Vdev并不是一个缓存，而是一个Storage，因此，你需要确保这个Vdev有较高的安全性，比如两个optane硬盘组成一个Mirror，如果这组Vdev坏了，在同一个Pool下的机械池数据也同样丢失。请不要想着<code>试试看能不能用</code>，操作不可逆。</p>
+<h2 id="4-2-Meta-Vdevs"><a href="#4-2-Meta-Vdevs" class="headerlink" title="4.2 Meta Vdevs"></a>4.2 Meta Vdevs</h2><p>Meta Vdevs是近几年新出的一个功能。这个Vdev并不是一个缓存，而是一个Storage，因此，你需要确保这个Vdev有较高的安全性，比如两个optane硬盘组成一个Mirror甚至更大的冗余，如果这组Vdev坏了，在同一个Pool下的机械池数据也同样丢失。请不要想着<code>试试看能不能用</code>，操作不可逆。</p>
 </br>
 
 <p>Meta Vdevs解决了两个问题。</p>
 <ul>
-<li>如果你的pool存在很多小文件，那读取或者写入都会牵扯到机械硬盘的stroke时间和io depth等问题。那么，如果把pool的Metadata放在了Optane上，则至少可以减少storke的时间，这对小文件多线程是很有帮助的。</li>
-<li>你同样可以对Meta Vdev进行设置。把特定的<code>Block size</code>文件存于Optane中，而没有命中规则的文件，则放入原来的机械存储池中。<br>TrueNas的Pool—-dataset–option中，可以看到你对这个池的<code>Record size</code>，比如我的是128K，然后我在下面的<code>Metadata (speical) small block size</code>中设置一个值，比如是64k。那么当一个文件≤ 64k，那么这个文件会自动存入Optane中。那么当<code>Metadata (speical) small block size</code>=<code>Record size</code>，则所有文件全会存入optane中，显然这样做，还不如单独用optane建立一个池。<br>这里会碰到两个问题：1.如果Optane存满了，我该怎么办？2.我应该选择多大的optane来存放？</br>
-</br>
+<li>如果你的pool存在很多小文件，那读取或者写入都会牵扯到机械硬盘的stroke时间和io depth等问题。那么，如果把pool的Metadata放在了Optane上，则至少可以减少storke的时间，也能收获到更多的IO queues，这对小文件多线程是很有帮助的。</li>
+<li>你同样可以对Meta Vdev进行设置。把特定的<code>Block size</code>文件存于Optane中，而没有命中规则的文件，则放入原来的机械存储池中。<br>TrueNas的Pool—-dataset–option中，可以看到你对这个池的<code>Record size</code>，比如我的是128K，然后我在下面的<code>Metadata (speical) small block size</code>中设置一个值，比如是64k。那么当一个文件≤ 64k，那么这个文件会自动存入Optane中。那么当<code>Metadata (speical) small block size</code>=<code>Record size</code>，则所有文件全会存入optane中，显然这样做，还不如单独用optane建立一个池。<br>这里会碰到如下两个问题：</br>
 
 </li>
 </ul>
-<h3 id="如果Optane作为Meta-Vdev存满了，我该怎么办？"><a href="#如果Optane作为Meta-Vdev存满了，我该怎么办？" class="headerlink" title="如果Optane作为Meta Vdev存满了，我该怎么办？"></a>如果Optane作为Meta Vdev存满了，我该怎么办？</h3><p>根据手册的说法，Meta Vdev存满了，则会根据算法自动将使用频率少的文件回落到机械硬盘。我没有触发过，不清楚到底是怎么个情况。<br></br></p>
-<h3 id="我应该选择多大的optane来存放？"><a href="#我应该选择多大的optane来存放？" class="headerlink" title="我应该选择多大的optane来存放？"></a>我应该选择多大的optane来存放？</h3><p>我们可以看一下你之前的一些比较具有代表性的小文件池来观察估算:</p>
+<h3 id="Optane作为Meta-Vdev存满了，我该怎么办？"><a href="#Optane作为Meta-Vdev存满了，我该怎么办？" class="headerlink" title="Optane作为Meta Vdev存满了，我该怎么办？"></a>Optane作为Meta Vdev存满了，我该怎么办？</h3><p>根据手册的说法，Meta Vdev存满了，则会根据算法自动将使用频率少的文件回落到机械硬盘。我没有触发过，不清楚到底是怎么个情况。<br></br></p>
+<h3 id="我应该选择多大的Optane来存放？"><a href="#我应该选择多大的Optane来存放？" class="headerlink" title="我应该选择多大的Optane来存放？"></a>我应该选择多大的Optane来存放？</h3><p>我们可以看一下你之前的一些比较具有代表性的小文件池来观察估算:</p>
 <pre><code class="bash">cd /mnt/poolname/test #cd到你想测试的dataset下
 find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2)); if (n&lt;10) &#123; n=10; &#125; size[n]++ &#125; END &#123; for (i in size) printf(&quot;%d %d\n&quot;, 2^i, size[i]) &#125;&#39; | sort -n | awk &#39;function human(x) &#123; x[1]/=1024; if (x[1]&gt;=1024) &#123; x[2]++; human(x) &#125; &#125; &#123; a[1]=$1; a[2]=0; human(a); printf(&quot;%3d%s: %6d\n&quot;, a[1],substr(&quot;kMGTEPYZ&quot;,a[2]+1,1),$2) &#125;&#39;
 </code></pre>
-<p>看一下你的这个dataset下文件的整个block size分布，按比例预估。<br>另外通过<code>zdb -LbbbA -U /data/zfs/zpool.cache &lt;poolname&gt;</code>也可以看到整个pool的情况。具体的一些估算以及应用方法请参考<a target="_blank" rel="noopener" href="https://forum.level1techs.com/t/zfs-metadata-special-device-z/159954">这里</a>。</p>
-</br>
-</br>
-
-<h2 id="4-3-Dedup-Vdevs"><a href="#4-3-Dedup-Vdevs" class="headerlink" title="4.3 Dedup Vdevs"></a>4.3 Dedup Vdevs</h2><p>一般来说，开启了Dedup功能的Dataset能做到文件去重复的作用，也就是一模一样的文件只占用一份文件的容量，以前用内存来做，代价是用内存换硬盘，现在即便是可以用Dedup Vdev来换空间，也不推荐，Meta Vdevs存储了dedup datasheet，同样做到了Dedup功能，不如用Meta Dev。<br>开启了Dedup的dataset是不可逆的，关了很危险，请把已经开启dedup的dataset通过<code>zfs send</code>到新的dataset里，再删除旧的。<br></br><br></br></p>
+<p>看一下你的这个dataset下文件的整个block size分布，按比例预估。<br>另外通过<code>zdb -LbbbA -U /data/zfs/zpool.cache &lt;poolname&gt;</code>也可以看到整个pool的情况。具体的一些估算以及应用方法请参考<a target="_blank" rel="noopener" href="https://forum.level1techs.com/t/zfs-metadata-special-device-z/159954">这里</a>。<br>当然，我们讨论的文件大小都是通过compression压缩后的大小！</p>
+<p>最后有个小问题，Metadata对于Zvol是无用的，因为对ZFS来说，Zvol只是block size大小完全一样的存在，你可以收益到的只是Metadata对Zvol的加速而已。这个问题的讨论请参考<a target="_blank" rel="noopener" href="https://github.com/openzfs/zfs/discussions/12769">这里</a>。<br></br><br></br></p>
+<h2 id="4-3-Dedup-Vdevs"><a href="#4-3-Dedup-Vdevs" class="headerlink" title="4.3 Dedup Vdevs"></a>4.3 Dedup Vdevs</h2><p>一般来说，开启了Dedup功能的Dataset能做到文件去重复的作用，也就是一模一样的文件只占用一份文件的容量，以前用内存来做，代价是用内存换硬盘空间，现在即便是可以用Dedup Vdev来换空间，也不推荐，Meta Vdevs存储了dedup datasheet，同样做到了Dedup功能，不如用Meta Dev。<br>开启了Dedup的dataset是不可逆的，关了很危险，请把已经开启dedup的dataset通过<code>zfs send</code>到新的dataset里，再删除旧的。<br></br><br></br></p>
 <h2 id="4-4-Slog"><a href="#4-4-Slog" class="headerlink" title="4.4 Slog"></a>4.4 Slog</h2><p>草，写不完了啊！好烦</p>
 <h2 id="4-5-L2arc"><a href="#4-5-L2arc" class="headerlink" title="4.5 L2arc"></a>4.5 L2arc</h2><h2 id="4-6-HDD-Storage-Pool"><a href="#4-6-HDD-Storage-Pool" class="headerlink" title="4.6 HDD Storage Pool"></a>4.6 HDD Storage Pool</h2><h2 id="4-7-OpenZFS-tuning"><a href="#4-7-OpenZFS-tuning" class="headerlink" title="4.7 OpenZFS tuning"></a>4.7 OpenZFS tuning</h2><p>ZFS 的使用优化是没有参照的，即便是跟我买完全一模一样的机器，拿回去使用场景不同都不能tuning一样的。老老实实看OpenZFS的Manual吧，没有捷径。但我可以说一下我自己的一些40Gbps网路下的Tuning思路。</p>
 <ul>
