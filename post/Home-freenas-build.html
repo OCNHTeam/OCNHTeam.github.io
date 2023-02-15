@@ -8,12 +8,12 @@
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta name="description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。  现在改名叫TrueNas,并且分支为TrueNas Core和TrueNas Scale。文章里面提及的FreeNas与TrueNas Core是一回事。最近TrueNas的官网好像被污染了，自己找梯子解决&#x3D;。&#x3D; https:&#x2F;&#x2F;www.v2ex.com&#x2F;">
+	<meta name="description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了。  现在改名叫TrueNas,并且分支为TrueNas Core和TrueNas Scale。文章里面提及的FreeNas与TrueNas Core是一回事。最近TrueNas的官网好像被污染了，自己找梯子解决&#x3D;。&#x3D; https:&#x2F;&#x2F;www.v2ex.com&#x2F;t&#x2F;832355">
 <meta property="og:type" content="article">
 <meta property="og:title" content="家用万兆FreeNAS组建">
 <meta property="og:url" content="https://blog.xjn819.com/post/Home-freenas-build.html">
 <meta property="og:site_name" content="Xjn&#39;s Blog">
-<meta property="og:description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。  现在改名叫TrueNas,并且分支为TrueNas Core和TrueNas Scale。文章里面提及的FreeNas与TrueNas Core是一回事。最近TrueNas的官网好像被污染了，自己找梯子解决&#x3D;。&#x3D; https:&#x2F;&#x2F;www.v2ex.com&#x2F;">
+<meta property="og:description" content="介绍我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了。  现在改名叫TrueNas,并且分支为TrueNas Core和TrueNas Scale。文章里面提及的FreeNas与TrueNas Core是一回事。最近TrueNas的官网好像被污染了，自己找梯子解决&#x3D;。&#x3D; https:&#x2F;&#x2F;www.v2ex.com&#x2F;t&#x2F;832355">
 <meta property="og:locale">
 <meta property="og:image" content="https://i.loli.net/2021/04/03/5bFZNyDv2M4p83I.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/03/uZEYmk21iphe8N3.jpg">
@@ -22,7 +22,7 @@
 <meta property="og:image" content="https://i.loli.net/2021/10/02/BXdfPDqb6OvxnAh.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/14/GrqjvK2TtW93gnC.png">
 <meta property="article:published_time" content="2021-04-03T14:27:50.000Z">
-<meta property="article:modified_time" content="2023-02-05T06:33:18.498Z">
+<meta property="article:modified_time" content="2023-02-15T08:36:41.814Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -606,7 +606,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2023-2-5 14:33:18">2021-4-3 22:27
+							<time title="发布于 2021-4-3 22:27:50 | 编辑于 2023-2-15 16:36:41">2021-4-3 22:27
 							</time>
 						</div>
 					
@@ -639,7 +639,7 @@
 	</header>
 
 	<div class="post-content" id="post_content">
-		<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了，也没别的什么目的。</p>
+		<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>我是一个很忠实的NAS用户，并且使用了FreeNas很多年，一直很稳定好用，也很想推荐给大家使用，就打算写这篇文章了。</p>
 <blockquote>
 <p>现在改名叫<code>TrueNas</code>,并且分支为<code>TrueNas Core</code>和<code>TrueNas Scale</code>。文章里面提及的<code>FreeNas</code>与<code>TrueNas Core</code>是一回事。<br>最近TrueNas的官网好像被污染了，自己找梯子解决=。= <a target="_blank" rel="noopener" href="https://www.v2ex.com/t/832355">https://www.v2ex.com/t/832355</a></p>
 </blockquote>
@@ -647,7 +647,8 @@
 <li>硬盘池的可拓展性</li>
 <li>数据的安全性</li>
 <li>ZFS格式</li>
-<li>独特的缓存机制</li>
+<li>独特的<code>缓存</code>机制</li>
+<li>对物理硬盘的感知能力</li>
 </ul>
 </br>
 
@@ -660,7 +661,7 @@
 </li>
 <li><p>你的7200转的硬盘数量必须大于或者等于10个。因为考虑万兆环境，我们并不喜欢通过加缓存提高读命中率的方式来达到万兆，直接10个盘来让读取速度达到万兆读取。（当然你可以加读缓存，但缓存永远是有限的，你还要考虑命中率等问题，没意思）</p>
 </li>
-<li><p>你的内存起码128GB，别慌，这其实不是很贵，比如我也会推荐DDR3的内存给X79用。</p>
+<li><p>你的内存起码64GB，别慌，这其实不是很贵，比如我也会推荐DDR3的内存给X79用。</p>
 </li>
 </ul>
 </br>
@@ -669,7 +670,8 @@
 <h1 id="我该购买什么样的机器来运行FreeNas"><a href="#我该购买什么样的机器来运行FreeNas" class="headerlink" title="我该购买什么样的机器来运行FreeNas"></a>我该购买什么样的机器来运行FreeNas</h1><p>在FreeNas的官网有很多标准配置，我自己也是按照官网以及前辈的推荐来购买的，这样可以避免走很多弯路。<br>清单一是我自己的配置，价格也还好比较适中。</p>
 </br>
 
-
+<details>
+  <summary><font color=red>点击查看清单，因为清单价格过时了，不做价格参考了</font></summary>
 
 <h2 id="清单一-（除机械硬盘外总计8991元）"><a href="#清单一-（除机械硬盘外总计8991元）" class="headerlink" title="清单一 （除机械硬盘外总计8991元）"></a>清单一 （除机械硬盘外总计8991元）</h2><ul>
 <li><p>主板: 超微X10SRA-F  二手主板自带IPMI，这是我买服务器主板的首要条件，不然大机箱管理起来特别麻烦。 闲鱼买来950元</p>
@@ -698,10 +700,7 @@
 </li>
 </ul>
 <ul>
-<li>SAS卡：LSI SAS 9217-8i 这款卡是给SAS2用的，有两个模式，自己刷成it模式，可以找淘宝店主直接帮你刷好。如果你买的是SAS3的背板，你需要购买LSI SAS 9300-8i，这卡好像本来就是it模式（以防万一，我会写一下刷IT模式的教程）。 闲鱼100元<blockquote>
-<p>LSI的9300系列卡在TrueNAS下对于HGST品牌的硬盘有很严重的性能问题，TrueNas官网出了一个与Broadcom合作的固件，这个固件没有在官网释放，你需要去TrueNAS下载：<a target="_blank" rel="noopener" href="https://www.truenas.com/community/resources/lsi-9300-xx-firmware-update.145/">下载链接</a></p>
-</blockquote>
-</li>
+<li>SAS卡：LSI SAS 9217-8i 这款卡是给SAS2用的，有两个模式，自己刷成it模式，可以找淘宝店主直接帮你刷好。如果你买的是SAS3的背板，你需要购买LSI SAS 9300-8i，这卡好像本来就是it模式（以防万一，我会写一下刷IT模式的教程）。 闲鱼100元</li>
 </ul>
 <ul>
 <li><p>SAS线：MINI-SAS线SFF-8087 X2，SAS2的线，80CM的。如果是买的SAS3背板请购买相应的线，两根46元</p>
@@ -747,17 +746,17 @@
 <p>当然，以上两个清单你不考虑噪音可以便宜一些。</p>
 </br>
 
-
+</details>
 
 
 
 <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>安装包括硬件和系统，首先是把SAS卡LSI SAS 9217-8i刷成it模式，再讲FreeNas的安装。<br></br></p>
-<h2 id="LSI-SAS-9217-8i-刷成it模式"><a href="#LSI-SAS-9217-8i-刷成it模式" class="headerlink" title="LSI SAS 9217-8i 刷成it模式"></a>LSI SAS 9217-8i 刷成it模式</h2><p>在家用FreeNas环境我没有推荐用阵列模式，一来是这个是家用而已，二来ZFS已经足够健壮并自带了整一套的整列解决方案，把卡刷成直通的it模式就行了。</p>
+<h2 id="LSI-SAS-9217-8i-刷成it模式"><a href="#LSI-SAS-9217-8i-刷成it模式" class="headerlink" title="LSI SAS 9217-8i 刷成it模式"></a>LSI SAS 9217-8i 刷成it模式</h2><p>ZFS请不要使用阵列模式，因为一旦用了ZFS就无法感知每一个物理硬盘，则data healing等功能是失效的，因此我们需要把这张卡刷成直通的it模式。</p>
 <p>如果不刷rom，只刷bin文件，则在TrueNAS系统下输入：</p>
 <pre><code class="bash">sas2flash -o -f SAS9217_xx_IT.bin   #这个是刷9217的
 sas3flash -o -f SAS9300_xx_IT.bin   #这个是刷9300的</code></pre>
 <p>刷完后记得重启<br></br></p>
-<p>如若要刷新BIN和ROM固件，根据流程：</p>
+<p>如若要刷新Bin和Rom固件，根据流程：</p>
 <ul>
 <li><p>下载如下软件</p>
 <ul>
@@ -824,6 +823,9 @@ sas3flash -o -f SAS9300_xx_IT.bin   #这个是刷9300的</code></pre>
 <li>重启输入<code>reset</code>就可以用了。</li>
 </ul>
 </li>
+</ul>
+<ul>
+<li>LSI的9300系列卡在TrueNAS下对于HGST品牌的硬盘有很严重的性能问题，TrueNas官网出了一个与Broadcom合作的固件，这个固件没有在官网释放，你需要去TrueNAS下载：<a target="_blank" rel="noopener" href="https://www.truenas.com/community/resources/lsi-9300-xx-firmware-update.145/">下载链接</a></li>
 </ul>
 </br>
 
@@ -926,7 +928,7 @@ nano /usr/local/etc/transmission/home/settings.json</code></pre>
 exit #退出jail，回到主系统</code></pre>
 <p>至此，完成。</p>
 <blockquote>
-<p><font color="#660000">强烈建议使用transmission配置文件中的incomplete-dir那个选项，把下载的东西先放到一个MLC的硬盘中，全下载完后，再自动移到主机械硬盘池。</font><br /></p>
+<p><font color="#660000">强烈建议使用transmission配置文件中的<code>incomplete-dir</code>那个选项，把下载的东西先放到一个MLC的硬盘中，全下载完后，再自动移到主机械硬盘池。</font><br /></p>
 </blockquote>
 <br>
 
@@ -938,7 +940,7 @@ exit #退出jail，回到主系统</code></pre>
 <ul>
 <li>vfs.zfs.arc_max </li>
 </ul>
-<p>这个是真的“写缓存”，其实我用默认的调整还是不错的，没有啥固定标准我就不说了</p>
+<p>如果不设置的话，默认会用完所有内存作为arc，自己看需求。</p>
 <h3 id="MacOS-Big-Sur后的链接方式"><a href="#MacOS-Big-Sur后的链接方式" class="headerlink" title="MacOS Big Sur后的链接方式"></a>MacOS Big Sur后的链接方式</h3><p>这里分别说一下nfs和smb这两种链接方式吧。MacOS源于Freebsd，在MacOS的文件系统中是很早就开始支持Async multi-threads for NFS的，可以参考一下官网的<a target="_blank" rel="noopener" href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/BSD/BSD.html">BSD Overview</a>。对MAC用户来说NFS肯定是连接Freebsd NAS的第一选择。</p>
 <h4 id="NFS"><a href="#NFS" class="headerlink" title="NFS"></a>NFS</h4><p>但是在Big Sur之后开始NFS莫名其妙就变得非常慢，查阅了很多资料，问题是：</p>
 <ol>
@@ -951,11 +953,9 @@ exit #退出jail，回到主系统</code></pre>
 <pre><code class="bash">nfs.client.allow_async = 1
 nfs.client.mount.options = vers=4.0,async,wsize=131072,rsize=131072</code></pre>
 <p>修改后，重新挂载nfs生效</p>
-<p>另外如果考虑兼容性问题不能全都适用v4的话，可以在链接的时候这样输入</p>
-<pre><code class="bash">nfs://NASIP/mnt/xxxx</code></pre>
 <p>你可以在terminal中输入<code>nfsstat -m</code>来检查链接方式是否正确。</p>
 <blockquote>
-<p><font color="#660000">MacOS同时挂载一个aysnc以及一个sync的池非常不方便，推荐NFS Manager来做。</font><br /></p>
+<p><font color="#660000">MacOS同时挂载一个aysnc以及一个sync的池非常不方便，推荐NFS Manager，或者用自带的<code>Automator</code>来做。</font><br /></p>
 </blockquote>
 <br>
 <br>
@@ -966,35 +966,38 @@ nfs.client.mount.options = vers=4.0,async,wsize=131072,rsize=131072</code></pre>
 <pre><code class="bash">aio read size = 1
 aio write size = 1</code></pre>
 <p>保存即生效。</p>
-<p>另外，MacOS 11.3开始支持Samba的multi-channel，可以参考<a target="_blank" rel="noopener" href="https://support.apple.com/en-us/HT212277">官方文档</a>自行设置体验，我没这个条件测试。</p>
+<p>另外，MacOS 11.3开始支持Samba的<code>multichannel</code>，可以参考<a target="_blank" rel="noopener" href="https://support.apple.com/en-us/HT212277">官方文档</a>自行设置体验，我没这个条件测试。</p>
 <h3 id="一些小问题"><a href="#一些小问题" class="headerlink" title="一些小问题"></a>一些小问题</h3><ul>
 <li>是否需要自己加Slog以及L2arc？</li>
 </ul>
-<p>你的网速是10gb，以及10个7200转的硬盘的话，Slog没有那么大的作用。Slog是保证你数据绝对能写入，并不是帮你增加速度的，比较适用与金融票据等小文件场景，家用还是配好UPS吧。L2ARC的话是你内存不够用的情况下才用的，但是我们10个7200转的硬盘已经达到读取速度900+MB/S了，如果需要大量的4k读取则另当别论。设置多层存储或者说缓存的目的我觉得不是为了加速度（当然有这个效果），而是确保数据安全而用的。</p>
+<p>Slog应只应用于当你连接池时使用sync，是保证你数据绝对能写入，并不是帮你增加速度的，比较适用与金融票据等小文件场景，家用还是配好UPS吧。我看到国内很多文章宣称Slog是写缓存，我觉得与我们理解的写缓存差别还是很大的，总之，<font color="#660000">Slog无法让你获得比将硬盘池的sync关闭后更快的速度。</font>老老实实加ECC内存吧，ddr3内存来一斤。</p>
+<blockquote>
+<p>如果你真的很需要多层存储，可以去研究一下这个玩意：<a target="_blank" rel="noopener" href="https://bcache.evilpiepirate.org/">Bcache</a></p>
+</blockquote>
+<br>
+
+<p>L2arc的话是你arc不再增长的情况下用的，在arc仍然growing的情况下使用l2arc是完全没有必要的！你可以通过<code>arc_summary</code>命令来观察。<br>10个7200转的硬盘，raid-z2已经达到万兆顺序读取速度，如果需要大量的4k读取以及随机则另当别论，这方面可以参考<code>Meta-Dev</code>功能。</p>
 <ul>
 <li>硬盘性能</li>
 </ul>
 <p>买来先测一下硬盘的stroke和速度，</p>
 <pre><code class="bash">diskinfo -ctv /dev/daX
 #X为你的硬盘编号，在管理页面的storage/disks下按照序列号对照过去</code></pre>
-<p>这是我刚用手机测的一块ST EXOS X16 12T的硬盘，刚好达到230MB的速度，stroke也很棒。请尽可能不要购买HGST，太手动挡了，买了后你可能需要刷各种固件以及他们家自己的HUGO软件做很多设置，并且操作比较危险，容易整个盘报废。<br>TrueNAS官网的Buyer Guide里只推荐WD Red Pro和希捷。WD和HGST对我这样的老用户来说是两个不一样的品牌，现在产品线比较乱我也分不清，真的喜欢西数就买官网推荐的WD Red PRO。<br>顺便提一下希捷酷狼pro这个系列，我测出来的一些数据完全跟exos x16一模一样，不知道除了酷狼pro提供一次免费数据修复之外，还有啥区别。</p>
+<p>这是我刚用手机测的一块ST EXOS X16 12T的硬盘，刚好达到230MB的速度，stroke也很棒。请尽可能不要购买HGST，太手动挡了，买了后你可能需要刷各种固件以及他们家自己的HUGO软件做很多设置，并且操作比较危险，容易整个盘报废。<br>TrueNAS官网的Buyer Guide里只推荐<code>WD Red Pro</code>和希捷。WD和HGST对我这样的老用户来说是两个不一样的品牌，现在产品线比较乱我也分不清，真的喜欢西数就买官网推荐的WD Red PRO。<br>顺便提一下希捷酷狼pro这个系列，我测出来的一些数据完全跟exos x16一模一样，不知道除了酷狼pro提供一次免费数据修复之外，还有啥区别。</p>
 <p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://i.loli.net/2021/04/14/GrqjvK2TtW93gnC.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="IMG_2776.PNG"></p>
 
 <ul>
-<li>内存是否必须ECC？<br>最近也读了FreeBSD开发者的一些书籍，其实有一些观点是，ZFS比任何一个其他的文件系统都不那么依赖ECC内存，因为ZFS的block本身就具有checksum并通过Geom 实现了<code>data healing</code>。这话不是让你去优先选择非ecc内存的。<br>另一方面，我看到国内很多文章宣称Slog是写缓存，我觉得与我们理解的写缓存差别还是很大的，总之，<font color="#660000">Slog无法让你获得比将硬盘池的sync关闭后更快的速度。</font>老老实实加ECC内存吧，ddr3内存来一斤。</li>
+<li>内存是否必须ECC？<br>最近也读了FreeBSD开发者的一些书籍，其实有一些观点是，ZFS比任何一个其他的文件系统都不那么依赖ECC内存，因为ZFS的block本身就具有<code>checksum</code>并通过Geom 实现了<code>data healing</code>。这话不是让你去优先选择非ecc内存的。</li>
 </ul>
-<blockquote>
-<p>如果你真的很需要多层存储，可以去研究一下这个玩意：<a target="_blank" rel="noopener" href="https://bcache.evilpiepirate.org/">Bcache</a></p>
-</blockquote>
 <ul>
-<li>ZFS是什么？<br>好问题，有一篇图文并茂的文章，可以看看：<a target="_blank" rel="noopener" href="https://arstechnica.com/information-technology/2020/05/zfs-101-understanding-zfs-storage-and-performance/3/">Understanding ZFS storage and performance</a></li>
+<li>ZFS是什么？<br>有一篇图文并茂的文章，可以看看：<a target="_blank" rel="noopener" href="https://arstechnica.com/information-technology/2020/05/zfs-101-understanding-zfs-storage-and-performance/3/">Understanding ZFS storage and performance</a></li>
 </ul>
 <br>
 
 <ul>
 <li>IO问题</li>
 </ul>
-<p>我玩pt的时候老是遇到自己的垃圾mlc缓存盘因为过热，内存写入速度过快或者什么的导致缓存盘io suspend。请尽量确保你的pt缓存池已经打开了<code>auto trim</code>功能。买傲腾当pt缓存盘的不需要。</p>
+<p>我玩pt的时候老是遇到自己的垃圾mlc缓存盘因为过热，内存写入速度过快或者什么的导致缓存盘io suspend。请尽量确保你的pt缓存池已经打开了<code>auto trim</code>功能。买傲腾当pt下载盘的不需要。</p>
 <p>如果你还是碰到io suspend的情况，请先关掉任何有关这个盘的进程。比如先把transmission的jail关了<br>然后输入：</p>
 <pre><code class="bash">zpool status #看看你的pt缓存池有没有error，一般会有好多好多。
 zpool clear -F pt #我的pt缓存池就叫pt，按你自己情况写

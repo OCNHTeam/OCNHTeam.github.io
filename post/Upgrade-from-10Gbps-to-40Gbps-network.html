@@ -8,16 +8,16 @@
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta name="description" content="0 介绍自TrueNAS Core更新至FreeBSD 13，它的两大产品Scale和Core都已经使用上了OpenZFS。既然如此，就直接转投OpenZFS用上Linux了，但考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不太熟悉，就小心翼翼的先使用了一下TrueNAS Scale试手。体验下来我个人不是很喜欢用K3S Containerd，也没有LXC，或者任何平">
+	<meta name="description" content="0 介绍自TrueNAS Core更新至FreeBSD 13，它的两大免费产品Scale和Core都已经使用上了OpenZFS。既然如此，就直接转投OpenZFS用上Linux了，但考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不太熟悉，就小心翼翼的先使用了一下TrueNAS Scale试手。体验下来我个人不是很喜欢用K3S Containerd，也没有LXC，或者任">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ZFS:从10Gbps升级到40Gbps网络">
 <meta property="og:url" content="https://blog.xjn819.com/post/Upgrade-from-10Gbps-to-40Gbps-network.html">
 <meta property="og:site_name" content="Xjn&#39;s Blog">
-<meta property="og:description" content="0 介绍自TrueNAS Core更新至FreeBSD 13，它的两大产品Scale和Core都已经使用上了OpenZFS。既然如此，就直接转投OpenZFS用上Linux了，但考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不太熟悉，就小心翼翼的先使用了一下TrueNAS Scale试手。体验下来我个人不是很喜欢用K3S Containerd，也没有LXC，或者任何平">
+<meta property="og:description" content="0 介绍自TrueNAS Core更新至FreeBSD 13，它的两大免费产品Scale和Core都已经使用上了OpenZFS。既然如此，就直接转投OpenZFS用上Linux了，但考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不太熟悉，就小心翼翼的先使用了一下TrueNAS Scale试手。体验下来我个人不是很喜欢用K3S Containerd，也没有LXC，或者任">
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-02-08T14:41:01.940Z">
+<meta property="article:modified_time" content="2023-02-13T01:57:53.665Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-8 22:41:01">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-13 9:57:53">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -634,7 +634,7 @@
 	</header>
 
 	<div class="post-content" id="post_content">
-		<h1 id="0-介绍"><a href="#0-介绍" class="headerlink" title="0 介绍"></a>0 介绍</h1><p>自TrueNAS Core更新至FreeBSD 13，它的两大产品Scale和Core都已经使用上了OpenZFS。既然如此，就直接转投OpenZFS用上Linux了，但考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不太熟悉，就小心翼翼的先使用了一下TrueNAS Scale试手。体验下来我个人不是很喜欢用K3S Containerd，也没有LXC，或者任何平替BSD Jail的东西，用着不是很舒服，等有空把这玩意换了。</p>
+		<h1 id="0-介绍"><a href="#0-介绍" class="headerlink" title="0 介绍"></a>0 介绍</h1><p>自TrueNAS Core更新至FreeBSD 13，它的两大免费产品Scale和Core都已经使用上了OpenZFS。既然如此，就直接转投OpenZFS用上Linux了，但考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不太熟悉，就小心翼翼的先使用了一下TrueNAS Scale试手。体验下来我个人不是很喜欢用K3S Containerd，也没有LXC，或者任何平替BSD Jail的东西，用着不是很舒服，等有空把这玩意换了。</p>
 <blockquote>
 <p>过了一周时间实在忍无可忍装回了TrueNas Core。</p>
 </blockquote>
@@ -812,12 +812,12 @@ apt install pve-kernel-5.xxxxxx-pve #安装特定版本内核，当然初次安�
 proxmox-boot-tool kernel list #查看pve下已经有的内核
 proxmox-boot-tool kernel pin 5.13.19-6-pve #pin住内核</code></pre>
 <blockquote>
-<p>说实在的，Windows我都懒得用。我都不知道Windows怎么跑40Gbps，文件管理器是单线程的，SMB是单线程的，ISCSI在较新的windows 10版本中也是单线程的=。=。RDMA？跟这篇文章主题无关。</p>
+<p>说实在的，Windows我都懒得用。都不知道Windows怎么跑40Gbps，文件管理器是单线程的，SMB是单线程的，ISCSI在较新的windows 10版本中也是单线程的=。=。RDMA？跟这篇文章主题无关。</p>
 </blockquote>
 </br>
 
 
-<p>我别的虚拟机全是LXC所以很方便通过PF或者VF。通过修改/etc/pve/lxc/xxx.conf文件，加入你想要通过去的VF即可了：</p>
+<p>我别的虚拟机全是LXC，很方便通过PF或者VF。通过修改/etc/pve/lxc/xxx.conf文件，加入你想要通过去的VF即可了：</p>
 <pre><code class="bash">lxc.net.1.type: phys
 lxc.net.1.flags: up
 lxc.net.1.link: enp3s0v0
@@ -904,8 +904,8 @@ DISTRO := Debian</code></pre>
 
 <p>Meta Vdevs解决了两个问题。</p>
 <ul>
-<li>如果你的pool存在很多小文件，那读取或者写入都会牵扯到机械硬盘的stroke时间,io depth,queue等问题。那么，如果把pool的Metadata放在了Optane上，则至少可以减少storke的时间，也能收获到更多的IO queues，这对小文件多线程是很有帮助的。</li>
-<li>你同样可以对Meta Vdev进行设置。把特定的<code>Block size</code>文件存于Optane中，而没有命中规则的文件，则放入原来的机械存储池中。<br>TrueNas的Pool–dataset–option中，可以看到你对这个池的<code>Record size</code>，比如我的是128K，然后我在下面的<code>Metadata (speical) small block size</code>中设置一个值，比如是64k。那么当一个文件≤ 64k，那么这个文件会自动存入Optane中。那么当<code>Metadata (speical) small block size</code>=<code>Record size</code>，则所有文件全会存入optane中，显然这样做，还不如单独用optane建立一个池。<br>在看Meta Vdevs的手册时，我思考了如下两个问题：</br>
+<li>如果你的存储池存在很多小文件，那读取或者写入都会牵扯到机械硬盘的stroke时间,io depth,queue等问题。那么，如果把pool的<code>Metadata</code>放在了Optane上，则至少可以减少storke的时间，也能收获到更多的IO queues，这对小文件多线程是很有帮助的。</li>
+<li>你同样可以对Meta Vdev进行设置：把特定的<code>Block size</code>文件存于Optane中，而没有命中规则的文件，则放入原来的机械存储池中。<br>TrueNas的Pool–dataset–option中，可以看到你对这个池的<code>Record size</code>，比如我的是128K，然后我在下面的<code>Metadata (speical) small block size</code>中设置一个值，比如是64k。那么当一个文件≤ 64k，那么这个文件会自动存入Optane中。那么当<code>Metadata (speical) small block size</code>=<code>Record size</code>，则所有文件全会存入Optane中，显然这样做，还不如单独用Optane建立一个池。<br>在看<code>Meta Vdevs</code>的手册时，我思考了如下两个问题：</br>
 
 </li>
 </ul>
@@ -914,9 +914,12 @@ DISTRO := Debian</code></pre>
 <pre><code class="bash">cd /mnt/poolname/test #cd到你想测试的dataset下
 find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2)); if (n&lt;10) &#123; n=10; &#125; size[n]++ &#125; END &#123; for (i in size) printf(&quot;%d %d\n&quot;, 2^i, size[i]) &#125;&#39; | sort -n | awk &#39;function human(x) &#123; x[1]/=1024; if (x[1]&gt;=1024) &#123; x[2]++; human(x) &#125; &#125; &#123; a[1]=$1; a[2]=0; human(a); printf(&quot;%3d%s: %6d\n&quot;, a[1],substr(&quot;kMGTEPYZ&quot;,a[2]+1,1),$2) &#125;&#39;
 </code></pre>
-<p>看一下你的这个dataset下文件的整个block size分布，按比例预估。<br>另外通过<code>zdb -LbbbA -U /data/zfs/zpool.cache &lt;poolname&gt;</code>也可以看到整个pool的情况。具体的一些估算以及应用方法请参考<a target="_blank" rel="noopener" href="https://forum.level1techs.com/t/zfs-metadata-special-device-z/159954">这里</a>。<br>当然，我们讨论的文件大小都是通过compression压缩后的大小！</p>
-<p>最后有个小问题，Metadata对于Zvol是无用的，因为对ZFS来说，往Zvol写入多少文件都只是<code>block size</code>大小完全一样的存在，你可以收益到的只是Metadata对Zvol的加速而已。这个问题的讨论请参考<a target="_blank" rel="noopener" href="https://github.com/openzfs/zfs/discussions/12769">这里</a>。如果你是zvol用的频繁并且还需要速度，参考章节6.ZFS Send。<br></br><br></br></p>
-<h2 id="4-3-Dedup-Vdevs"><a href="#4-3-Dedup-Vdevs" class="headerlink" title="4.3 Dedup Vdevs"></a>4.3 Dedup Vdevs</h2><p>一般来说，开启了Dedup功能的Dataset能做到文件去重复的作用，也就是一模一样的文件只占用一份文件的容量。以前用内存来做，代价是用内存换硬盘空间，现在即便是可以用Dedup Vdev来换机械硬盘空间，也不推荐，Meta Vdevs存储了dedup datasheet，同样做到了Dedup功能，不如用Meta Dev。<br>开启了Dedup的dataset是不可逆的，请把已经开启dedup的dataset通过<code>zfs send</code>到新的dataset里，再删除旧的。名字的话通过<code>zpool rename</code>改回来。<br></br><br></br></p>
+<p>看一下你的这个dataset下文件的整个block size分布，按比例预估。<br>另外通过<code>zdb -LbbbA -U /data/zfs/zpool.cache &lt;poolname&gt;</code>也可以看到整个pool的情况。具体的一些估算以及应用方法请参考<a target="_blank" rel="noopener" href="https://forum.level1techs.com/t/zfs-metadata-special-device-z/159954">这里</a>。</p>
+<blockquote>
+<p>当然，我们讨论的文件大小都是通过compression压缩后的大小。而非Optane的SSD作为Meta Devs你需要手动开启<code>trim on</code>。</p>
+</blockquote>
+<p>最后有个小问题，metadata对于Zvol是无用的。对ZFS来说，往zvol写入多少文件都只是<code>block size</code>大小完全一样的存在，你可以收益到的只是Metadata对Zvol的加速而已。这个问题的讨论请参考<a target="_blank" rel="noopener" href="https://github.com/openzfs/zfs/discussions/12769">这里</a>。如果你是zvol用的频繁并且还需要速度，参考章节6.ZFS Send。<br></br><br></br></p>
+<h2 id="4-3-Dedup-Vdevs"><a href="#4-3-Dedup-Vdevs" class="headerlink" title="4.3 Dedup Vdevs"></a>4.3 Dedup Vdevs</h2><p>一般来说，开启了dedup功能的dataset能做到文件去重复的作用，也就是多个一模一样的文件只占用一份文件的容量。以前用内存来做，代价是用内存换硬盘空间，现在即便是可以用Dedup Vdev来换机械硬盘空间，也不推荐。Meta Vdevs存储了dedup datasheet，同样做到了dedup功能，不如用meta dev。<br>开启dedup的dataset是不可逆的，请把已经开启dedup的dataset通过<code>zfs send</code>到新的dataset里，再删除旧的。名字的话通过<code>zpool rename</code>改回来。<br></br><br></br></p>
 <h2 id="4-4-Slog"><a href="#4-4-Slog" class="headerlink" title="4.4 Slog"></a>4.4 Slog</h2><p>草，写不完了啊！好烦</p>
 <h2 id="4-5-L2arc"><a href="#4-5-L2arc" class="headerlink" title="4.5 L2arc"></a>4.5 L2arc</h2><p>本来就想写一点点的。。为嘛我越写越多。。</p>
 <h2 id="4-6-HDD-Storage-Pool"><a href="#4-6-HDD-Storage-Pool" class="headerlink" title="4.6 HDD Storage Pool"></a>4.6 HDD Storage Pool</h2><p>好烦</p>
@@ -948,7 +951,7 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 <p>这个插件的<code>API Password</code>就是root的登陆密码，不是<code>API Key</code>。</p>
 </blockquote>
 <p>使用<a target="_blank" rel="noopener" href="https://github.com/Corsinvest/cv4pve-autosnap">这个</a>工具可以对VM Guest自动化操作snapshot。这里的快照是使用<code>ZFS Snapshot</code>的，可以完全利用到ZFS的功能了。链接中有好多个视频操作演示教程，这里就不赘述了。</p>
-<h1 id="8-性能测试"><a href="#8-性能测试" class="headerlink" title="8 性能测试"></a>8 性能测试</h1><h1 id="9-一些题外话"><a href="#9-一些题外话" class="headerlink" title="9 一些题外话"></a>9 一些题外话</h1><ul>
+<h1 id="8-Infiniband"><a href="#8-Infiniband" class="headerlink" title="8 Infiniband"></a>8 Infiniband</h1><h1 id="9-性能测试"><a href="#9-性能测试" class="headerlink" title="9 性能测试"></a>9 性能测试</h1><h1 id="10-一些题外话"><a href="#10-一些题外话" class="headerlink" title="10 一些题外话"></a>10 一些题外话</h1><ul>
 <li><p>非常喜欢用网卡ipxe+Ventoy这套东西跑系统，最近发现Mikrotik ROS系统在DHCP Server选项中增加了一个<code>Option Matcher</code>的功能。配合Option 93可以根据主板的架构分配不同的引导文件e.g.ArmUEFI,LegacyBIOS,x86UEFI.</p>
 </li>
 <li><p>MTU 9000, AKA <code>Jumbo Frames</code>, 你需要慎重去考虑你整个网络内的所有设备通信，这个东西带来的收益其实远比它带来的问题多，如果你家里有很多无线智能设备的话，考虑尽可能用vlan去划分。网络inbound的话，需要修正mss，Mikrotik ROS则加一条mangle：</p>
@@ -1025,7 +1028,7 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 <script type="text/javascript">
 	socialShare("#share", {
 	    title : 'ZFS:从10Gbps升级到40Gbps网络',
-	    description : '0 介绍自TrueNAS Core更新至FreeBSD 13，它的两大产品Scale和Core都已经...',
+	    description : '0 介绍自TrueNAS Core更新至FreeBSD 13，它的两大免费产品Scale和Core都...',
 	    wechatQrcodeTitle : "分享到微信",
 	    wechatQrcodeHelper : '微信扫描二维码',
 	    source : 'https://blog.xjn819.com/post/Upgrade-from-10Gbps-to-40Gbps-network.html'
