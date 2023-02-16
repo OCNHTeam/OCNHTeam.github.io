@@ -16,8 +16,11 @@
 <meta property="og:description" content="0 介绍自TrueNAS Core更新至FreeBSD 13，它的两大免费产品Scale和Core都已经使用上了OpenZFS。既然如此，就直接转投OpenZFS用上Linux了，但考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不太熟悉，就小心翼翼的先使用了一下TrueNAS Scale试手。体验下来我个人不是很喜欢用K3S Containerd，也没有LXC，或者任">
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
+<meta property="og:image" content="https://s2.loli.net/2023/02/16/zmOUyepZlck3TvY.png">
+<meta property="og:image" content="https://s2.loli.net/2023/02/16/2H8KlAGBPLS3Vyg.png">
+<meta property="og:image" content="https://s2.loli.net/2023/02/16/m7PYpiEk1qSxVM6.png">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-02-15T12:24:24.784Z">
+<meta property="article:modified_time" content="2023-02-16T08:54:52.571Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +604,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-15 20:24:24">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-16 16:54:52">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -618,7 +621,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							5.4k 字
+							10.7k 字
 						</div>
 					
 						
@@ -626,7 +629,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							25 分钟
+							45 分钟
 						</div>
 					
 		</div>
@@ -804,7 +807,9 @@ mstconfig -d 03:00.00 set LINK_TYPE_P1=ETH  #设置p1端口为ETH模式</code></
 <li>这里我让第一个口做了4个VF给各种虚拟机和LXC用，第二个口不动我拿来给PVE用了。</li>
 </ul>
 <p>设置完后记得<code>update-initramfs -u</code>后重启。</p>
-<p>创建一个shell，assign mac地址以及vf link up:<code>nano /opt/sr-iov.sh</code></p>
+<p>创建一个shell，assign mac地址以及vf link up:</p>
+<pre><code class="bash">nano /opt/sr-iov.sh</code></pre>
+<p>内容如下</p>
 <pre><code class="bash">ip link set dev enp2s0 mtu 9000  #这个你看自己需求是否要设置mtu。如果pf是1500，那么vf设置9000会有问题。
 ip link set dev enp2s0 vf 0 mac ae:51:1a:2b:c0:00
 ip link set dev enp2s0 vf 1 mac ae:51:1a:2b:c0:01
@@ -816,7 +821,9 @@ ip link set enp2s0v1 up
 ip link set enp2s0v2 up
 ip link set enp2s0v3 up</code></pre>
 <p>记得<code>chmod +x /opt/sr-iov.sh</code></p>
-<p>创建systemd unit开机运行: <code>nano mlx-sr-iov.service</code></p>
+<p>创建systemd unit开机运行</p>
+<pre><code class="bash">`nano mlx-sr-iov.service`</code></pre>
+<p>内容如下</p>
 <pre><code class="bash">[Unit]
 Description=Script to enable MLX SR-IOV
 
@@ -830,7 +837,7 @@ WantedBy=multi-user.target</code></pre>
 </br>
 </br>
 
-<p>如果要用Windows的VM，则尽可能使用Windows的LTSC版本。在PVE内核大于Linux 5.13的情况下，使用3代网卡的VF直通到Windows你要对Proxmox的kernel进行patch，不然Windows Guest的设备管理器里，这个VF会报错code 43。具体参考<a target="_blank" rel="noopener" href="https://forums.servethehome.com/index.php?threads/help-with-connectx-3-sr-iov-with-linux-host-and-windows-guest-via-kvm.28956/page-1">这里</a>。 有空我把我自己patch好的传到Github上去。当然不使用tree上的驱动，通过OFED也可以解决，但是3代卡的OFED驱动也就只支持到5.13的内核，还是要自己编译驱动，自己选哪条路简单。最后一种办法是安装proxmox-ve_7.1-2.iso这个版本，然后pin内核。</p>
+<p>如果要用Windows的VM，则尽可能使用Windows的LTSC版本。在PVE内核大于Linux 5.13的情况下，使用3代网卡的VF直通到Windows你要对Proxmox的kernel进行patch，不然Windows Guest的设备管理器里，这个VF会报错code 43。具体参考<a target="_blank" rel="noopener" href="https://forums.servethehome.com/index.php?threads/help-with-connectx-3-sr-iov-with-linux-host-and-windows-guest-via-kvm.28956/page-1">这里</a>。 有空我把我自己patch好的传到Github上去。当然不使用tree上的驱动，在Proxmox上安装OFED驱动也可以解决，但是3代卡的OFED驱动也就只支持到5.13的内核，还是要自己编译驱动，自己选哪条路简单。最后一种办法是安装proxmox-ve_7.1-2.iso这个版本，然后pin内核。</p>
 <pre><code class="bash">uname -a #查看内核版本
 apt update
 apt search pve-kernel|grep pve-kernel- #查看可以安装的内核
@@ -977,7 +984,252 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 <p>这个插件的<code>API Password</code>就是root的登陆密码，不是<code>API Key</code>。</p>
 </blockquote>
 <p>使用<a target="_blank" rel="noopener" href="https://github.com/Corsinvest/cv4pve-autosnap">这个</a>工具可以对VM Guest自动化操作snapshot。这里的快照是使用<code>ZFS Snapshot</code>的，可以完全利用到ZFS的功能了。链接中有好多个视频操作演示教程，这里就不赘述了。</p>
-<h1 id="8-Infiniband"><a href="#8-Infiniband" class="headerlink" title="8 Infiniband"></a>8 Infiniband</h1><h1 id="9-性能测试"><a href="#9-性能测试" class="headerlink" title="9 性能测试"></a>9 性能测试</h1><h1 id="10-一些题外话"><a href="#10-一些题外话" class="headerlink" title="10 一些题外话"></a>10 一些题外话</h1><ul>
+<h1 id="8-Infiniband"><a href="#8-Infiniband" class="headerlink" title="8 Infiniband"></a>8 Infiniband</h1><h1 id="9-性能测试"><a href="#9-性能测试" class="headerlink" title="9 性能测试"></a>9 性能测试</h1><p>感觉说了这么多，最终还是要测一下的。配置如下：</p>
+<ul>
+<li>TrueNas Server配置：<ul>
+<li>CPU:E5-2680 v3</li>
+<li>主板: 超微X10-SRA-F</li>
+<li>内存：SK海力士HMA82GR7CJR8N-VK DDR4 Reg ECC 2666 16G x8</li>
+<li>机械硬盘：16T Seagate EXOS x 10 + 12T Seagate EXOS x10；两组RaidZ2后stripe，已经用了54%的容量了。</li>
+<li>NVME：480G Optane x1 + 480G Samsung 983zet x1；组成mirror后放在了同一组机械池作为Meta Dev。</li>
+<li>网卡：HP 544+；最新固件，ETH模式，关闭了SR-IOV。</li>
+<li>SAS卡：LSI 9300-8i</li>
+<li>背板：超微BPN-SAS3-846EL1</li>
+<li>系统：TrueNAS-13.0-U3.1</li>
+</ul>
+</li>
+<li>Proxmox VE Client 配置：<ul>
+<li>CPU：E-2186G</li>
+<li>主板：超微X11-SCA-F</li>
+<li>内存：Samsung DDR4 UDIMM ECC 2666 16G x8</li>
+<li>机械硬盘：无</li>
+<li>NVME：无</li>
+<li>网卡：HP 544+；老固件，ETH模式，开了SR-IOV</li>
+<li>系统：Linux 6.0.15 patched</li>
+</ul>
+</li>
+</ul>
+<p>在Proxmox VE下，分别虚拟化以下系统，来做一下测试</p>
+<h2 id="windows-10-LTSC-1809"><a href="#windows-10-LTSC-1809" class="headerlink" title="windows 10 LTSC (1809)"></a>windows 10 LTSC (1809)</h2><p>设置：</p>
+<ul>
+<li>分了12个CPU 8G内存</li>
+<li>虚拟机中安装了官网的最新OFED</li>
+<li>MTU 9000</li>
+<li>直接装的，完全没更新过任何补丁</li>
+</ul>
+<h3 id="iperf3"><a href="#iperf3" class="headerlink" title="iperf3"></a>iperf3</h3><pre><code class="bash">[ ID] Interval           Transfer     Bitrate
+[  5]   0.00-4.00   sec   893 MBytes  1.87 Gbits/sec                  receiver
+[  8]   0.00-4.00   sec   902 MBytes  1.89 Gbits/sec                  receiver
+[ 10]   0.00-4.00   sec   904 MBytes  1.89 Gbits/sec                  receiver
+[ 12]   0.00-4.00   sec   875 MBytes  1.84 Gbits/sec                  receiver
+[ 14]   0.00-4.00   sec   898 MBytes  1.88 Gbits/sec                  receiver
+[ 16]   0.00-4.00   sec   904 MBytes  1.90 Gbits/sec                  receiver
+[ 18]   0.00-4.00   sec   884 MBytes  1.85 Gbits/sec                  receiver
+[ 20]   0.00-4.00   sec   900 MBytes  1.89 Gbits/sec                  receiver
+[ 22]   0.00-4.00   sec   904 MBytes  1.90 Gbits/sec                  receiver
+[ 24]   0.00-4.00   sec   867 MBytes  1.82 Gbits/sec                  receiver
+[ 26]   0.00-4.00   sec   903 MBytes  1.89 Gbits/sec                  receiver
+[ 28]   0.00-4.00   sec   896 MBytes  1.88 Gbits/sec                  receiver
+[ 30]   0.00-4.00   sec   903 MBytes  1.89 Gbits/sec                  receiver
+[ 32]   0.00-4.00   sec   903 MBytes  1.89 Gbits/sec                  receiver
+[ 34]   0.00-4.00   sec   898 MBytes  1.88 Gbits/sec                  receiver
+[ 36]   0.00-4.00   sec   882 MBytes  1.85 Gbits/sec                  receiver
+[ 38]   0.00-4.00   sec   902 MBytes  1.89 Gbits/sec                  receiver
+[ 40]   0.00-4.00   sec   902 MBytes  1.89 Gbits/sec                  receiver
+[ 42]   0.00-4.00   sec   901 MBytes  1.89 Gbits/sec                  receiver
+[ 44]   0.00-4.00   sec   900 MBytes  1.89 Gbits/sec                  receiver
+[ 46]   0.00-4.00   sec   900 MBytes  1.89 Gbits/sec                  receiver
+[ 48]   0.00-4.00   sec   893 MBytes  1.87 Gbits/sec                  receiver
+[ 50]   0.00-4.00   sec   892 MBytes  1.87 Gbits/sec                  receiver
+[ 52]   0.00-4.00   sec   899 MBytes  1.89 Gbits/sec                  receiver
+[SUM]   0.00-4.00   sec  21.0 GBytes  45.1 Gbits/sec                  receiver</code></pre>
+<h3 id="CrystalDiskMark"><a href="#CrystalDiskMark" class="headerlink" title="CrystalDiskMark"></a>CrystalDiskMark</h3><p>分别测了<code>ZFS over iSCSI</code>,<code>iSCSI</code>,<code>MS-SMB</code></p>
+<ul>
+<li>ZFS over iSCSI</li>
+</ul>
+<p><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://s2.loli.net/2023/02/16/zmOUyepZlck3TvY.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="zfsoiscsi.png"></p>
+
+<blockquote>
+<p>用的是device分享模式</p>
+</blockquote>
+<ul>
+<li>iSCSI<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://s2.loli.net/2023/02/16/2H8KlAGBPLS3Vyg.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="iscsi.png"></li>
+
+<li>MS-SMB<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://s2.loli.net/2023/02/16/m7PYpiEk1qSxVM6.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="smb.png"><h2 id="NixOS"><a href="#NixOS" class="headerlink" title="NixOS"></a>NixOS</h2>设置：<ul>
+
+<li>分了12个CPU 40G内存</li>
+<li>Linux 5.15</li>
+<li>MTU 9000</li>
+<li>NFS Flags:  rw,relatime,vers=4.2,rsize=131072,wsize=131072,namlen=255,hard,async,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=10.10.10.4,local_lock=none,addr=10.10.10.11</li>
+</ul>
+</li>
+</ul>
+<h3 id="iperf3-1"><a href="#iperf3-1" class="headerlink" title="iperf3"></a>iperf3</h3><pre><code class="bash">[ ID] Interval           Transfer     Bitrate
+[  5]   0.00-5.00   sec   958 MBytes  1.61 Gbits/sec                  receiver
+[  8]   0.00-5.00   sec   975 MBytes  1.64 Gbits/sec                  receiver
+[ 10]   0.00-5.00   sec   969 MBytes  1.63 Gbits/sec                  receiver
+[ 12]   0.00-5.00   sec   980 MBytes  1.64 Gbits/sec                  receiver
+[ 14]   0.00-5.00   sec   975 MBytes  1.63 Gbits/sec                  receiver
+[ 16]   0.00-5.00   sec   980 MBytes  1.64 Gbits/sec                  receiver
+[ 18]   0.00-5.00   sec   993 MBytes  1.67 Gbits/sec                  receiver
+[ 20]   0.00-5.00   sec   998 MBytes  1.67 Gbits/sec                  receiver
+[ 22]   0.00-5.00   sec  1008 MBytes  1.69 Gbits/sec                  receiver
+[ 24]   0.00-5.00   sec   972 MBytes  1.63 Gbits/sec                  receiver
+[ 26]   0.00-5.00   sec   993 MBytes  1.67 Gbits/sec                  receiver
+[ 28]   0.00-5.00   sec   988 MBytes  1.66 Gbits/sec                  receiver
+[ 30]   0.00-5.00   sec   988 MBytes  1.66 Gbits/sec                  receiver
+[ 32]   0.00-5.00   sec   966 MBytes  1.62 Gbits/sec                  receiver
+[ 34]   0.00-5.00   sec   984 MBytes  1.65 Gbits/sec                  receiver
+[ 36]   0.00-5.00   sec  1007 MBytes  1.69 Gbits/sec                  receiver
+[ 38]   0.00-5.00   sec   980 MBytes  1.64 Gbits/sec                  receiver
+[ 40]   0.00-5.00   sec   983 MBytes  1.65 Gbits/sec                  receiver
+[ 42]   0.00-5.00   sec   982 MBytes  1.65 Gbits/sec                  receiver
+[ 44]   0.00-5.00   sec   976 MBytes  1.64 Gbits/sec                  receiver
+[ 46]   0.00-5.00   sec  2.88 GBytes  4.95 Gbits/sec                  receiver
+[ 48]   0.00-5.00   sec   984 MBytes  1.65 Gbits/sec                  receiver
+[ 50]   0.00-5.00   sec   994 MBytes  1.67 Gbits/sec                  receiver
+[ 52]   0.00-5.00   sec  1.11 GBytes  1.91 Gbits/sec                  receiver
+[SUM]   0.00-5.00   sec  25.1 GBytes  43.2 Gbits/sec                  receiver</code></pre>
+<h3 id="FIO"><a href="#FIO" class="headerlink" title="FIO"></a>FIO</h3><p>全部不加入<code>-direct=1</code>参数，我没场景，不需要。</p>
+<h4 id="写入相关"><a href="#写入相关" class="headerlink" title="写入相关"></a>写入相关</h4><ul>
+<li><p>4k随机写</p>
+<pre><code class="bash">fio -filename=test-rand-write -ioengine=libaio -bs=4k -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=randwrite -group_reporting -name=&quot;randwrite&quot;</code></pre>
+</br>
+
+<pre><code class="bash">randwrite: (groupid=0, jobs=24): err= 0: pid=2251134: Thu Feb 16 16:32:01 2023
+write: IOPS=49.4k, BW=193MiB/s (202MB/s)(12.6GiB/66882msec); 0 zone resets
+ slat (usec): min=2, max=15423k, avg=482.15, stdev=58552.02
+ clat (usec): min=3, max=15484k, avg=14999.99, stdev=360480.85
+  lat (usec): min=142, max=15484k, avg=15482.14, stdev=366436.81
+ clat percentiles (usec):
+  |  1.00th=[     157],  5.00th=[     251], 10.00th=[     330],
+  | 20.00th=[     437], 30.00th=[     537], 40.00th=[     627],
+  | 50.00th=[     717], 60.00th=[     791], 70.00th=[     865],
+  | 80.00th=[    1631], 90.00th=[    5800], 95.00th=[   10028],
+  | 99.00th=[   19530], 99.50th=[   28967], 99.90th=[ 7549748],
+  | 99.95th=[ 9059697], 99.99th=[15502148]
+bw (  KiB/s): min=  280, max=1929744, per=100.00%, avg=814115.55, stdev=27422.74, samples=780
+iops        : min=   70, max=482436, avg=203528.73, stdev=6855.69, samples=780
+lat (usec)   : 4=0.01%, 10=0.01%, 20=0.01%, 250=5.00%, 500=21.57%
+lat (usec)   : 750=27.79%, 1000=24.14%
+lat (msec)   : 2=1.82%, 4=3.04%, 10=11.67%, 20=4.04%, 50=0.53%
+lat (msec)   : 100=0.06%, 250=0.14%, 500=0.05%, 750=0.01%, 1000=0.01%
+lat (msec)   : 2000=0.01%, &gt;=2000=0.14%
+cpu          : usr=0.53%, sys=3.79%, ctx=496046, majf=0, minf=24
+IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=100.0%, &gt;=64=0.0%
+  submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
+  complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.1%, 64=0.0%, &gt;=64=0.0%
+  issued rwts: total=0,3303411,0,0 short=0,0,0,0 dropped=0,0,0,0
+  latency   : target=0, window=0, percentile=100.00%, depth=32
+</code></pre>
+</li>
+</ul>
+<p>Run status group 0 (all jobs):<br>  WRITE: bw=193MiB/s (202MB/s), 193MiB/s-193MiB/s (202MB/s-202MB/s), io=12.6GiB (13.5GB), run=66882-66882msec</p>
+<pre><code>&lt;/br&gt;
+&lt;/br&gt;
+
+##### 1M顺序写
+```bash
+fio -filename=test-write -ioengine=libaio -bs=1M -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=write -group_reporting -name=&quot;write&quot;</code></pre>
+</br>
+
+<pre><code class="bash">write: (groupid=0, jobs=24): err= 0: pid=2258302: Thu Feb 16 16:44:20 2023
+  write: IOPS=2833, BW=2834MiB/s (2971MB/s)(168GiB/60747msec); 0 zone resets
+    slat (usec): min=182, max=7100.7k, avg=8453.00, stdev=94600.26
+    clat (usec): min=5, max=7500.7k, avg=260924.86, stdev=552308.55
+     lat (msec): min=11, max=7512, avg=269.38, stdev=561.22
+    clat percentiles (msec):
+     |  1.00th=[  113],  5.00th=[  136], 10.00th=[  146], 20.00th=[  159],
+     | 30.00th=[  167], 40.00th=[  176], 50.00th=[  184], 60.00th=[  192],
+     | 70.00th=[  201], 80.00th=[  211], 90.00th=[  230], 95.00th=[  259],
+     | 99.00th=[ 2123], 99.50th=[ 3306], 99.90th=[ 7416], 99.95th=[ 7416],
+     | 99.99th=[ 7483]
+   bw (  MiB/s): min=  103, max= 5308, per=100.00%, avg=3626.54, stdev=48.04, samples=2268
+   iops        : min=   97, max= 5306, avg=3625.18, stdev=48.09, samples=2268
+  lat (usec)   : 10=0.01%, 50=0.01%
+  lat (msec)   : 20=0.01%, 50=0.03%, 100=0.32%, 250=93.96%, 500=2.00%
+  lat (msec)   : 750=0.30%, 1000=0.38%, 2000=1.66%, &gt;=2000=1.33%
+  cpu          : usr=0.44%, sys=23.26%, ctx=76380, majf=0, minf=25
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.2%, 32=99.6%, &gt;=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.1%, 64=0.0%, &gt;=64=0.0%
+     issued rwts: total=0,172146,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=32
+
+Run status group 0 (all jobs):
+  WRITE: bw=2834MiB/s (2971MB/s), 2834MiB/s-2834MiB/s (2971MB/s-2971MB/s), io=168GiB (181GB), run=60747-60747msec</code></pre>
+<h4 id="读取相关"><a href="#读取相关" class="headerlink" title="读取相关"></a>读取相关</h4><p>读取测试其实还是要看实际场景软件的，下面的测试太理想化了，图个乐，意义不大。</p>
+<ul>
+<li><p>4k随机读取</p>
+<pre><code class="bash">fio -filename=test-rand-read -ioengine=libaio -bs=4k -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=randread -group_reporting -name=&quot;randread&quot;</code></pre>
+</br>
+
+<pre><code class="bash">randread: (groupid=0, jobs=24): err= 0: pid=2260684: Thu Feb 16 16:48:58 2023
+read: IOPS=50.0k, BW=195MiB/s (205MB/s)(11.4GiB/60003msec)
+ slat (nsec): min=1932, max=149087k, avg=476537.26, stdev=855570.75
+ clat (usec): min=3, max=166765, avg=14874.41, stdev=6683.97
+  lat (usec): min=7, max=167317, avg=15350.95, stdev=6844.11
+ clat percentiles (msec):
+  |  1.00th=[    6],  5.00th=[    7], 10.00th=[    9], 20.00th=[   10],
+  | 30.00th=[   12], 40.00th=[   13], 50.00th=[   14], 60.00th=[   16],
+  | 70.00th=[   18], 80.00th=[   20], 90.00th=[   23], 95.00th=[   24],
+  | 99.00th=[   40], 99.50th=[   45], 99.90th=[   56], 99.95th=[   63],
+  | 99.99th=[  163]
+bw (  KiB/s): min=118708, max=359568, per=99.41%, avg=198860.20, stdev=2670.29, samples=2856
+iops        : min=29675, max=89892, avg=49715.03, stdev=667.57, samples=2856
+lat (usec)   : 4=0.01%, 10=0.01%, 20=0.01%, 50=0.01%, 500=0.01%
+lat (usec)   : 750=0.01%, 1000=0.01%
+lat (msec)   : 2=0.01%, 4=0.27%, 10=22.40%, 20=58.79%, 50=18.32%
+lat (msec)   : 100=0.18%, 250=0.02%
+cpu          : usr=0.87%, sys=2.23%, ctx=1820208, majf=0, minf=792
+IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=100.0%, &gt;=64=0.0%
+  submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
+  complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.1%, 64=0.0%, &gt;=64=0.0%
+  issued rwts: total=3000750,0,0,0 short=0,0,0,0 dropped=0,0,0,0
+  latency   : target=0, window=0, percentile=100.00%, depth=32
+</code></pre>
+</li>
+</ul>
+<p>Run status group 0 (all jobs):<br>   READ: bw=195MiB/s (205MB/s), 195MiB/s-195MiB/s (205MB/s-205MB/s), io=11.4GiB (12.3GB), run=60003-60003msec</p>
+<pre><code>&gt; 这个参考价值非常低了，加`-direct=1`测好像又没意义，不加又有命中率的事情，随便看看图个乐吧。
+&lt;/br&gt;
+&lt;/br&gt;
+
+- 1M顺序读取
+```bash
+fio -filename=test-read -ioengine=libaio -bs=1M -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=read -group_reporting -name=&quot;read&quot;</code></pre>
+</br>
+
+<pre><code class="bash">Jobs: 24 (f=24): [R(24)][100.0%][r=7440MiB/s][r=7440 IOPS][eta 00m:00s]
+read: (groupid=0, jobs=24): err= 0: pid=2262359: Thu Feb 16 16:51:39 2023
+ read: IOPS=8368, BW=8369MiB/s (8775MB/s)(240GiB/29367msec)
+   slat (usec): min=85, max=74615, avg=2855.92, stdev=2478.60
+   clat (usec): min=4, max=217900, avg=88764.77, stdev=22209.24
+    lat (usec): min=1824, max=219305, avg=91620.69, stdev=22776.37
+   clat percentiles (msec):
+    |  1.00th=[   35],  5.00th=[   60], 10.00th=[   66], 20.00th=[   72],
+    | 30.00th=[   77], 40.00th=[   81], 50.00th=[   86], 60.00th=[   92],
+    | 70.00th=[  100], 80.00th=[  107], 90.00th=[  118], 95.00th=[  128],
+    | 99.00th=[  150], 99.50th=[  163], 99.90th=[  180], 99.95th=[  184],
+    | 99.99th=[  201]
+  bw (  MiB/s): min= 5642, max=11347, per=99.86%, avg=8357.27, stdev=62.64, samples=1392
+  iops        : min= 5642, max=11346, avg=8356.07, stdev=62.61, samples=1392
+ lat (usec)   : 10=0.01%, 20=0.01%
+ lat (msec)   : 2=0.01%, 4=0.01%, 10=0.02%, 20=0.07%, 50=2.47%
+ lat (msec)   : 100=68.50%, 250=28.92%
+ cpu          : usr=0.31%, sys=19.00%, ctx=6755544, majf=0, minf=196632
+ IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.2%, 32=99.7%, &gt;=64=0.0%
+    submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
+    complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.1%, 64=0.0%, &gt;=64=0.0%
+    issued rwts: total=245760,0,0,0 short=0,0,0,0 dropped=0,0,0,0
+    latency   : target=0, window=0, percentile=100.00%, depth=32
+
+Run status group 0 (all jobs):
+  READ: bw=8369MiB/s (8775MB/s), 8369MiB/s-8369MiB/s (8775MB/s-8775MB/s), io=240GiB (258GB), run=29367-29367msec</code></pre>
+<blockquote>
+<p>同样图个乐</p>
+</blockquote>
+<h3 id="DD"><a href="#DD" class="headerlink" title="DD"></a>DD</h3><h1 id="10-一些题外话"><a href="#10-一些题外话" class="headerlink" title="10 一些题外话"></a>10 一些题外话</h1><ul>
 <li><p>非常喜欢用网卡ipxe+Ventoy这套东西跑系统，最近发现Mikrotik ROS系统在DHCP Server选项中增加了一个<code>Option Matcher</code>的功能。配合Option 93可以根据主板的架构分配不同的引导文件e.g.ArmUEFI,LegacyBIOS,x86UEFI.</p>
 </li>
 <li><p>MTU 9000, AKA <code>Jumbo Frames</code>, 你需要慎重去考虑你整个网络内的所有设备通信，这个东西带来的收益其实远比它带来的问题多，如果你家里有很多无线智能设备的话，考虑尽可能用vlan去划分。网络inbound的话，需要修正mss，Mikrotik ROS则加一条mangle：</p>
