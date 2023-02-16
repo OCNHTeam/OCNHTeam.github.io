@@ -18,9 +18,9 @@
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/zmOUyepZlck3TvY.png">
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/6yZpdQtXg7IhUPn.png">
-<meta property="og:image" content="https://s2.loli.net/2023/02/16/m7PYpiEk1qSxVM6.png">
+<meta property="og:image" content="https://s2.loli.net/2023/02/16/vSm7T3QYq4KIdtc.png">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-02-16T09:58:36.268Z">
+<meta property="article:modified_time" content="2023-02-16T10:45:50.132Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -604,7 +604,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-16 17:58:36">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-16 18:45:50">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -953,9 +953,10 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 
 <p>最后有个小问题，metadata对于Zvol是无用的。对ZFS来说，往zvol写入多少文件都只是<code>block size</code>大小完全一样的存在，你可以收益到的只是Metadata对Zvol的加速。这个问题的讨论请参考<a target="_blank" rel="noopener" href="https://github.com/openzfs/zfs/discussions/12769">这里</a>。如果你是zvol用的频繁并且还需要更极致的zvol性能，参考章节6.ZFS Send。<br></br><br></br></p>
 <h2 id="4-3-Dedup-Vdevs"><a href="#4-3-Dedup-Vdevs" class="headerlink" title="4.3 Dedup Vdevs"></a>4.3 Dedup Vdevs</h2><p>一般来说，开启了dedup功能的dataset能做到文件去重复的作用，也就是多个一模一样的文件只占用一份文件的容量。以前用内存来做，代价是用内存换硬盘空间，现在即便是可以用Dedup Vdev来换机械硬盘空间，也不推荐。Meta Vdevs存储了dedup datasheet，同样做到了dedup功能，不如用meta dev。<br>开启dedup的dataset是不可逆的，请把已经开启dedup的dataset通过<code>zfs send</code>到新的dataset里，再删除旧的。名字的话通过<code>zpool rename</code>改回来。<br></br><br></br></p>
-<h2 id="4-4-Slog"><a href="#4-4-Slog" class="headerlink" title="4.4 Slog"></a>4.4 Slog</h2><p>草，写不完了啊！好烦</p>
-<h2 id="4-5-L2arc"><a href="#4-5-L2arc" class="headerlink" title="4.5 L2arc"></a>4.5 L2arc</h2><p>本来就想写一点点的。。为嘛我越写越多。。</p>
-<h2 id="4-6-HDD-Storage-Pool"><a href="#4-6-HDD-Storage-Pool" class="headerlink" title="4.6 HDD Storage Pool"></a>4.6 HDD Storage Pool</h2><p>好烦</p>
+<h2 id="4-4-Slog"><a href="#4-4-Slog" class="headerlink" title="4.4 Slog"></a>4.4 Slog</h2><p>草，写不完了啊！好烦<br></br><br></br></p>
+<h2 id="4-5-L2arc"><a href="#4-5-L2arc" class="headerlink" title="4.5 L2arc"></a>4.5 L2arc</h2><p>本来就想写一点点的。。为嘛我越写越多。。<br></br><br></br></p>
+<h2 id="4-6-HDD-Storage-Pool"><a href="#4-6-HDD-Storage-Pool" class="headerlink" title="4.6 HDD Storage Pool"></a>4.6 HDD Storage Pool</h2><p>TrueNAS通过WebUI建立的pool非常平庸，如果你对自己的硬盘参数性能非常了解，请通过zfs命令建立。</p>
+<p>有空再写。</p>
 <h2 id="4-7-OpenZFS-tuning"><a href="#4-7-OpenZFS-tuning" class="headerlink" title="4.7 OpenZFS tuning"></a>4.7 OpenZFS tuning</h2><p>ZFS 的使用优化是没有参照的，即便是跟我买完全一模一样的机器，拿回去使用场景不同都不能tuning一样的。老老实实看OpenZFS的Manual吧，没有捷径。但我可以说一下我自己的一些40Gbps网路下的Tuning思路。</p>
 <ul>
 <li>在内存<font color="#660000">有限</font>的情况下使用<code>L2arc</code>提高读取速度。<code>L2arc</code>是一个高性价比的选择。在内存arc仍然growing的情况下强行使用l2arc只会让你的读取速度变慢，按现代计算机架构来看，没有啥SSD是比内存更快的。</li>
@@ -988,7 +989,8 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 </br>
 </br>
 
-<h1 id="9-性能测试"><a href="#9-性能测试" class="headerlink" title="9 性能测试"></a>9 性能测试</h1><p>感觉说了这么多，最终还是要测一下的。配置如下：</p>
+<h1 id="9-性能测试"><a href="#9-性能测试" class="headerlink" title="9 性能测试"></a>9 性能测试</h1><p>感觉说了这么多，最终还是要测一下的，但是坦率的说，我很讨厌跑这些东西，因为跟实际使用环境差太多了，参考价值比较低。真的要测，还是要用你的常用软件，协议等等方面一起去看一下表现的。</p>
+<p>配置如下：</p>
 <ul>
 <li>TrueNas Server配置：<ul>
 <li>CPU:E5-2680 v3</li>
@@ -1016,11 +1018,12 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 <p>在Proxmox VE下，分别虚拟化以下系统，全是vm，没测lxc，直通了SR-IOV</p>
 <h2 id="windows-10-LTSC-1809"><a href="#windows-10-LTSC-1809" class="headerlink" title="windows 10 LTSC (1809)"></a>windows 10 LTSC (1809)</h2><p>设置：</p>
 <ul>
-<li>分了12个CPU 8G内存</li>
+<li>分了12个CPU 20G内存, q35, cpu-host</li>
 <li>虚拟机中安装了官网的最新OFED</li>
 <li>MTU 9000</li>
 <li>直接装的，完全没更新过任何补丁</li>
 </ul>
+<p>不是很懂windows的这些测速软件，跑出来的数据也太魔幻了，实际用各种软件限制，协议限制。最真实的还是<code>zfs over iscsi</code>，我暂时没有条件用RDMA。</p>
 <h3 id="iperf3"><a href="#iperf3" class="headerlink" title="iperf3"></a>iperf3</h3><pre><code class="bash">[ ID] Interval           Transfer     Bitrate
 [  5]   0.00-4.00   sec   893 MBytes  1.87 Gbits/sec                  receiver
 [  8]   0.00-4.00   sec   902 MBytes  1.89 Gbits/sec                  receiver
@@ -1059,7 +1062,7 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 <li><p>iSCSI<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://s2.loli.net/2023/02/16/6yZpdQtXg7IhUPn.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="iscsi-win.png"></p>
 
 </li>
-<li><p>MS-SMB<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://s2.loli.net/2023/02/16/m7PYpiEk1qSxVM6.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="smb.png"></p>
+<li><p>MS-SMB<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://s2.loli.net/2023/02/16/vSm7T3QYq4KIdtc.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="smb.png"></p>
 
 </li>
 </ul>
