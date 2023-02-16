@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/6yZpdQtXg7IhUPn.png">
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/m7PYpiEk1qSxVM6.png">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-02-16T09:26:02.085Z">
+<meta property="article:modified_time" content="2023-02-16T09:31:32.340Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -604,7 +604,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-16 17:26:02">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-16 17:31:32">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -995,7 +995,7 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 <li>主板: 超微X10-SRA-F</li>
 <li>内存：SK海力士HMA82GR7CJR8N-VK DDR4 Reg ECC 2666 16G x8</li>
 <li>机械硬盘：16T Seagate EXOS x 10 + 12T Seagate EXOS x10；两组RaidZ2后stripe，已经用了54%的容量了。</li>
-<li>NVME：480G Optane x1 + 480G Samsung 983zet x1；组成mirror后放在了同一组机械池作为Meta Dev。</li>
+<li>NVME：480G Optane 905P x1 + 480G Samsung 983zet x1；组成mirror后放在了同一组机械池作为Meta Dev。</li>
 <li>网卡：HP 544+；最新固件，ETH模式，关闭了SR-IOV。</li>
 <li>SAS卡：LSI 9300-8i</li>
 <li>背板：超微BPN-SAS3-846EL1</li>
@@ -1013,7 +1013,7 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 </ul>
 </li>
 </ul>
-<p>在Proxmox VE下，分别虚拟化以下系统，来做一下测试</p>
+<p>在Proxmox VE下，分别虚拟化以下系统，全是vm，没测lxc，直通了SR-IOV</p>
 <h2 id="windows-10-LTSC-1809"><a href="#windows-10-LTSC-1809" class="headerlink" title="windows 10 LTSC (1809)"></a>windows 10 LTSC (1809)</h2><p>设置：</p>
 <ul>
 <li>分了12个CPU 8G内存</li>
@@ -1200,8 +1200,7 @@ Run status group 0 (all jobs):
 <li>1M顺序读取</li>
 </ul>
 <pre><code class="bash">fio -filename=test-read -ioengine=libaio -bs=1M -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=read -group_reporting -name=&quot;read&quot;</code></pre>
-<pre><code class="bash">Jobs: 24 (f=24): [R(24)][100.0%][r=7440MiB/s][r=7440 IOPS][eta 00m:00s]
-read: (groupid=0, jobs=24): err= 0: pid=2262359: Thu Feb 16 16:51:39 2023
+<pre><code class="bash">read: (groupid=0, jobs=24): err= 0: pid=2262359: Thu Feb 16 16:51:39 2023
   read: IOPS=8368, BW=8369MiB/s (8775MB/s)(240GiB/29367msec)
     slat (usec): min=85, max=74615, avg=2855.92, stdev=2478.60
     clat (usec): min=4, max=217900, avg=88764.77, stdev=22209.24
