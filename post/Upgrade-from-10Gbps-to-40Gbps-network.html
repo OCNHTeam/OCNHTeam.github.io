@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/6yZpdQtXg7IhUPn.png">
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/vSm7T3QYq4KIdtc.png">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-02-16T10:45:50.132Z">
+<meta property="article:modified_time" content="2023-02-19T21:06:01.386Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -604,7 +604,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-16 18:45:50">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-20 5:06:01">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -621,7 +621,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							10.6k 字
+							10.7k 字
 						</div>
 					
 						
@@ -810,7 +810,8 @@ mstconfig -d 03:00.00 set LINK_TYPE_P1=ETH  #设置p1端口为ETH模式</code></
 <p>创建一个shell，assign mac地址以及vf link up:</p>
 <pre><code class="bash">nano /opt/sr-iov.sh</code></pre>
 <p>内容如下</p>
-<pre><code class="bash">ip link set dev enp2s0 mtu 9000  #这个你看自己需求是否要设置mtu。如果pf是1500，那么vf设置9000会有问题。
+<pre><code class="bash">#!/bin/sh
+ip link set dev enp2s0 mtu 9000  #这个你看自己需求是否要设置mtu。如果pf是1500，那么vf设置9000会有问题。
 ip link set dev enp2s0 vf 0 mac ae:51:1a:2b:c0:00
 ip link set dev enp2s0 vf 1 mac ae:51:1a:2b:c0:01
 ip link set dev enp2s0 vf 2 mac ae:51:1a:2b:c0:02
@@ -822,7 +823,7 @@ ip link set enp2s0v2 up
 ip link set enp2s0v3 up</code></pre>
 <p>记得<code>chmod +x /opt/sr-iov.sh</code></p>
 <p>创建systemd unit开机运行</p>
-<pre><code class="bash">`nano mlx-sr-iov.service`</code></pre>
+<pre><code class="bash">nano mlx-sr-iov.service</code></pre>
 <p>内容如下</p>
 <pre><code class="bash">[Unit]
 Description=Script to enable MLX SR-IOV
@@ -948,7 +949,7 @@ DISTRO := Debian</code></pre>
 find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2)); if (n&lt;10) &#123; n=10; &#125; size[n]++ &#125; END &#123; for (i in size) printf(&quot;%d %d\n&quot;, 2^i, size[i]) &#125;&#39; | sort -n | awk &#39;function human(x) &#123; x[1]/=1024; if (x[1]&gt;=1024) &#123; x[2]++; human(x) &#125; &#125; &#123; a[1]=$1; a[2]=0; human(a); printf(&quot;%3d%s: %6d\n&quot;, a[1],substr(&quot;kMGTEPYZ&quot;,a[2]+1,1),$2) &#125;&#39;
 </code></pre>
 <p>看一下你的这个dataset下文件的整个block size分布，按比例预估。<br>另外通过如下命令也可以看到整个pool的情况。具体的一些估算以及应用方法请参考<a target="_blank" rel="noopener" href="https://forum.level1techs.com/t/zfs-metadata-special-device-z/159954">这里</a>。当然，我们讨论的文件大小都是通过compression压缩后的大小。非Optane的SSD作为Meta Devs你需要手动开启<code>trim on</code>。</p>
-<pre><code class="bash">`zdb -LbbbA -U /data/zfs/zpool.cache &lt;poolname&gt;`</code></pre>
+<pre><code class="bash">zdb -LbbbA -U /data/zfs/zpool.cache &lt;poolname&gt;</code></pre>
 </br>
 
 <p>最后有个小问题，metadata对于Zvol是无用的。对ZFS来说，往zvol写入多少文件都只是<code>block size</code>大小完全一样的存在，你可以收益到的只是Metadata对Zvol的加速。这个问题的讨论请参考<a target="_blank" rel="noopener" href="https://github.com/openzfs/zfs/discussions/12769">这里</a>。如果你是zvol用的频繁并且还需要更极致的zvol性能，参考章节6.ZFS Send。<br></br><br></br></p>
