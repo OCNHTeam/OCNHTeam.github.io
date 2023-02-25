@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/6yZpdQtXg7IhUPn.png">
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/vSm7T3QYq4KIdtc.png">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-02-22T13:26:38.494Z">
+<meta property="article:modified_time" content="2023-02-25T11:16:38.397Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -604,7 +604,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-22 21:26:38">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-25 19:16:38">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -621,7 +621,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							10.7k 字
+							11.6k 字
 						</div>
 					
 						
@@ -629,7 +629,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							45 分钟
+							49 分钟
 						</div>
 					
 		</div>
@@ -683,7 +683,7 @@
 </li>
 </ul>
 <h1 id="2-管理SX6036"><a href="#2-管理SX6036" class="headerlink" title="2 管理SX6036"></a>2 管理SX6036</h1><p>通过RJ45网线连接交换机的mgt口，登陆其后台IP即可管理。若你不知道管理口IP，需要用Console线（RJ45 to USB）连接，进入向导模式设置管理口IP等，这个可以看官网的说明书，这里不细说这些没用的了，说一下几个小坑。</p>
-<p>如果使用SFP光缆配合购物清单中的SFP to QSFP转换头，连接10Gbps交换机和SX6036，请在后台的WEB UI中将连接口的速率手动协商至10Gbps，不然无法通信。<br>如果你有一条QSFP一分四SFP的线，需关闭其中一个口才能使用。例如，我关闭了SX6036的1口，则4口可以插入这条QSFP一分四SFP的线，具体请查阅说明书来找到关闭对应口。关闭端口必须使用Console线连接才能更改。</p>
+<p>如果使用SFP光缆配合购物清单中的SFP to QSFP转换头，连接10Gbps交换机和SX6036，请在后台的WEB UI中将连接口的速率手动协商至10Gbps，不然无法通信。<br>如果你有一条QSFP一分四SFP的线，需关闭其中一个口才能使用。例如，我关闭了SX6036的1口，再在ssh管理界面中对4口标注为1分4，则4口可以插入这条QSFP一分四SFP的线，具体请查阅说明书来找到关闭对应口。关闭端口必须使用Console线连接才能更改。</p>
 </br>
 </br>
 
@@ -986,7 +986,78 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 <p>这个插件的<code>API Password</code>就是root的登陆密码，不是<code>API Key</code>。</p>
 </blockquote>
 <p>使用<a target="_blank" rel="noopener" href="https://github.com/Corsinvest/cv4pve-autosnap">这个</a>工具可以对VM Guest自动化操作snapshot。这里的快照是使用<code>ZFS Snapshot</code>的，可以完全利用到ZFS的功能了。链接中有好多个视频操作演示教程，这里就不赘述了。</p>
-<h1 id="8-Infiniband"><a href="#8-Infiniband" class="headerlink" title="8 Infiniband"></a>8 Infiniband</h1><p>不知道写啥，其实就是IP over Infiniband。有空凑一凑字。</p>
+<h1 id="8-IP-over-Infiniband"><a href="#8-IP-over-Infiniband" class="headerlink" title="8 IP over Infiniband"></a>8 IP over Infiniband</h1><p>Proxmox VE和TrueNAS都支持IP over Infiniband(IPoIB)。这里最好买原装的Mellanox 56GB FDR QSFP+铜缆，别的牌子可能兼容性没有这么好，闲鱼大概2米的在50元左右（线比网卡贵系列）。</p>
+<p>首先最好找一台机器把两张HP 544+的卡的其中一个口刷成IB mode。</p>
+<pre><code class="bash">lspci |grep Mellanox
+
+03:00.0 Ethernet controller: Mellanox Technologies MT27520 Family [ConnectX-3 Pro]
+mstconfig -d 03:00.00 set LINK_TYPE_P1=IB LINK_TYPE_P2=ETH #设置p1端口为IB模式</code></pre>
+<p>这里假设p1口是IB模式，p2口是ETH模式。</p>
+<ul>
+<li><p>SX6036<br>在SX6036的WebUI下切换profile到vpi模式，然后在端口管理处修改端口类型。我这里把1-21口设置成了ETH模式，22-36口为IB模式。<br>在IB SM Mgmt菜单中找到base SM，选择SM Enabled来开启SM。注意，这些设置完后都要按右上角的SAVE按钮，不然重启就失效了。</p>
+</li>
+<li><p>PVE端<br>输入<code>modprobe ib_ipoib</code>加载ipoib的驱动，然后通过<code>ip a</code>看到加载的ib口了，一般就是叫<code>ibp2s0</code>或者<code>ibp2S0d1</code>。<br>修改/etc/network/interfaces</p>
+<pre><code class="bash">auto ibp2s0
+iface ibp2s0 inet static
+      address  10.99.0.1
+      netmask  255.255.255.0
+      pre-up modprobe ib_ipoib
+      pre-up echo connected &gt; /sys/class/net/ibp2s0/mode
+      mtu 65520</code></pre>
+<p>自己修改网卡名字，注意，这里面的网端不能跟你eth网段相同的。最后输入<code>systemctl restart networking.service</code>生效，我们可以看到SX6036交换机的管理界面中已经有IB流量出现了。</p>
+</li>
+<li><p>TrueNAS端<br>在Core的BSD分支中，直接在Tunables中增加一条:</p>
+<pre><code class="xml">mlx4ib_load 
+Value: YES
+type: loaders</code></pre>
+</li>
+</ul>
+<p> 并在Tasks/Init/Shutdown Scripts中增加一条postinit 命令：</p>
+<pre><code class="bash">kldload ipoib</code></pre>
+<p> 最后如同设置普通网卡的ip地址一样，在webui中设置与PVE同一段的ip，比如10.99.0.2。这里有个小问题就是Core版本的MTU到底怎么改到65520，我没弄明白，不行的话，两端全部改成MTU=2044。</p>
+<p> 如果是Scale版本的话，插上网卡在WebUI上啥都别设置，输入<code>modprobe ib_ipoib &amp;&amp; modprobe ib_umad</code>后，你通过<code>ls /sys/class/net</code>就能知道你IB口的名字了，接着直接修改/etc/network/interfaces</p>
+<pre><code class="bash">auto ibs1d1
+iface ibs1d1 inet static
+        address  10.99.0.2
+        netmask  255.255.255.0
+        pre-up modprobe ib_ipoib &amp;&amp; modprobe ib_umad
+        pre-up echo connected &gt; /sys/class/net/ibs1d1/mode
+        mtu 65520</code></pre>
+<p> 保存重启就好了。</p>
+<p> 随便测了一下两台之间的ping和qperf，其中10.99.0.0段是IPoIB，10.10.10.0段是ETH:</p>
+<pre><code class="bash">PING 10.99.0.2 (10.99.0.2) 56(84) bytes of data.
+64 bytes from 10.99.0.2: icmp_seq=1 ttl=64 time=0.096 ms
+64 bytes from 10.99.0.2: icmp_seq=2 ttl=64 time=0.099 ms
+64 bytes from 10.99.0.2: icmp_seq=3 ttl=64 time=0.099 ms
+64 bytes from 10.99.0.2: icmp_seq=4 ttl=64 time=0.091 ms 
+
+PING 10.10.10.11 (10.10.10.11) 56(84) bytes of data.
+64 bytes from 10.10.10.11: icmp_seq=1 ttl=64 time=0.296 ms
+64 bytes from 10.10.10.11: icmp_seq=2 ttl=64 time=0.224 ms
+64 bytes from 10.10.10.11: icmp_seq=3 ttl=64 time=0.237 ms
+64 bytes from 10.10.10.11: icmp_seq=4 ttl=64 time=0.254 ms
+
+root@pve:~# qperf 10.99.0.2 tcp_bw tcp_lat udp_bw udp_lat
+tcp_bw:
+   bw  =  3.61 GB/sec
+tcp_lat:
+   latency  =  8.61 us
+udp_bw:
+   send_bw  =  7.39 GB/sec
+   recv_bw  =  4.54 GB/sec
+udp_lat:
+   latency  =  7.85 us
+
+root@pve:~# qperf 10.10.10.11 tcp_bw tcp_lat udp_bw udp_lat
+tcp_bw:
+   bw  =  4.31 GB/sec
+tcp_lat:
+   latency  =  11.3 us
+udp_bw:
+   send_bw  =   2.5 GB/sec
+   recv_bw  =  2.47 GB/sec
+udp_lat:
+   latency  =  18.3 us</code></pre>
 </br>
 </br>
 
