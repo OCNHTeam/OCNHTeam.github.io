@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/6yZpdQtXg7IhUPn.png">
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/vSm7T3QYq4KIdtc.png">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-02-25T11:36:27.907Z">
+<meta property="article:modified_time" content="2023-02-25T11:40:29.698Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -604,7 +604,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-25 19:36:27">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-25 19:40:29">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -1022,40 +1022,8 @@ iface ibs1d1 inet static
      pre-up echo connected &gt; /sys/class/net/ibs1d1/mode
      mtu 65520</code></pre>
 <p>保存重启就好了。</p>
-<p>随便测了一下两台之间的ping和qperf，其中10.99.0.0段是IPoIB，10.10.10.0段是ETH:</p>
-<pre><code class="bash">PING 10.99.0.2 (10.99.0.2) 56(84) bytes of data.
-64 bytes from 10.99.0.2: icmp_seq=1 ttl=64 time=0.096 ms
-64 bytes from 10.99.0.2: icmp_seq=2 ttl=64 time=0.099 ms
-64 bytes from 10.99.0.2: icmp_seq=3 ttl=64 time=0.099 ms
-64 bytes from 10.99.0.2: icmp_seq=4 ttl=64 time=0.091 ms 
-PING 10.10.10.11 (10.10.10.11) 56(84) bytes of data.
-64 bytes from 10.10.10.11: icmp_seq=1 ttl=64 time=0.296 ms
-64 bytes from 10.10.10.11: icmp_seq=2 ttl=64 time=0.224 ms
-64 bytes from 10.10.10.11: icmp_seq=3 ttl=64 time=0.237 ms
-64 bytes from 10.10.10.11: icmp_seq=4 ttl=64 time=0.254 ms</code></pre>
 </li>
 </ul>
-<pre><code class="bash">root@pve:~# qperf 10.99.0.2 tcp_bw tcp_lat udp_bw udp_lat
-tcp_bw:
-    bw  =  3.61 GB/sec
-tcp_lat:
-    latency  =  8.61 us
-udp_bw:
-    send_bw  =  7.39 GB/sec
-    recv_bw  =  4.54 GB/sec
-udp_lat:
-    latency  =  7.85 us
-
-root@pve:~# qperf 10.10.10.11 tcp_bw tcp_lat udp_bw udp_lat
-tcp_bw:
-    bw  =  4.31 GB/sec
-tcp_lat:
-    latency  =  11.3 us
-udp_bw:
-    send_bw  =   2.5 GB/sec
-    recv_bw  =  2.47 GB/sec
-udp_lat:
-    latency  =  18.3 us</code></pre>
 </br>
 </br>
 
@@ -1086,6 +1054,39 @@ udp_lat:
 </li>
 </ul>
 <p>在Proxmox VE下，分别虚拟化以下系统，全是vm，没测lxc，直通了SR-IOV</p>
+<h2 id="IPoIB"><a href="#IPoIB" class="headerlink" title="IPoIB"></a>IPoIB</h2><p>通过IPoIB连接PVE和TrueNAS，再通过ZFS over iSCSI跑虚拟机。<br>通过ping测了一下latency</p>
+<pre><code class="bash">PING 10.99.0.2 (10.99.0.2) 56(84) bytes of data.
+64 bytes from 10.99.0.2: icmp_seq=1 ttl=64 time=0.096 ms
+64 bytes from 10.99.0.2: icmp_seq=2 ttl=64 time=0.099 ms
+64 bytes from 10.99.0.2: icmp_seq=3 ttl=64 time=0.099 ms
+64 bytes from 10.99.0.2: icmp_seq=4 ttl=64 time=0.091 ms 
+PING 10.10.10.11 (10.10.10.11) 56(84) bytes of data.
+64 bytes from 10.10.10.11: icmp_seq=1 ttl=64 time=0.296 ms
+64 bytes from 10.10.10.11: icmp_seq=2 ttl=64 time=0.224 ms
+64 bytes from 10.10.10.11: icmp_seq=3 ttl=64 time=0.237 ms
+64 bytes from 10.10.10.11: icmp_seq=4 ttl=64 time=0.254 ms</code></pre>
+<p>通过qperf测试</p>
+<pre><code class="bash">root@pve:~# qperf 10.99.0.2 tcp_bw tcp_lat udp_bw udp_lat
+tcp_bw:
+    bw  =  3.61 GB/sec
+tcp_lat:
+    latency  =  8.61 us
+udp_bw:
+    send_bw  =  7.39 GB/sec
+    recv_bw  =  4.54 GB/sec
+udp_lat:
+    latency  =  7.85 us
+
+root@pve:~# qperf 10.10.10.11 tcp_bw tcp_lat udp_bw udp_lat
+tcp_bw:
+    bw  =  4.31 GB/sec
+tcp_lat:
+    latency  =  11.3 us
+udp_bw:
+    send_bw  =   2.5 GB/sec
+    recv_bw  =  2.47 GB/sec
+udp_lat:
+    latency  =  18.3 us</code></pre>
 <h2 id="windows-10-LTSC-1809"><a href="#windows-10-LTSC-1809" class="headerlink" title="windows 10 LTSC (1809)"></a>windows 10 LTSC (1809)</h2><p>设置：</p>
 <ul>
 <li>分了12个CPU 20G内存, q35, cpu-host</li>
