@@ -16,11 +16,11 @@
 <meta property="og:description" content="0 介绍自TrueNAS Core更新至FreeBSD 13，它的两大免费产品Scale和Core都已经使用上了OpenZFS。既然如此，就直接转投OpenZFS用上Linux了，但考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不太熟悉，就小心翼翼的先使用了一下TrueNAS Scale试手。体验下来我个人不是很喜欢用K3S Containerd，也没有LXC，或者任">
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
-<meta property="og:image" content="https://s2.loli.net/2023/02/16/zmOUyepZlck3TvY.png">
+<meta property="og:image" content="https://s2.loli.net/2023/02/28/DHX7iNJjgZOz9LB.png">
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/6yZpdQtXg7IhUPn.png">
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/vSm7T3QYq4KIdtc.png">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-02-27T11:40:44.210Z">
+<meta property="article:modified_time" content="2023-02-28T07:03:13.141Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -604,7 +604,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-27 19:40:44">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-2-28 15:03:13">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -1093,6 +1093,7 @@ udp_lat:
 <li>虚拟机中安装了官网的最新OFED</li>
 <li>MTU 9000</li>
 <li>直接装的，完全没更新过任何补丁</li>
+<li>Windows的系统盘是虚拟scsi，因为sata的协议queue本身有限制了</li>
 </ul>
 <p>不是很懂windows的这些测速软件，跑出来的数据也太魔幻了，实际用各种软件限制，协议限制。最真实的还是<code>zfs over iscsi</code>，我暂时没有条件用RDMA。</p>
 <h3 id="iperf3"><a href="#iperf3" class="headerlink" title="iperf3"></a>iperf3</h3><pre><code class="bash">[ ID] Interval           Transfer     Bitrate
@@ -1123,7 +1124,7 @@ udp_lat:
 [SUM]   0.00-4.00   sec  21.0 GBytes  45.1 Gbits/sec                  receiver</code></pre>
 <h3 id="CrystalDiskMark"><a href="#CrystalDiskMark" class="headerlink" title="CrystalDiskMark"></a>CrystalDiskMark</h3><p>分别测了<code>ZFS over iSCSI</code>,<code>iSCSI</code>,<code>MS-SMB</code></p>
 <ul>
-<li>ZFS over iSCSI<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://s2.loli.net/2023/02/16/zmOUyepZlck3TvY.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="zfsoiscsi.png"></li>
+<li>ZFS over iSCSI<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://s2.loli.net/2023/02/28/DHX7iNJjgZOz9LB.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="zfsoiscsi.png"></li>
 
 </ul>
 <blockquote>
