@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/6yZpdQtXg7IhUPn.png">
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/vSm7T3QYq4KIdtc.png">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-04-25T06:48:05.244Z">
+<meta property="article:modified_time" content="2023-04-25T11:15:30.947Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -604,7 +604,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-4-25 14:48:05">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-4-25 19:15:30">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -802,7 +802,7 @@ mstconfig -d 03:00.00 query    #获取设备设置信息
 mstconfig -d 03:00.00 set SRIOV_EN=1 NUM_OF_VFS=8  #开启SR-IOV以及设置VF总数为8个；确保主板已开通sr-iov，Proxmox VE已开通虚拟化等设置
 mstconfig -d 03:00.00 set LINK_TYPE_P1=ETH  #设置p1端口为ETH模式</code></pre>
 <p>创建一个/etc/modprobe.d/mlx4_core.conf填入：</p>
-<pre><code class="bash">options mlx4_core port_type_array=2,2 num_vfs=4,0,2 probe_vf=4,0,2</code></pre>
+<pre><code class="bash">options mlx4_core port_type_array=2,2 num_vfs=4,0,2 probe_vf=4,0,0</code></pre>
 <ul>
 <li>port_type_array=2,2 意味着两个端口都是ETH模式</li>
 <li>num_vfs 是VF数量，格式是a,b,c。a和b分别代表端口1和2的VF量，而C是总量。注意C不是<code>a+b</code>，具体可以参考<a target="_blank" rel="noopener" href="https://docs.nvidia.com/networking/pages/viewpage.action?pageId=37849263">这个文档</a>。</li>
@@ -826,7 +826,7 @@ ip link set enp2s0v2 up
 ip link set enp2s0v3 up</code></pre>
 <p>记得<code>chmod +x /opt/sr-iov.sh</code></p>
 <p>创建systemd unit开机运行</p>
-<pre><code class="bash">nano /lib/systemd/system/mlx-sr-iov.service</code></pre>
+<pre><code class="bash">nano /etc/systemd/system/mlx-sr-iov.service</code></pre>
 <p>内容如下</p>
 <pre><code class="bash">[Unit]
 Description=Script to enable MLX SR-IOV
@@ -1040,6 +1040,7 @@ iface ibs1d1 inet static
 </br>
 
 <h1 id="9-性能测试"><a href="#9-性能测试" class="headerlink" title="9 性能测试"></a>9 性能测试</h1><p>感觉说了这么多，最终还是要测一下的。但是坦率的说，我很讨厌跑这些东西，因为跟实际使用环境差太多了，参考价值比较低。真的要测，还是要用你的常用软件，协议等等方面一起去看一下表现的，自己用着爽才是最重要的。</p>
+<p>如下测试都是异步的，我先学习一下别人如何标准地去测试，参考意义不大。</p>
 <p>配置如下：</p>
 <ul>
 <li>TrueNas Server配置：<ul>
