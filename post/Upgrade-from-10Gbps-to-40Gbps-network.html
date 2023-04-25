@@ -8,19 +8,19 @@
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta name="description" content="0 介绍TrueNAS Core已更新至FreeBSD 13，其两款免费产品Scale和Core也已转至OpenZFS。考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不够熟悉，因此使用了TrueNAS Scale。但体验不佳，所以最终选择回到了TrueNAS Core 13。 家里装修时布置了2条MPO数据线的，但不知道为什么只有一条能通网络，导致我有段时间是NAS和">
+	<meta name="description" content="0 介绍TrueNAS Core已更新至FreeBSD 13，其两款免费产品Scale和Core也已转至OpenZFS。考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不够熟悉，又想获得Linux的一些优势，因此使用了TrueNAS Scale。但体验不佳，所以最终选择回到了TrueNAS Core 13。 家里装修时布置了2条MPO数据线的，不知为何只有一条能通网络，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ZFS:从10Gbps升级到40Gbps网络">
 <meta property="og:url" content="https://blog.xjn819.com/post/Upgrade-from-10Gbps-to-40Gbps-network.html">
 <meta property="og:site_name" content="Xjn&#39;s Blog">
-<meta property="og:description" content="0 介绍TrueNAS Core已更新至FreeBSD 13，其两款免费产品Scale和Core也已转至OpenZFS。考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不够熟悉，因此使用了TrueNAS Scale。但体验不佳，所以最终选择回到了TrueNAS Core 13。 家里装修时布置了2条MPO数据线的，但不知道为什么只有一条能通网络，导致我有段时间是NAS和">
+<meta property="og:description" content="0 介绍TrueNAS Core已更新至FreeBSD 13，其两款免费产品Scale和Core也已转至OpenZFS。考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不够熟悉，又想获得Linux的一些优势，因此使用了TrueNAS Scale。但体验不佳，所以最终选择回到了TrueNAS Core 13。 家里装修时布置了2条MPO数据线的，不知为何只有一条能通网络，">
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="og:image" content="https://s2.loli.net/2023/02/28/rI1JFL5VfQlDuqk.png">
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/6yZpdQtXg7IhUPn.png">
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/vSm7T3QYq4KIdtc.png">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-04-18T09:45:48.061Z">
+<meta property="article:modified_time" content="2023-04-25T06:35:50.648Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -604,7 +604,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-4-18 17:45:48">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-4-25 14:35:50">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -621,7 +621,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							11.8k 字
+							11.9k 字
 						</div>
 					
 						
@@ -629,7 +629,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							50 分钟
+							51 分钟
 						</div>
 					
 		</div>
@@ -637,8 +637,8 @@
 	</header>
 
 	<div class="post-content" id="post_content">
-		<h1 id="0-介绍"><a href="#0-介绍" class="headerlink" title="0 介绍"></a>0 介绍</h1><p>TrueNAS Core已更新至FreeBSD 13，其两款免费产品Scale和Core也已转至OpenZFS。考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不够熟悉，因此使用了TrueNAS Scale。但体验不佳，所以最终选择回到了TrueNAS Core 13。</p>
-<p>家里装修时布置了2条MPO数据线的，但不知道为什么只有一条能通网络，导致我有段时间是NAS和MAC电脑端对端连着，用着也还行就没想太多。刚好早些时候拼车买了Mellanox SX6036，疫情闲赋在家就拿出来换了一套猫扇，NAS连接Mellanox SX6036再连接家里的10Gbps交换机Mikrotik CRS312，至此把40Gbps网络并入整个家庭内网。<br></br></p>
+		<h1 id="0-介绍"><a href="#0-介绍" class="headerlink" title="0 介绍"></a>0 介绍</h1><p>TrueNAS Core已更新至FreeBSD 13，其两款免费产品Scale和Core也已转至OpenZFS。考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不够熟悉，又想获得Linux的一些优势，因此使用了TrueNAS Scale。但体验不佳，所以最终选择回到了TrueNAS Core 13。</p>
+<p>家里装修时布置了2条MPO数据线的，不知为何只有一条能通网络，导致我有段时间是NAS和MAC电脑端对端连着，用着也还行就没想太多。刚好早些时候拼车买了Mellanox SX6036，疫情闲赋在家就拿出来换了一套猫扇，NAS和Proxmox VE连接Mellanox SX6036,再连接家里的10Gbps交换机Mikrotik CRS312，至此把40Gbps网络并入整个家庭内网。<br></br></p>
 <h1 id="1-硬件添置"><a href="#1-硬件添置" class="headerlink" title="1 硬件添置"></a>1 硬件添置</h1><ul>
 <li><p>Mellanox SX6036交换机。闲鱼差不多2000-3000左右，但是海淘Ebay大概在600-1200左右，邮费非常贵，如果有拼车最好了，需要授权才能使用以太网ETH模式，这个可以找淘宝或者Ebay上购买License或者破解。</p>
 </li>
@@ -646,7 +646,7 @@
 </li>
 <li><p>Chelsio T580 40Gbps 网卡。这张卡我之前800左右买的，闲鱼现在我看有的1500，有的1000，看运气吧。此卡是唯一一张可以在MacOS下驱动的40Gbps PCIE网卡。此卡目前的驱动只支持到MacOS Big Sur。Monterey开始，苹果使用了DriverKit驱动，只能等Chelsio去做DriverKit。</p>
 </li>
-<li><p>在写这篇文章的时候MacOS突然更新支持了Mellanox ConnectX-4代及以上的eth网卡的驱动，看了一下匹配非常宽泛，感觉200G的都支持，但不确定是否带有ROCE2；同时也支持了intel的几张40G以上的网卡。但这些卡的驱动都是driverkit，暂时似乎不支持mtu设置。</p>
+<li><p>在写这篇文章的时候MacOS突然更新支持了Mellanox ConnectX-4代及以上的eth网卡的驱动，看了一下匹配非常宽泛，感觉200G的都支持，但不确定是否带有ROCE2；同时也支持了intel的几张40G以上的网卡。如果只是MacOS使用的话，推荐mcx-4131a。</p>
 </li>
 <li><p>AOC 40Gbps QSFP网线。这个我闲鱼买的橘色的细线，价格大概在30-50元每米，比较方便理线，如果是DAC铜缆价格会更加便宜，但实在是太粗难以梳理。对了，这类线都带了模块的，你不需要再另购入模块。如果要用IB功能，线就有点贵了，自行搜索。</p>
 </li>
@@ -771,7 +771,7 @@
 <p>若使用PWM的风扇可以在SSH或者Console界面输入如下命令来控制转速：</p>
 <pre><code class="bash">enable  #进入高级模式
 fae mlxi2c set_fan set_fan /FAN/FAN 1 65    #1代表FAN 1; 65为转速
-fae mlxi2c set_fan set_fan /PS1/FAN 1 65</code></pre>
+fae mlxi2c set_fan set_fan /PS1/FAN 1 65    #PS1代表第一个电源，此交换机可以插两个冗余</code></pre>
 <blockquote>
 <p>更换风扇后，sx6036的指示灯变红，不影响使用。若觉得不舒服，写个定时脚本，通过可以带密码的sshpass去后台清理掉关于风扇相关的报错。</p>
 </blockquote>
@@ -779,7 +779,7 @@ fae mlxi2c set_fan set_fan /PS1/FAN 1 65</code></pre>
 
 <p> 待传…..</p>
 <h1 id="3-网卡过坑"><a href="#3-网卡过坑" class="headerlink" title="3 网卡过坑"></a>3 网卡过坑</h1><p>说一下HP 544+和Chelsio T580这两张卡。</p>
-<h2 id="3-1-HP-Mellanox-544"><a href="#3-1-HP-Mellanox-544" class="headerlink" title="3.1 HP Mellanox 544+"></a>3.1 HP Mellanox 544+</h2><p>如果你不太想折腾，请购买原装原厂的Mellanox卡，最好是还在维护的Mellanox 4代以上。我买了两张，说明一下情况，我的NAS和计算是彻底分开的两台机器，NAS是真的只做存储，而乱七八糟玩的是一台Proxmox VE，因此买两张分别给两台机器。<br>HP544+这张卡是Mellanox CX354a-FCCT的套娃卡，并不能刷入原装固件。HPE官网最新的固件在TrueNas使用的话，必须把此网卡的SR-IOV功能关闭，不然可能连开机都开不了。</p>
+<h2 id="3-1-HP-Mellanox-544"><a href="#3-1-HP-Mellanox-544" class="headerlink" title="3.1 HP Mellanox 544+"></a>3.1 HP Mellanox 544+</h2><p>如果你不太想折腾，请购买原装原厂的Mellanox卡，最好是还在维护的Mellanox 4代以上。<br>我买了两张544+，说明一下情况，我的NAS和计算是彻底分开的两台机器，NAS是真的只做存储，而乱七八糟玩的是一台Proxmox VE，因此买两张分别给两台机器。<br>HP544+这张卡是Mellanox CX354a-FCCT的套娃卡，并不能刷入原装固件。HPE官网最新的固件在TrueNas使用的话，必须把此网卡的SR-IOV功能关闭，不然可能连开机都开不了。</p>
 <pre><code class="bash">mstconfig -d 03:00.00 set SRIOV_EN=0</code></pre>
 <blockquote>
 <p>通过BIOS Legacy模式在开机引导此固件Rom的时候也可以直接进入Setup界面关闭SR-IOV，这样无需安装别的软件来设置</p>
@@ -805,7 +805,7 @@ mstconfig -d 03:00.00 set LINK_TYPE_P1=ETH  #设置p1端口为ETH模式</code></
 <pre><code class="bash">options mlx4_core port_type_array=2,2 num_vfs=4,0,2 probe_vf=4,0,2</code></pre>
 <ul>
 <li>port_type_array=2,2 意味着两个端口都是ETH模式</li>
-<li>num_vfs 是VF数量，格式是a,b,c。a和b分别代表端口1和2的VF量，而C是总量。注意C不是<code>a+b</code>，而是a和b的数量去掉PF数量。</li>
+<li>num_vfs 是VF数量，格式是a,b,c。a和b分别代表端口1和2的VF量，而C是总量。注意C不是<code>a+b</code>，具体可以参考<a target="_blank" rel="noopener" href="https://docs.nvidia.com/networking/pages/viewpage.action?pageId=37849263">这个文档</a>。</li>
 <li>probe_vf 格式同上；为Proxmox下ip link中能得到的数量</li>
 <li>这里我让第一个口做了4个VF给各种虚拟机和LXC用，第二个口不动我拿来给PVE用了。</li>
 </ul>
@@ -826,7 +826,7 @@ ip link set enp2s0v2 up
 ip link set enp2s0v3 up</code></pre>
 <p>记得<code>chmod +x /opt/sr-iov.sh</code></p>
 <p>创建systemd unit开机运行</p>
-<pre><code class="bash">nano mlx-sr-iov.service</code></pre>
+<pre><code class="bash">nano /lib/systemd/system/mlx-sr-iov.service</code></pre>
 <p>内容如下</p>
 <pre><code class="bash">[Unit]
 Description=Script to enable MLX SR-IOV
@@ -852,7 +852,7 @@ apt install pve-kernel-5.xxxxxx-pve #安装特定版本内核，当然初次安�
 proxmox-boot-tool kernel list #查看pve下已经有的内核
 proxmox-boot-tool kernel pin 5.13.19-6-pve #pin住内核</code></pre>
 <blockquote>
-<p>说实在的，Windows我都懒得用。都不知道Windows怎么跑40Gbps，文件管理器是单线程的，SMB是单线程的，ISCSI在较新的windows 10版本中也是单线程的=。=。RDMA？跟这篇文章主题无关。</p>
+<p>说实在的，Windows我都懒得用。都不知道Windows怎么跑40Gbps，文件管理器是单线程的，SMB是单线程的，ISCSI在较新的windows 10版本中也是单线程的=。=。</p>
 </blockquote>
 </br>
 
@@ -1027,17 +1027,15 @@ ib_umad</code></pre>
 Value: YES
 type: loaders</code></pre>
 并在Tasks/Init/Shutdown Scripts中增加一条postinit 命令：<pre><code class="bash">kldload ipoib</code></pre>
-最后如同设置普通网卡的ip地址一样，在webui中设置与PVE同一段的ip，比如10.99.0.2/24。</li>
-</ul>
-<p>如果是Scale版本的话，插上网卡在WebUI上啥都别设置，输入<code>modprobe ib_ipoib &amp;&amp; modprobe ib_umad</code>后，你通过<code>ls /sys/class/net</code>就能知道你IB口的名字了，接着直接修改/etc/network/interfaces</p>
-<pre><code class="bash">auto ibs1d1
+最后如同设置普通网卡的ip地址一样，在webui中设置与PVE同一段的ip，比如10.99.0.2/24。<br>如果是Scale版本的话，插上网卡在WebUI上啥都别设置，输入<code>modprobe ib_ipoib &amp;&amp; modprobe ib_umad</code>后，你通过<code>ls /sys/class/net</code>就能知道你IB口的名字了，接着直接修改/etc/network/interfaces<pre><code class="bash">auto ibs1d1
 iface ibs1d1 inet static
-        address  10.99.0.2
-        netmask  255.255.255.0
-        pre-up modprobe ib_ipoib &amp;&amp; modprobe ib_umad
-        pre-up echo connected &gt; /sys/class/net/ibs1d1/mode
-        mtu 2044</code></pre>
-<p>保存重启就好了，但每次系统更新都会导致其失效。</p>
+     address  10.99.0.2
+     netmask  255.255.255.0
+     pre-up modprobe ib_ipoib &amp;&amp; modprobe ib_umad
+     pre-up echo connected &gt; /sys/class/net/ibs1d1/mode
+     mtu 2044</code></pre>
+保存重启就好了，但每次系统更新都会导致其失效。</li>
+</ul>
 </br>
 </br>
 
@@ -1323,7 +1321,7 @@ Run status group 0 (all jobs):
 <li><p>MTU 9000, AKA <code>Jumbo Frames</code>, 你需要慎重去考虑你整个网络内的所有设备通信，这个东西带来的收益其实远比它带来的问题多，如果你家里有很多无线智能设备的话，考虑尽可能用vlan去划分。网络inbound的话，需要修正mss，Mikrotik ROS则加一条mangle：</p>
 <pre><code class="bash">/ip firewall mangle add action=change-mss chain=forward new-mss=clamp-to-pmtu passthrough=yes protocol=tcp tcp-flags=syn</code></pre>
 </li>
-<li><p>关于RDMA，我觉得不应该再在这篇文章中写了，首先就是那些客制化系统似乎都不支持，我预计会使用NixOS部署，则会放弃使用TrueNAS和Proxmox VE。其实，在这篇文章里写的大部分内容已经脱离了这些系统的WEBUI使用，再使用RDMA的话大可不必使用这些WEBUI了，但未来我不清楚会不会写这个主题，因为我也是个NixOS菜鸟。</p>
+<li><p>关于RDMA，我觉得不应该再在这篇文章中展开了，首先那些客制化系统似乎都不支持，我预计会使用NixOS部署，则会放弃使用TrueNAS和Proxmox VE。其实，在这篇文章里写的大部分内容已经脱离了这些系统的WebUI使用，再使用RDMA的话大可不必使用WebUI了，我打算之后PVE和TrueNAS都换成NixOS，但未来我不清楚会不会写这个主题，毕竟我也是个NixOS菜鸟。</p>
 </li>
 </ul>
 
