@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/6yZpdQtXg7IhUPn.png">
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/vSm7T3QYq4KIdtc.png">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-04-25T06:41:02.926Z">
+<meta property="article:modified_time" content="2023-04-25T06:48:05.244Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -604,7 +604,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-4-25 14:41:02">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-4-25 14:48:05">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -1191,7 +1191,7 @@ udp_lat:
 <h3 id="FIO"><a href="#FIO" class="headerlink" title="FIO"></a>FIO</h3><h4 id="写入相关"><a href="#写入相关" class="headerlink" title="写入相关"></a>写入相关</h4><ul>
 <li>4k随机写</li>
 </ul>
-<pre><code class="bash">fio -filename=test-rand-write -ioengine=libaio -bs=4k -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=randwrite -group_reporting -name=&quot;randwrite&quot;</code></pre>
+<pre><code class="bash">fio -filename=test-rand-write -ioengine=libaio -direct=1 -bs=4k -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=randwrite -group_reporting -name=&quot;randwrite&quot;</code></pre>
 <pre><code class="bash">randwrite: (groupid=0, jobs=24): err= 0: pid=2251134: Thu Feb 16 16:32:01 2023
   write: IOPS=49.4k, BW=193MiB/s (202MB/s)(12.6GiB/66882msec); 0 zone resets
     slat (usec): min=2, max=15423k, avg=482.15, stdev=58552.02
@@ -1225,7 +1225,7 @@ Run status group 0 (all jobs):
 <ul>
 <li>1M顺序写</li>
 </ul>
-<pre><code class="bash">fio -filename=test-write -ioengine=libaio -bs=1M -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=write -group_reporting -name=&quot;write&quot;</code></pre>
+<pre><code class="bash">fio -filename=test-write -ioengine=libaio -direct=1 -bs=1M -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=write -group_reporting -name=&quot;write&quot;</code></pre>
 <pre><code class="bash">write: (groupid=0, jobs=24): err= 0: pid=2258302: Thu Feb 16 16:44:20 2023
   write: IOPS=2833, BW=2834MiB/s (2971MB/s)(168GiB/60747msec); 0 zone resets
     slat (usec): min=182, max=7100.7k, avg=8453.00, stdev=94600.26
@@ -1250,11 +1250,11 @@ Run status group 0 (all jobs):
      latency   : target=0, window=0, percentile=100.00%, depth=32
 Run status group 0 (all jobs):
   WRITE: bw=2834MiB/s (2971MB/s), 2834MiB/s-2834MiB/s (2971MB/s-2971MB/s), io=168GiB (181GB), run=60747-60747msec</code></pre>
-<h4 id="读取相关"><a href="#读取相关" class="headerlink" title="读取相关"></a>读取相关</h4><p>读取测试其实还是要看实际场景软件的，下面的测试太理想化了，加<code>-direct=1</code>测好像又没意义，不加又有命中率的事情，随便看看图个乐吧。</p>
+<h4 id="读取相关"><a href="#读取相关" class="headerlink" title="读取相关"></a>读取相关</h4><p>读取测试其实还是要看实际场景软件的，下面的测试太理想化了，随便看看图个乐吧。</p>
 <ul>
 <li>4k随机读取</li>
 </ul>
-<pre><code class="bash"> fio -filename=test-rand-read -ioengine=libaio -bs=4k -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=randread -group_reporting -name=&quot;randread&quot;</code></pre>
+<pre><code class="bash"> fio -filename=test-rand-read -ioengine=libaio -direct=1 -bs=4k -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=randread -group_reporting -name=&quot;randread&quot;</code></pre>
 <pre><code class="bash">randread: (groupid=0, jobs=24): err= 0: pid=2260684: Thu Feb 16 16:48:58 2023
   read: IOPS=50.0k, BW=195MiB/s (205MB/s)(11.4GiB/60003msec)
     slat (nsec): min=1932, max=149087k, avg=476537.26, stdev=855570.75
@@ -1286,7 +1286,7 @@ Run status group 0 (all jobs):
 <ul>
 <li>1M顺序读取</li>
 </ul>
-<pre><code class="bash">fio -filename=test-read -ioengine=libaio -bs=1M -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=read -group_reporting -name=&quot;read&quot;</code></pre>
+<pre><code class="bash">fio -filename=test-read -ioengine=libaio -direct=1 -bs=1M -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=read -group_reporting -name=&quot;read&quot;</code></pre>
 <pre><code class="bash">read: (groupid=0, jobs=24): err= 0: pid=2262359: Thu Feb 16 16:51:39 2023
   read: IOPS=8368, BW=8369MiB/s (8775MB/s)(240GiB/29367msec)
     slat (usec): min=85, max=74615, avg=2855.92, stdev=2478.60
