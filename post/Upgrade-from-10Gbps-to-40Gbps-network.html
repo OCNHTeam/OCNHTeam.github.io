@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/6yZpdQtXg7IhUPn.png">
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/vSm7T3QYq4KIdtc.png">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-04-25T06:35:50.648Z">
+<meta property="article:modified_time" content="2023-04-25T06:41:02.926Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -604,7 +604,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-4-25 14:35:50">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-4-25 14:41:02">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -837,7 +837,7 @@ ExecStart=/opt/sr-iov.sh
 
 [Install]
 WantedBy=multi-user.target</code></pre>
-<p>创建完执行<code>systemctl enable mlx-sr-iov.service</code>则看到效果了；执行<code>systemctl enable mlx-sr-iov.service</code>则开机自动运行</p>
+<p>创建完执行<code>systemctl start mlx-sr-iov.service</code>则看到效果了；执行<code>systemctl enable mlx-sr-iov.service</code>则开机自动运行</p>
 <blockquote>
 <p>我这个X11-SCA-F主板要在BIOS开启<code>ARI</code>才能sr-iov出7个以上的VF。但ARI的开关是被隐藏的，你需进入grub执行setup var手动开启，自行搜索懒得写了。</p>
 </blockquote>
