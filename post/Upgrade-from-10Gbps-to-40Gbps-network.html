@@ -16,11 +16,8 @@
 <meta property="og:description" content="0 介绍TrueNAS Core已更新至FreeBSD 13，其两款免费产品Scale和Core也已转至OpenZFS。考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不够熟悉，又想获得Linux的一些优势，因此使用了TrueNAS Scale。但体验不佳，所以最终选择回到了TrueNAS Core 13。 家里装修时布置了2条MPO数据线的，不知为何只有一条能通网络，">
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
-<meta property="og:image" content="https://s2.loli.net/2023/02/28/rI1JFL5VfQlDuqk.png">
-<meta property="og:image" content="https://s2.loli.net/2023/02/16/6yZpdQtXg7IhUPn.png">
-<meta property="og:image" content="https://s2.loli.net/2023/02/16/vSm7T3QYq4KIdtc.png">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-04-27T17:00:28.364Z">
+<meta property="article:modified_time" content="2023-05-11T02:29:03.407Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -604,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-4-28 1:00:28">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-5-11 10:29:03">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -621,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							11.9k 字
+							6.8k 字
 						</div>
 					
 						
@@ -629,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							51 分钟
+							31 分钟
 						</div>
 					
 		</div>
@@ -959,7 +956,7 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 <h2 id="4-3-Dedup-Vdevs"><a href="#4-3-Dedup-Vdevs" class="headerlink" title="4.3 Dedup Vdevs"></a>4.3 Dedup Vdevs</h2><p>一般来说，开启了dedup功能的dataset能做到文件去重复的作用，也就是多个一模一样的文件只占用一份文件的容量。以前用内存来做，代价是用内存换硬盘空间，现在即便是可以用Dedup Vdev来换机械硬盘空间，也不推荐。Meta Vdevs存储了dedup datasheet，同样做到了dedup功能，不如用meta dev。<br>开启dedup的dataset是不可逆的，请把已经开启dedup的dataset通过<code>zfs send</code>到新的dataset里，再删除旧的。名字的话通过<code>zfs rename</code>改回来。<br></br><br></br></p>
 <h2 id="4-4-Slog"><a href="#4-4-Slog" class="headerlink" title="4.4 Slog"></a>4.4 Slog</h2><p>如果说起ZFS的写缓存，往往会被误导到使用Slog，这里可以明确指出，Slog不会让你的写入速度超过当你dataset设置成async的速度的。ZFS在写入时先产生ZFS intent log(ZIL)，也就是未来会写入的文件的一个操作日志，在5秒为预期的时间内，文件会先进入内存(TXG)，再写入硬盘，当整个文件还没落盘，文件不具备可读性以及可执行性的情况下，我们称之为脏数据(dirty data)，最后等落盘写入，整个操作完成，而这个文件通过判断可能会继续留在内存的ARC里作为未来的读缓存。我们看下来整个过程，其实ZFS并不具备传统意义上的写缓存，而是一个缓冲区为未来的读取做准备的。</p>
 <p>另一方面这样的写入是异步操作的，在更严谨的环境中，需要同步写入(sync write)。同步写入的速度会非常慢，通过增加Slog，比如Optane这种写入快，安全性高的硬盘去帮我们提高写入速度，当然，当Optane开启了FUA bit作为Slog后，速度也不会太好看的。<br>总之，Slog只是保证了你文件的同步写入，家用情况，UPS足矣。<br></br><br></br></p>
-<h2 id="4-5-L2arc"><a href="#4-5-L2arc" class="headerlink" title="4.5 L2arc"></a>4.5 L2arc</h2><p>L2arc是ZFS的读缓存。在访问ZFS时，一些常用文件会放置于内存ARC中，以便快速读取，而内存的容量是相对有限且昂贵的，因此增加一个L2arc可以让你有更大的空间去缓存常读的文件。一般来说l2arc的容量需要一部分的arc来带动，官方推荐的是你可用arc的4倍左右的容量就足够了，如果买的太大，则需要tuning你的arc.max或者l2arc.max稍作控制。l2arc不需要任何冗余，你只要买的足够快就可以了。<br>如果你的arc仍然在growing，请不要添加任何l2arc，这样只会有反作用，因为内存的速度永远比SSD快，但是如果你的zfs是跑在网络上，比如我的网络带宽是40g，则l2arc的速度只要达到这个速度就够了。请通过<code>arc_summary</code>来观察自己的内存arc做判断依据。</p>
+<h2 id="4-5-L2arc"><a href="#4-5-L2arc" class="headerlink" title="4.5 L2arc"></a>4.5 L2arc</h2><p>L2arc是ZFS的读缓存。在访问ZFS时，一些常用文件会放置于内存ARC中，以便快速读取，而内存的容量是相对有限且昂贵的，因此增加一个L2arc可以让你有更大的空间去缓存常读的文件。一般来说l2arc的容量需要一部分的arc来带动，官方推荐的是你可用arc的4倍左右的容量就足够了，如果买的太大，则需要tuning你的arc.max或者l2arc.max稍作控制。l2arc不需要任何冗余，你只要买的足够快就可以了。<br>如果你的arc仍然在growing，请不要添加任何l2arc，这样只会有反作用，因为内存的速度永远比SSD快，但是如果你的zfs是跑在网络上，比如我的网络带宽是40g，则l2arc的速度只要达到这个速度就够了。请通过<code>arc_summary</code>来观察自己的内存arc做判断依据。<br>在设置了相应的l2arc后，也推荐通过<code>zfs set secondarycache=metadata DatasetName</code>把metadata都给过去，同时请关注一下<a target="_blank" rel="noopener" href="https://jira.ixsystems.com/browse/NAS-106992">这个问题</a>。</p>
 </br>
 </br>
 
@@ -1039,8 +1036,8 @@ iface ibs1d1 inet static
 </br>
 </br>
 
-<h1 id="9-性能测试"><a href="#9-性能测试" class="headerlink" title="9 性能测试"></a>9 性能测试</h1><p>感觉说了这么多，最终还是要测一下的。但是坦率的说，我很讨厌跑这些东西，因为跟实际使用环境差太多了，参考价值比较低。真的要测，还是要用你的常用软件，协议等等方面一起去看一下表现的，自己用着爽才是最重要的。</p>
-<p>如下测试都是异步的，我先学习一下别人如何标准地去测试，参考意义不大。</p>
+<h1 id="9-Remote-Direct-Memory-Access-RDMA"><a href="#9-Remote-Direct-Memory-Access-RDMA" class="headerlink" title="9 Remote Direct Memory Access (RDMA)"></a>9 Remote Direct Memory Access (RDMA)</h1><p>有空写一下。</p>
+<h1 id="10-性能测试"><a href="#10-性能测试" class="headerlink" title="10 性能测试"></a>10 性能测试</h1><p>以下内容先删了 有空重新写。</p>
 <p>配置如下：</p>
 <ul>
 <li>TrueNas Server配置：<ul>
@@ -1078,240 +1075,6 @@ PING 10.10.10.11 (10.10.10.11) 56(84) bytes of data.
 64 bytes from 10.10.10.11: icmp_seq=2 ttl=64 time=0.224 ms
 64 bytes from 10.10.10.11: icmp_seq=3 ttl=64 time=0.237 ms
 64 bytes from 10.10.10.11: icmp_seq=4 ttl=64 time=0.254 ms</code></pre>
-<p>通过qperf测试</p>
-<pre><code class="bash">root@pve:~# qperf 10.99.0.2 tcp_bw tcp_lat udp_bw udp_lat
-tcp_bw:
-    bw  =  3.61 GB/sec
-tcp_lat:
-    latency  =  8.61 us
-udp_bw:
-    send_bw  =  7.39 GB/sec
-    recv_bw  =  4.54 GB/sec
-udp_lat:
-    latency  =  7.85 us
-
-root@pve:~# qperf 10.10.10.11 tcp_bw tcp_lat udp_bw udp_lat
-tcp_bw:
-    bw  =  4.31 GB/sec
-tcp_lat:
-    latency  =  11.3 us
-udp_bw:
-    send_bw  =   2.5 GB/sec
-    recv_bw  =  2.47 GB/sec
-udp_lat:
-    latency  =  18.3 us</code></pre>
-<h2 id="windows-10-LTSC-1809"><a href="#windows-10-LTSC-1809" class="headerlink" title="windows 10 LTSC (1809)"></a>windows 10 LTSC (1809)</h2><p>设置：</p>
-<ul>
-<li>分了12个CPU 20G内存, q35, cpu-host</li>
-<li>虚拟机中安装了官网的最新WinOF</li>
-<li>MTU 9000</li>
-<li>直接装的，完全没更新过任何补丁</li>
-<li>Windows的系统盘是虚拟scsi且放置于zfs over iscsi之上的。因为sata的协议queue本身有限制了</li>
-</ul>
-<p>不是很懂windows的这些测速软件，跑出来的数据也太魔幻了，实际用各种软件限制，协议限制。最真实的还是<code>zfs over iscsi</code>，我暂时没有条件用RDMA。</p>
-<h3 id="iperf3"><a href="#iperf3" class="headerlink" title="iperf3"></a>iperf3</h3><pre><code class="bash">[ ID] Interval           Transfer     Bitrate
-[  5]   0.00-4.00   sec   893 MBytes  1.87 Gbits/sec                  receiver
-[  8]   0.00-4.00   sec   902 MBytes  1.89 Gbits/sec                  receiver
-[ 10]   0.00-4.00   sec   904 MBytes  1.89 Gbits/sec                  receiver
-[ 12]   0.00-4.00   sec   875 MBytes  1.84 Gbits/sec                  receiver
-[ 14]   0.00-4.00   sec   898 MBytes  1.88 Gbits/sec                  receiver
-[ 16]   0.00-4.00   sec   904 MBytes  1.90 Gbits/sec                  receiver
-[ 18]   0.00-4.00   sec   884 MBytes  1.85 Gbits/sec                  receiver
-[ 20]   0.00-4.00   sec   900 MBytes  1.89 Gbits/sec                  receiver
-[ 22]   0.00-4.00   sec   904 MBytes  1.90 Gbits/sec                  receiver
-[ 24]   0.00-4.00   sec   867 MBytes  1.82 Gbits/sec                  receiver
-[ 26]   0.00-4.00   sec   903 MBytes  1.89 Gbits/sec                  receiver
-[ 28]   0.00-4.00   sec   896 MBytes  1.88 Gbits/sec                  receiver
-[ 30]   0.00-4.00   sec   903 MBytes  1.89 Gbits/sec                  receiver
-[ 32]   0.00-4.00   sec   903 MBytes  1.89 Gbits/sec                  receiver
-[ 34]   0.00-4.00   sec   898 MBytes  1.88 Gbits/sec                  receiver
-[ 36]   0.00-4.00   sec   882 MBytes  1.85 Gbits/sec                  receiver
-[ 38]   0.00-4.00   sec   902 MBytes  1.89 Gbits/sec                  receiver
-[ 40]   0.00-4.00   sec   902 MBytes  1.89 Gbits/sec                  receiver
-[ 42]   0.00-4.00   sec   901 MBytes  1.89 Gbits/sec                  receiver
-[ 44]   0.00-4.00   sec   900 MBytes  1.89 Gbits/sec                  receiver
-[ 46]   0.00-4.00   sec   900 MBytes  1.89 Gbits/sec                  receiver
-[ 48]   0.00-4.00   sec   893 MBytes  1.87 Gbits/sec                  receiver
-[ 50]   0.00-4.00   sec   892 MBytes  1.87 Gbits/sec                  receiver
-[ 52]   0.00-4.00   sec   899 MBytes  1.89 Gbits/sec                  receiver
-[SUM]   0.00-4.00   sec  21.0 GBytes  45.1 Gbits/sec                  receiver</code></pre>
-<h3 id="CrystalDiskMark"><a href="#CrystalDiskMark" class="headerlink" title="CrystalDiskMark"></a>CrystalDiskMark</h3><p>分别测了<code>ZFS over iSCSI</code>,<code>iSCSI</code>,<code>MS-SMB</code></p>
-<ul>
-<li>ZFS over iSCSI<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://s2.loli.net/2023/02/28/rI1JFL5VfQlDuqk.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="zfsoiscsi.png"></li>
-
-</ul>
-<blockquote>
-<p>用的是device分享模式</p>
-</blockquote>
-<ul>
-<li><p>iSCSI<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://s2.loli.net/2023/02/16/6yZpdQtXg7IhUPn.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="iscsi-win.png"></p>
-
-</li>
-<li><p>MS-SMB<br><img class="lazyload lazyload-style-1" src="data:image/svg+xml;base64,PCEtLUFyZ29uTG9hZGluZy0tPgo8c3ZnIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjZmZmZmZmMDAiPjxnPjwvZz4KPC9zdmc+"  data-original="https://s2.loli.net/2023/02/16/vSm7T3QYq4KIdtc.png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC" alt="smb.png"></p>
-
-</li>
-</ul>
-</br>
-</br>
-
-
-<h2 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h2><p>设置：</p>
-<ul>
-<li>分了12个CPU 40G内存</li>
-<li>NixOS,Linux 5.15</li>
-<li>MTU 9000</li>
-<li>NFS Flags:  rw,relatime,vers=4.2,rsize=131072,wsize=131072,namlen=255,hard,async,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=10.10.10.4,local_lock=none,addr=10.10.10.11</li>
-</ul>
-<p>有空再想想怎么写这个，测的话如果走内存，又没啥好看的，然后还有meta dev的测试好像就是905p的iops自己搜一下就行了，当然我这个cpu带不动的。机械硬盘池的话因为已经用了50%多了，好像还是没啥好看的，有空琢磨一下怎么写吧。</p>
-<h3 id="iperf3-1"><a href="#iperf3-1" class="headerlink" title="iperf3"></a>iperf3</h3><pre><code class="bash">[ ID] Interval           Transfer     Bitrate
-[  5]   0.00-5.00   sec   958 MBytes  1.61 Gbits/sec                  receiver
-[  8]   0.00-5.00   sec   975 MBytes  1.64 Gbits/sec                  receiver
-[ 10]   0.00-5.00   sec   969 MBytes  1.63 Gbits/sec                  receiver
-[ 12]   0.00-5.00   sec   980 MBytes  1.64 Gbits/sec                  receiver
-[ 14]   0.00-5.00   sec   975 MBytes  1.63 Gbits/sec                  receiver
-[ 16]   0.00-5.00   sec   980 MBytes  1.64 Gbits/sec                  receiver
-[ 18]   0.00-5.00   sec   993 MBytes  1.67 Gbits/sec                  receiver
-[ 20]   0.00-5.00   sec   998 MBytes  1.67 Gbits/sec                  receiver
-[ 22]   0.00-5.00   sec  1008 MBytes  1.69 Gbits/sec                  receiver
-[ 24]   0.00-5.00   sec   972 MBytes  1.63 Gbits/sec                  receiver
-[ 26]   0.00-5.00   sec   993 MBytes  1.67 Gbits/sec                  receiver
-[ 28]   0.00-5.00   sec   988 MBytes  1.66 Gbits/sec                  receiver
-[ 30]   0.00-5.00   sec   988 MBytes  1.66 Gbits/sec                  receiver
-[ 32]   0.00-5.00   sec   966 MBytes  1.62 Gbits/sec                  receiver
-[ 34]   0.00-5.00   sec   984 MBytes  1.65 Gbits/sec                  receiver
-[ 36]   0.00-5.00   sec  1007 MBytes  1.69 Gbits/sec                  receiver
-[ 38]   0.00-5.00   sec   980 MBytes  1.64 Gbits/sec                  receiver
-[ 40]   0.00-5.00   sec   983 MBytes  1.65 Gbits/sec                  receiver
-[ 42]   0.00-5.00   sec   982 MBytes  1.65 Gbits/sec                  receiver
-[ 44]   0.00-5.00   sec   976 MBytes  1.64 Gbits/sec                  receiver
-[ 46]   0.00-5.00   sec  2.88 GBytes  4.95 Gbits/sec                  receiver
-[ 48]   0.00-5.00   sec   984 MBytes  1.65 Gbits/sec                  receiver
-[ 50]   0.00-5.00   sec   994 MBytes  1.67 Gbits/sec                  receiver
-[ 52]   0.00-5.00   sec  1.11 GBytes  1.91 Gbits/sec                  receiver
-[SUM]   0.00-5.00   sec  25.1 GBytes  43.2 Gbits/sec                  receiver</code></pre>
-<h3 id="FIO"><a href="#FIO" class="headerlink" title="FIO"></a>FIO</h3><h4 id="写入相关"><a href="#写入相关" class="headerlink" title="写入相关"></a>写入相关</h4><ul>
-<li>4k随机写</li>
-</ul>
-<pre><code class="bash">fio -filename=test-rand-write -ioengine=libaio -direct=1 -bs=4k -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=randwrite -group_reporting -name=&quot;randwrite&quot;</code></pre>
-<pre><code class="bash">randwrite: (groupid=0, jobs=24): err= 0: pid=2251134: Thu Feb 16 16:32:01 2023
-  write: IOPS=49.4k, BW=193MiB/s (202MB/s)(12.6GiB/66882msec); 0 zone resets
-    slat (usec): min=2, max=15423k, avg=482.15, stdev=58552.02
-    clat (usec): min=3, max=15484k, avg=14999.99, stdev=360480.85
-     lat (usec): min=142, max=15484k, avg=15482.14, stdev=366436.81
-    clat percentiles (usec):
-     |  1.00th=[     157],  5.00th=[     251], 10.00th=[     330],
-     | 20.00th=[     437], 30.00th=[     537], 40.00th=[     627],
-     | 50.00th=[     717], 60.00th=[     791], 70.00th=[     865],
-     | 80.00th=[    1631], 90.00th=[    5800], 95.00th=[   10028],
-     | 99.00th=[   19530], 99.50th=[   28967], 99.90th=[ 7549748],
-     | 99.95th=[ 9059697], 99.99th=[15502148]
-   bw (  KiB/s): min=  280, max=1929744, per=100.00%, avg=814115.55, stdev=27422.74, samples=780
-   iops        : min=   70, max=482436, avg=203528.73, stdev=6855.69, samples=780
-  lat (usec)   : 4=0.01%, 10=0.01%, 20=0.01%, 250=5.00%, 500=21.57%
-  lat (usec)   : 750=27.79%, 1000=24.14%
-  lat (msec)   : 2=1.82%, 4=3.04%, 10=11.67%, 20=4.04%, 50=0.53%
-  lat (msec)   : 100=0.06%, 250=0.14%, 500=0.05%, 750=0.01%, 1000=0.01%
-  lat (msec)   : 2000=0.01%, &gt;=2000=0.14%
-  cpu          : usr=0.53%, sys=3.79%, ctx=496046, majf=0, minf=24
-  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=100.0%, &gt;=64=0.0%
-     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
-     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.1%, 64=0.0%, &gt;=64=0.0%
-     issued rwts: total=0,3303411,0,0 short=0,0,0,0 dropped=0,0,0,0
-     latency   : target=0, window=0, percentile=100.00%, depth=32
-Run status group 0 (all jobs):
-  WRITE: bw=193MiB/s (202MB/s), 193MiB/s-193MiB/s (202MB/s-202MB/s), io=12.6GiB (13.5GB), run=66882-66882msec</code></pre>
-</br>
-</br>
-
-<ul>
-<li>1M顺序写</li>
-</ul>
-<pre><code class="bash">fio -filename=test-write -ioengine=libaio -direct=1 -bs=1M -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=write -group_reporting -name=&quot;write&quot;</code></pre>
-<pre><code class="bash">write: (groupid=0, jobs=24): err= 0: pid=2258302: Thu Feb 16 16:44:20 2023
-  write: IOPS=2833, BW=2834MiB/s (2971MB/s)(168GiB/60747msec); 0 zone resets
-    slat (usec): min=182, max=7100.7k, avg=8453.00, stdev=94600.26
-    clat (usec): min=5, max=7500.7k, avg=260924.86, stdev=552308.55
-     lat (msec): min=11, max=7512, avg=269.38, stdev=561.22
-    clat percentiles (msec):
-     |  1.00th=[  113],  5.00th=[  136], 10.00th=[  146], 20.00th=[  159],
-     | 30.00th=[  167], 40.00th=[  176], 50.00th=[  184], 60.00th=[  192],
-     | 70.00th=[  201], 80.00th=[  211], 90.00th=[  230], 95.00th=[  259],
-     | 99.00th=[ 2123], 99.50th=[ 3306], 99.90th=[ 7416], 99.95th=[ 7416],
-     | 99.99th=[ 7483]
-   bw (  MiB/s): min=  103, max= 5308, per=100.00%, avg=3626.54, stdev=48.04, samples=2268
-   iops        : min=   97, max= 5306, avg=3625.18, stdev=48.09, samples=2268
-  lat (usec)   : 10=0.01%, 50=0.01%
-  lat (msec)   : 20=0.01%, 50=0.03%, 100=0.32%, 250=93.96%, 500=2.00%
-  lat (msec)   : 750=0.30%, 1000=0.38%, 2000=1.66%, &gt;=2000=1.33%
-  cpu          : usr=0.44%, sys=23.26%, ctx=76380, majf=0, minf=25
-  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.2%, 32=99.6%, &gt;=64=0.0%
-     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
-     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.1%, 64=0.0%, &gt;=64=0.0%
-     issued rwts: total=0,172146,0,0 short=0,0,0,0 dropped=0,0,0,0
-     latency   : target=0, window=0, percentile=100.00%, depth=32
-Run status group 0 (all jobs):
-  WRITE: bw=2834MiB/s (2971MB/s), 2834MiB/s-2834MiB/s (2971MB/s-2971MB/s), io=168GiB (181GB), run=60747-60747msec</code></pre>
-<h4 id="读取相关"><a href="#读取相关" class="headerlink" title="读取相关"></a>读取相关</h4><p>读取测试其实还是要看实际场景软件的，下面的测试太理想化了，随便看看图个乐吧。</p>
-<ul>
-<li>4k随机读取</li>
-</ul>
-<pre><code class="bash"> fio -filename=test-rand-read -ioengine=libaio -direct=1 -bs=4k -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=randread -group_reporting -name=&quot;randread&quot;</code></pre>
-<pre><code class="bash">randread: (groupid=0, jobs=24): err= 0: pid=2260684: Thu Feb 16 16:48:58 2023
-  read: IOPS=50.0k, BW=195MiB/s (205MB/s)(11.4GiB/60003msec)
-    slat (nsec): min=1932, max=149087k, avg=476537.26, stdev=855570.75
-    clat (usec): min=3, max=166765, avg=14874.41, stdev=6683.97
-     lat (usec): min=7, max=167317, avg=15350.95, stdev=6844.11
-    clat percentiles (msec):
-     |  1.00th=[    6],  5.00th=[    7], 10.00th=[    9], 20.00th=[   10],
-     | 30.00th=[   12], 40.00th=[   13], 50.00th=[   14], 60.00th=[   16],
-     | 70.00th=[   18], 80.00th=[   20], 90.00th=[   23], 95.00th=[   24],
-     | 99.00th=[   40], 99.50th=[   45], 99.90th=[   56], 99.95th=[   63],
-     | 99.99th=[  163]
-   bw (  KiB/s): min=118708, max=359568, per=99.41%, avg=198860.20, stdev=2670.29, samples=2856
-   iops        : min=29675, max=89892, avg=49715.03, stdev=667.57, samples=2856
-  lat (usec)   : 4=0.01%, 10=0.01%, 20=0.01%, 50=0.01%, 500=0.01%
-  lat (usec)   : 750=0.01%, 1000=0.01%
-  lat (msec)   : 2=0.01%, 4=0.27%, 10=22.40%, 20=58.79%, 50=18.32%
-  lat (msec)   : 100=0.18%, 250=0.02%
-  cpu          : usr=0.87%, sys=2.23%, ctx=1820208, majf=0, minf=792
-  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=100.0%, &gt;=64=0.0%
-     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
-     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.1%, 64=0.0%, &gt;=64=0.0%
-     issued rwts: total=3000750,0,0,0 short=0,0,0,0 dropped=0,0,0,0
-     latency   : target=0, window=0, percentile=100.00%, depth=32
-Run status group 0 (all jobs):
-   READ: bw=195MiB/s (205MB/s), 195MiB/s-195MiB/s (205MB/s-205MB/s), io=11.4GiB (12.3GB), run=60003-60003msec</code></pre>
-</br>
-</br>
-
-<ul>
-<li>1M顺序读取</li>
-</ul>
-<pre><code class="bash">fio -filename=test-read -ioengine=libaio -direct=1 -bs=1M -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=read -group_reporting -name=&quot;read&quot;</code></pre>
-<pre><code class="bash">read: (groupid=0, jobs=24): err= 0: pid=2262359: Thu Feb 16 16:51:39 2023
-  read: IOPS=8368, BW=8369MiB/s (8775MB/s)(240GiB/29367msec)
-    slat (usec): min=85, max=74615, avg=2855.92, stdev=2478.60
-    clat (usec): min=4, max=217900, avg=88764.77, stdev=22209.24
-     lat (usec): min=1824, max=219305, avg=91620.69, stdev=22776.37
-    clat percentiles (msec):
-     |  1.00th=[   35],  5.00th=[   60], 10.00th=[   66], 20.00th=[   72],
-     | 30.00th=[   77], 40.00th=[   81], 50.00th=[   86], 60.00th=[   92],
-     | 70.00th=[  100], 80.00th=[  107], 90.00th=[  118], 95.00th=[  128],
-     | 99.00th=[  150], 99.50th=[  163], 99.90th=[  180], 99.95th=[  184],
-     | 99.99th=[  201]
-   bw (  MiB/s): min= 5642, max=11347, per=99.86%, avg=8357.27, stdev=62.64, samples=1392
-   iops        : min= 5642, max=11346, avg=8356.07, stdev=62.61, samples=1392
-  lat (usec)   : 10=0.01%, 20=0.01%
-  lat (msec)   : 2=0.01%, 4=0.01%, 10=0.02%, 20=0.07%, 50=2.47%
-  lat (msec)   : 100=68.50%, 250=28.92%
-  cpu          : usr=0.31%, sys=19.00%, ctx=6755544, majf=0, minf=196632
-  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.2%, 32=99.7%, &gt;=64=0.0%
-     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
-     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.1%, 64=0.0%, &gt;=64=0.0%
-     issued rwts: total=245760,0,0,0 short=0,0,0,0 dropped=0,0,0,0
-     latency   : target=0, window=0, percentile=100.00%, depth=32
-Run status group 0 (all jobs):
-   READ: bw=8369MiB/s (8775MB/s), 8369MiB/s-8369MiB/s (8775MB/s-8775MB/s), io=240GiB (258GB), run=29367-29367msec</code></pre>
 </br>
 </br>
 
@@ -1321,8 +1084,6 @@ Run status group 0 (all jobs):
 </li>
 <li><p>MTU 9000, AKA <code>Jumbo Frames</code>, 你需要慎重去考虑你整个网络内的所有设备通信，这个东西带来的收益其实远比它带来的问题多，如果你家里有很多无线智能设备的话，考虑尽可能用vlan去划分。网络inbound的话，需要修正mss，Mikrotik ROS则加一条mangle：</p>
 <pre><code class="bash">/ip firewall mangle add action=change-mss chain=forward new-mss=clamp-to-pmtu passthrough=yes protocol=tcp tcp-flags=syn</code></pre>
-</li>
-<li><p>关于RDMA，我觉得不应该再在这篇文章中展开了，首先那些客制化系统似乎都不支持，我预计会使用NixOS部署，则会放弃使用TrueNAS和Proxmox VE。其实，在这篇文章里写的大部分内容已经脱离了这些系统的WebUI使用，再使用RDMA的话大可不必使用WebUI了，我打算之后PVE和TrueNAS都换成NixOS，但未来我不清楚会不会写这个主题，毕竟我也是个NixOS菜鸟。</p>
 </li>
 </ul>
 
