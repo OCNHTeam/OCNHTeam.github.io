@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-05-13T16:56:35.303Z">
+<meta property="article:modified_time" content="2023-05-13T17:07:45.353Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-5-14 0:56:35">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-5-14 1:07:45">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -1048,7 +1048,8 @@ iface ibs1d1 inet static
       mtu 2044</code></pre>
 </li>
 <li>在另一端pve的/etc/modules中增加一个<code>xprtrdma</code>，保存重启。</li>
-<li>在pve中直接输入mount指令挂载nfs，这个nfs是带RDMA的，比如<code>mount -t nfs 10.99.0.2://mnt/SSD/works /mnt/test -o vers=4.2,_netdev,rdma,port=20049,hard,intr,noatime,nodiratime,async,nolock,noacl,sec=sys,noresvport</code></li>
+<li>在pve中直接输入mount指令挂载nfs，这个nfs是带RDMA的，比如:<pre><code class="bash">mount -t nfs 10.99.0.2:/mnt/SSD/works /mnt/test -o vers=4.2,_netdev,rdma,port=20049,hard,intr,noatime,nodiratime,async,nolock,noacl,sec=sys,noresvport</code></pre>
+</li>
 <li>如果是在pve的webui中使用，则修改/etc/pve/storage.cfg，在nfs的池的option中增加rdma，例如：<pre><code class="bash">nfs: ib-nfs
       export /mnt/Home/Proxmox
       path /mnt/pve/ib-nfs
