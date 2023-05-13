@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-05-11T16:16:19.222Z">
+<meta property="article:modified_time" content="2023-05-13T16:56:35.303Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-5-12 0:16:19">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-5-14 0:56:35">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							6.9k 字
+							7.2k 字
 						</div>
 					
 						
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							31 分钟
+							33 分钟
 						</div>
 					
 		</div>
@@ -1036,8 +1036,31 @@ iface ibs1d1 inet static
 </br>
 </br>
 
-<h1 id="9-Remote-Direct-Memory-Access-RDMA"><a href="#9-Remote-Direct-Memory-Access-RDMA" class="headerlink" title="9 Remote Direct Memory Access (RDMA)"></a>9 Remote Direct Memory Access (RDMA)</h1><p>应求写一下。其实这个是在TrueNas Scale下实现的，首先它是debian based，再者我看了一下scale的nfs从ganesha换到nfs-kernel-server，这样nfs o rdma就很简单；iser可能有点麻烦/</p>
-<p>我没有在用scale，写这个我还得抽空装一个，再者我平时工作挺忙的，在写这个博客没想到还是有很多人看的，就坚持写写吧，但我希望大家通过这里获得一些启发，主动学一些基本的zfs cli，那么在各种linux正式发行版中使用RDMA才游刃有余，不被客制化系统所束缚。</p>
+<h1 id="9-Remote-Direct-Memory-Access-RDMA"><a href="#9-Remote-Direct-Memory-Access-RDMA" class="headerlink" title="9 Remote Direct Memory Access (RDMA)"></a>9 Remote Direct Memory Access (RDMA)</h1><p>RDMA只有在scale中比较容易设置。因为Infiniband是自带RDMA的，这种技术可以让网卡直接负载，绕开CPU，继而减少tcp/ip带来的overhead。这种技术可以让NFS或者ISCSI很轻松地跑到56GB的带宽。</p>
+<h2 id="9-1-NFS-over-RDMA"><a href="#9-1-NFS-over-RDMA" class="headerlink" title="9.1 NFS over RDMA"></a>9.1 NFS over RDMA</h2><ul>
+<li>接着之前的ipoib设置，对networks再进行修改一下（主要是我太懒了，这些东西本该写在init script里去的）。<pre><code class="bash">auto ibs1d1
+iface ibs1d1 inet static
+      address  10.99.0.2
+      netmask  255.255.255.0
+      pre-up modprobe ib_ipoib &amp;&amp; modprobe ib_umad &amp;&amp; modprobe svcrdma
+      pre-up echo connected &gt; /sys/class/net/ibs1d1/mode
+      pre-up echo rdma 20049 &gt; /proc/fs/nfsd/portlist
+      mtu 2044</code></pre>
+</li>
+<li>在另一端pve的/etc/modules中增加一个<code>xprtrdma</code>，保存重启。</li>
+<li>在pve中直接输入mount指令挂载nfs，这个nfs是带RDMA的，比如<code>mount -t nfs 10.99.0.2://mnt/SSD/works /mnt/test -o vers=4.2,_netdev,rdma,port=20049,hard,intr,noatime,nodiratime,async,nolock,noacl,sec=sys,noresvport</code></li>
+<li>如果是在pve的webui中使用，则修改/etc/pve/storage.cfg，在nfs的池的option中增加rdma，例如：<pre><code class="bash">nfs: ib-nfs
+      export /mnt/Home/Proxmox
+      path /mnt/pve/ib-nfs
+      server 10.99.0.2
+      content snippets,vztmpl,backup,images,iso,rootdir
+      options vers=4.2,proto=rdma,port=20049
+      prune-backups keep-all=1</code></pre>
+</li>
+<li>在pve下输入<code>nfsstat -m</code> 你可以看到proto已经是RDMA了。</li>
+<li>试试NFS Over RDMA的速度吧。</li>
+</ul>
+<h2 id="9-2-ZFS-over-ISER"><a href="#9-2-ZFS-over-ISER" class="headerlink" title="9.2 ZFS over ISER"></a>9.2 ZFS over ISER</h2><p>其实我几乎没有使用过scst这种iscsi，再者我也懒得在一个debian based truenas上折腾来折腾去，这部分我就想写个大方向。其实本质上就是scale的scst是自己魔改的，那么我们把原版的scst编译好替换掉应该就行了，但这么做的话，估计WEBUI那边的iscsi设置会有很多问题的，你要熟悉scst的cli。如果你熟悉linux的话，还是推荐用LIO更为方便简单。<br>最主要的是！我没有在用scale，写这个我还得抽空装一个，再者我平时工作挺忙的，在写这个博客没想到还是有很多人看的，就坚持写写吧，但我希望大家通过这里获得一些启发，主动学一些基本的zfs cli，那么在各种linux正式发行版中使用RDMA才游刃有余，不被客制化系统所束缚。</p>
 <h1 id="10-性能测试"><a href="#10-性能测试" class="headerlink" title="10 性能测试"></a>10 性能测试</h1><p>以下内容先删了 有空重新写。</p>
 <p>配置如下：</p>
 <ul>
