@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-05-21T10:18:45.912Z">
+<meta property="article:modified_time" content="2023-05-21T11:56:20.866Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-5-21 18:18:45">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-5-21 19:56:20">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							13.2k 字
+							13.3k 字
 						</div>
 					
 						
@@ -993,7 +993,8 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 <p>这个插件的<code>API Password</code>就是root的登陆密码，不是<code>API Key</code>。</p>
 </blockquote>
 <p>使用<a target="_blank" rel="noopener" href="https://github.com/Corsinvest/cv4pve-autosnap">这个</a>工具可以对VM Guest自动化操作snapshot。这里的快照是使用<code>ZFS Snapshot</code>的，可以完全利用到ZFS的功能了。链接中有好多个视频操作演示教程，这里就不赘述了。</p>
-<h1 id="8-IP-over-Infiniband"><a href="#8-IP-over-Infiniband" class="headerlink" title="8 IP over Infiniband"></a>8 IP over Infiniband</h1><p>Proxmox VE和TrueNAS都支持IP over Infiniband(IPoIB)。这里最好买原装的Mellanox 56GB FDR QSFP+铜缆，别的牌子可能兼容性没有这么好，闲鱼大概2米的在100元左右（线比网卡贵系列）。</p>
+<h1 id="8-IP-over-Infiniband"><a href="#8-IP-over-Infiniband" class="headerlink" title="8 IP over Infiniband"></a>8 IP over Infiniband</h1><p>InfiniBand是一种高速网络通信技术，用于在计算机系统和数据中心中连接高性能计算、存储和网络设备。InfiniBand提供了一种高效的低延迟和高带宽的解决方案，通过使用专用硬件和协议来提高数据传输的速度和可靠性。与传统的以太网技术相比，InfiniBand提供了更高的带宽和更低的延迟。</p>
+<p>然而，不是所有的软件都支持Infiniband，因此赋予infiniband一个IP则可以让它兼容大部分的软件协议，这种方法就是IP over Infiniband(IPoIB)。<br>Proxmox VE和TrueNAS都支持IPoIB。这里最好买原装的Mellanox 56GB FDR QSFP+铜缆，别的牌子可能兼容性没有这么好，闲鱼大概2米的在100元左右（线比网卡贵系列）。</p>
 <p>首先最好找一台机器把两张HP 544+的卡的其中一个口刷成IB mode，TrueNAS系统下是无法操作的。</p>
 <pre><code class="bash">lspci |grep Mellanox
 03:00.0 Ethernet controller: Mellanox Technologies MT27520 Family [ConnectX-3 Pro]
@@ -1036,7 +1037,7 @@ iface ibs1d1 inet static
 </br>
 </br>
 
-<h1 id="9-Remote-Direct-Memory-Access-RDMA"><a href="#9-Remote-Direct-Memory-Access-RDMA" class="headerlink" title="9 Remote Direct Memory Access (RDMA)"></a>9 Remote Direct Memory Access (RDMA)</h1><p>RDMA只有在scale中比较容易设置。因为Infiniband是自带RDMA的，这种技术可以让网卡直接负载，绕开CPU，继而减少tcp/ip带来的overhead。这种技术可以让NFS或者ISCSI很轻松地跑到56GB的带宽。</p>
+<h1 id="9-Remote-Direct-Memory-Access-RDMA"><a href="#9-Remote-Direct-Memory-Access-RDMA" class="headerlink" title="9 Remote Direct Memory Access (RDMA)"></a>9 Remote Direct Memory Access (RDMA)</h1><p>上一个章节中我们在设置好IPoIB后，我们发现虽然获得了更低的延迟，比如ping你能看到非常低的延迟，但是实际的传输速度又很慢，这主要是因为tcp/ip的overhead，协议等问题，这就非常考验你的CPU了。因此我们使用RDMA技术来解决这个问题。<br>Remote Direct Memory Access（远程直接内存访问，简称RDMA），是一种用于在网络中直接访问异地计算机内存的技术。传统的数据传输方式需要在发送端和接收端CPU中进行多次数据拷贝，增加了CPU的使用和数据传输的延迟。而RDMA技术可以通过网络适配器，让一个计算机的内存直接传输到另一个计算机的内存中，不需要CPU的干预，避免了数据拷贝和CPU资源的浪费，从而显著提高了数据传输的速度和效率。<br>RDMA有很多种，一般我们用InfiniBand是自带RDMA的，但是需要开启。同样在以太网络模式下(ETH)也有相应的RDMA比如iWrap, RoCE。这里我们只介绍IB的RDMA。<br>RDMA只有在scale中比较容易设置。</p>
 <h2 id="9-1-NFS-over-RDMA"><a href="#9-1-NFS-over-RDMA" class="headerlink" title="9.1 NFS over RDMA"></a>9.1 NFS over RDMA</h2><ul>
 <li>接着之前的ipoib设置，对networks再进行修改一下（主要是我太懒了，这些东西本该写在init script里去的）。<pre><code class="bash">auto ibs1d1
 iface ibs1d1 inet static
