@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-05-20T10:26:11.742Z">
+<meta property="article:modified_time" content="2023-05-21T09:52:06.712Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-5-20 18:26:11">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-5-21 17:52:06">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							7.3k 字
+							13.3k 字
 						</div>
 					
 						
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							33 分钟
+							56 分钟
 						</div>
 					
 		</div>
@@ -799,7 +799,7 @@ mstconfig -d 03:00.00 query    #获取设备设置信息
 mstconfig -d 03:00.00 set SRIOV_EN=1 NUM_OF_VFS=8  #开启SR-IOV以及设置VF总数为8个；确保主板已开通sr-iov，Proxmox VE已开通虚拟化等设置
 mstconfig -d 03:00.00 set LINK_TYPE_P1=ETH  #设置p1端口为ETH模式</code></pre>
 <p>创建一个/etc/modprobe.d/mlx4_core.conf填入：</p>
-<pre><code class="bash">options mlx4_core port_type_array=2,2 num_vfs=4,0,2 probe_vf=4,0,0</code></pre>
+<pre><code class="bash">options mlx4_core port_type_array=2,2 num_vfs=4,0,0 probe_vf=4,0,0</code></pre>
 <ul>
 <li>port_type_array=2,2 意味着两个端口都是ETH模式</li>
 <li>num_vfs 是VF数量，格式是a,b,c。a和b分别代表端口1和2的VF量，而C是总量。注意C不是<code>a+b</code>，具体可以参考<a target="_blank" rel="noopener" href="https://docs.nvidia.com/networking/pages/viewpage.action?pageId=37849263">这个文档</a>。</li>
@@ -1074,15 +1074,16 @@ iface ibs1d1 inet static
 <p>配置如下：</p>
 <ul>
 <li>TrueNas Server配置：<ul>
-<li>CPU:E5-2680 v3</li>
-<li>主板: 超微X10-SRA-F</li>
+<li>CPU:7302P</li>
+<li>主板: Gigabyte MZ32-AR0</li>
 <li>内存：SK海力士HMA82GR7CJR8N-VK DDR4 Reg ECC 2666 16G x8</li>
 <li>机械硬盘：16T Seagate EXOS x 10 + 12T Seagate EXOS x10；两组RaidZ2后stripe，已经用了54%的容量了，其实有几个是酷狼pro，我记不得是多大的在哪组里了，反正没啥区别。</li>
-<li>NVME：480G Optane 905P x1 + 480G Samsung 983zet x1；组成mirror后放在了同一组机械池作为Meta Dev。</li>
+<li>NVME1：480G Optane 905P x1 + 480G Samsung 983zet x1；组成mirror后放在了同一组机械池作为Meta Dev。</li>
+<li>NVME2: 单独一组SSD Kioxia CD6 3.84T stripe, 每小时通过<code>zfs send</code>传回HDD池</li>
 <li>网卡：HP 544+；最新固件，ETH模式，关闭了SR-IOV。</li>
 <li>SAS卡：LSI 9300-8i</li>
 <li>背板：超微BPN-SAS3-846EL1</li>
-<li>系统：TrueNAS-13.0-U3.1</li>
+<li>系统：NixOS 22.05</li>
 </ul>
 </li>
 <li>Proxmox VE Client 配置：<ul>
@@ -1097,7 +1098,7 @@ iface ibs1d1 inet static
 </li>
 </ul>
 <p>在Proxmox VE下，分别虚拟化以下系统，全是vm，没测lxc，直通了SR-IOV</p>
-<h2 id="IPoIB"><a href="#IPoIB" class="headerlink" title="IPoIB"></a>IPoIB</h2><p>通过IPoIB连接PVE和TrueNAS，再通过ZFS over iSCSI跑虚拟机。下面测试中10.99.0.0是IPoIB，10.10.10.0是ETH<br>通过ping测了一下latency</p>
+<h2 id="IPoIB"><a href="#IPoIB" class="headerlink" title="IPoIB"></a>IPoIB</h2><p>通过IPoIB连接PVE和TrueNAS(最近把TrueNAS删了换成了NixOS)，再通过ZFS over iser跑虚拟机。下面测试中10.99.0.0是IPoIB，10.10.10.0是ETH<br>通过ping测了一下latency</p>
 <pre><code class="bash">PING 10.99.0.2 (10.99.0.2) 56(84) bytes of data.
 64 bytes from 10.99.0.2: icmp_seq=1 ttl=64 time=0.046 ms
 64 bytes from 10.99.0.2: icmp_seq=2 ttl=64 time=0.069 ms
@@ -1109,6 +1110,224 @@ PING 10.10.10.11 (10.10.10.11) 56(84) bytes of data.
 64 bytes from 10.10.10.11: icmp_seq=3 ttl=64 time=0.237 ms
 64 bytes from 10.10.10.11: icmp_seq=4 ttl=64 time=0.254 ms</code></pre>
 </br>
+</br>
+
+<h2 id="ISER"><a href="#ISER" class="headerlink" title="ISER"></a>ISER</h2><p>在PVE上连接iser，是SSD那个池<br>以下是4k随机写入 24线程psync：</p>
+<pre><code class="bash">root@pve:~# fio -filename=/dev/sdb -direct=1 -ioengine=psync -bs=4k -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=randwrite -group_reporting -name=&quot;randwrite&quot;
+randwrite: (g=0): rw=randwrite, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=psync, iodepth=32
+...
+fio-3.25
+Starting 24 threads
+Jobs: 24 (f=24): [w(24)][100.0%][w=510MiB/s][w=130k IOPS][eta 00m:00s]
+randwrite: (groupid=0, jobs=24): err= 0: pid=176142: Sun May 21 17:26:35 2023
+  write: IOPS=132k, BW=518MiB/s (543MB/s)(30.3GiB/60001msec); 0 zone resets
+    clat (usec): min=35, max=19045, avg=180.20, stdev=61.22
+     lat (usec): min=35, max=19046, avg=180.35, stdev=61.22
+    clat percentiles (usec):
+     |  1.00th=[  130],  5.00th=[  147], 10.00th=[  155], 20.00th=[  163],
+     | 30.00th=[  167], 40.00th=[  172], 50.00th=[  178], 60.00th=[  182],
+     | 70.00th=[  188], 80.00th=[  194], 90.00th=[  208], 95.00th=[  221],
+     | 99.00th=[  253], 99.50th=[  297], 99.90th=[  502], 99.95th=[  758],
+     | 99.99th=[ 3130]
+   bw (  KiB/s): min=482416, max=577304, per=100.00%, avg=530297.19, stdev=936.60, samples=2856
+   iops        : min=120604, max=144326, avg=132574.20, stdev=234.14, samples=2856
+  lat (usec)   : 50=0.01%, 100=0.16%, 250=98.74%, 500=0.99%, 750=0.05%
+  lat (usec)   : 1000=0.01%
+  lat (msec)   : 2=0.02%, 4=0.01%, 10=0.01%, 20=0.01%
+  cpu          : usr=0.95%, sys=2.09%, ctx=7949914, majf=0, minf=0
+  IO depths    : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, &gt;=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
+     issued rwts: total=0,7949243,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=32
+
+Run status group 0 (all jobs):
+  WRITE: bw=518MiB/s (543MB/s), 518MiB/s-518MiB/s (543MB/s-543MB/s), io=30.3GiB (32.6GB), run=60001-60001msec
+
+Disk stats (read/write):
+  sdb: ios=110/7935683, merge=0/2, ticks=8/1393327, in_queue=1393335, util=99.89%</code></pre>
+</br>
+</br>
+
+<p>以下是1M顺序写入 24线程psync：</p>
+<pre><code class="bash">root@pve:~# fio -filename=/dev/sdb -direct=1 -ioengine=psync -bs=1M -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=write -group_reporting -name=&quot;seqwrite&quot;
+seqwrite: (g=0): rw=write, bs=(R) 1024KiB-1024KiB, (W) 1024KiB-1024KiB, (T) 1024KiB-1024KiB, ioengine=psync, iodepth=32
+...
+fio-3.25
+Starting 24 threads
+Jobs: 1 (f=1): [_(14),W(1),_(9)][98.1%][w=1576MiB/s][w=1575 IOPS][eta 00m:01s]          
+seqwrite: (groupid=0, jobs=24): err= 0: pid=176521: Sun May 21 17:28:31 2023
+  write: IOPS=4808, BW=4808MiB/s (5042MB/s)(240GiB/51114msec); 0 zone resets
+    clat (usec): min=450, max=61358, avg=4775.89, stdev=1543.22
+     lat (usec): min=475, max=61501, avg=4840.36, stdev=1543.55
+    clat percentiles (usec):
+     |  1.00th=[ 1467],  5.00th=[ 3097], 10.00th=[ 3523], 20.00th=[ 3916],
+     | 30.00th=[ 4178], 40.00th=[ 4359], 50.00th=[ 4555], 60.00th=[ 4817],
+     | 70.00th=[ 5014], 80.00th=[ 5407], 90.00th=[ 6063], 95.00th=[ 6980],
+     | 99.00th=[10552], 99.50th=[12911], 99.90th=[17957], 99.95th=[20579],
+     | 99.99th=[26608]
+   bw (  MiB/s): min= 4000, max= 6883, per=100.00%, avg=4955.55, stdev=33.42, samples=2359
+   iops        : min= 4000, max= 6882, avg=4955.39, stdev=33.41, samples=2359
+  lat (usec)   : 500=0.04%, 750=0.52%, 1000=0.12%
+  lat (msec)   : 2=0.49%, 4=21.63%, 10=75.94%, 20=1.21%, 50=0.06%
+  lat (msec)   : 100=0.01%
+  cpu          : usr=1.43%, sys=0.50%, ctx=246687, majf=0, minf=0
+  IO depths    : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, &gt;=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
+     issued rwts: total=0,245760,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=32
+
+Run status group 0 (all jobs):
+  WRITE: bw=4808MiB/s (5042MB/s), 4808MiB/s-4808MiB/s (5042MB/s-5042MB/s), io=240GiB (258GB), run=51114-51114msec
+
+Disk stats (read/write):
+  sdb: ios=270/491442, merge=0/0, ticks=63/2193831, in_queue=2193894, util=99.79%</code></pre>
+</br>
+</br>
+
+<h2 id="NFS-over-RDMA"><a href="#NFS-over-RDMA" class="headerlink" title="NFS over RDMA"></a>NFS over RDMA</h2><p>这里连接的是HDD的池。<br>1M顺序写入 24线程 psync，机械池。</p>
+<pre><code class="bash">root@pve:/mnt/pve/ib-nfs/template# fio -filename=write -direct=1 -ioengine=psync -bs=1M -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=write -group_reporting -name=&quot;write&quot;
+write: (g=0): rw=write, bs=(R) 1024KiB-1024KiB, (W) 1024KiB-1024KiB, (T) 1024KiB-1024KiB, ioengine=psync, iodepth=32
+...
+fio-3.25
+Starting 24 threads
+Jobs: 24 (f=24): [W(24)][97.9%][w=5141MiB/s][w=5141 IOPS][eta 00m:01s]
+write: (groupid=0, jobs=24): err= 0: pid=178298: Sun May 21 17:38:07 2023
+  write: IOPS=5142, BW=5142MiB/s (5392MB/s)(240GiB/47790msec); 0 zone resets
+    clat (usec): min=569, max=27777, avg=4633.72, stdev=757.33
+     lat (usec): min=592, max=27806, avg=4664.18, stdev=761.07
+    clat percentiles (usec):
+     |  1.00th=[ 3916],  5.00th=[ 4293], 10.00th=[ 4359], 20.00th=[ 4424],
+     | 30.00th=[ 4490], 40.00th=[ 4490], 50.00th=[ 4555], 60.00th=[ 4555],
+     | 70.00th=[ 4621], 80.00th=[ 4686], 90.00th=[ 4752], 95.00th=[ 4883],
+     | 99.00th=[ 7635], 99.50th=[ 8455], 99.90th=[15139], 99.95th=[17433],
+     | 99.99th=[19792]
+   bw (  MiB/s): min= 3902, max= 5414, per=100.00%, avg=5145.63, stdev=12.45, samples=2280
+   iops        : min= 3902, max= 5414, avg=5145.60, stdev=12.44, samples=2280
+  lat (usec)   : 750=0.01%, 1000=0.01%
+  lat (msec)   : 2=0.04%, 4=1.15%, 10=98.49%, 20=0.29%, 50=0.01%
+  cpu          : usr=0.73%, sys=1.00%, ctx=322779, majf=0, minf=0
+  IO depths    : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, &gt;=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
+     issued rwts: total=0,245760,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=32
+
+Run status group 0 (all jobs):
+  WRITE: bw=5142MiB/s (5392MB/s), 5142MiB/s-5142MiB/s (5392MB/s-5392MB/s), io=240GiB (258GB), run=47790-47790msec</code></pre>
+</br>
+</br>
+
+<p>4k随机写 24线程 psync，机械池。</p>
+<pre><code class="bash">root@pve:/mnt/pve/ib-nfs/template# fio -filename=randwrite -direct=1 -ioengine=psync -bs=4k -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=randwrite -group_reporting -name=&quot;randwrite&quot;
+randwrite: (g=0): rw=randwrite, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=psync, iodepth=32
+...
+fio-3.25
+Starting 24 threads
+Jobs: 24 (f=24): [w(24)][100.0%][w=189MiB/s][w=48.5k IOPS][eta 00m:00s]
+randwrite: (groupid=0, jobs=24): err= 0: pid=177907: Sun May 21 17:36:12 2023
+  write: IOPS=81.3k, BW=318MiB/s (333MB/s)(18.6GiB/60003msec); 0 zone resets
+    clat (usec): min=45, max=145511, avg=293.97, stdev=887.94
+     lat (usec): min=45, max=145511, avg=294.15, stdev=887.94
+    clat percentiles (usec):
+     |  1.00th=[   78],  5.00th=[   85], 10.00th=[   88], 20.00th=[   92],
+     | 30.00th=[   95], 40.00th=[   98], 50.00th=[  102], 60.00th=[  109],
+     | 70.00th=[  143], 80.00th=[  255], 90.00th=[  529], 95.00th=[  963],
+     | 99.00th=[ 3228], 99.50th=[ 4359], 99.90th=[10552], 99.95th=[14746],
+     | 99.99th=[28705]
+   bw (  KiB/s): min=27632, max=934848, per=100.00%, avg=326662.59, stdev=8797.03, samples=2856
+   iops        : min= 6908, max=233712, avg=81665.65, stdev=2199.26, samples=2856
+  lat (usec)   : 50=0.01%, 100=46.46%, 250=33.26%, 500=9.61%, 750=3.95%
+  lat (usec)   : 1000=1.89%
+  lat (msec)   : 2=2.27%, 4=1.94%, 10=0.50%, 20=0.09%, 50=0.02%
+  lat (msec)   : 100=0.01%, 250=0.01%
+  cpu          : usr=0.65%, sys=1.38%, ctx=5699062, majf=0, minf=0
+  IO depths    : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, &gt;=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
+     issued rwts: total=0,4880906,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=32
+
+Run status group 0 (all jobs):
+  WRITE: bw=318MiB/s (333MB/s), 318MiB/s-318MiB/s (333MB/s-333MB/s), io=18.6GiB (19.0GB), run=60003-60003msec</code></pre>
+</br>
+</br>
+
+<h2 id="ZFS-over-ISER"><a href="#ZFS-over-ISER" class="headerlink" title="ZFS over ISER"></a>ZFS over ISER</h2><p>虚拟机直接通了PVE上的iscsi，那个iscsi的zvol是SSD的池。方法大概是修改/etc/pve/qemu-server/1xx.conf:</p>
+<pre><code class="bash">scsi0: /dev/disk/by-id/scsi-3600140512333f9ef3744ed7bc7c2527f,size=100G,ssd=1</code></pre>
+</br>
+
+<p>以下是在虚拟机Ubuntu下跑的，4k随机 24线程 psync：</p>
+<pre><code class="bash">fio -filename=randwrite -direct=1 -ioengine=psync -bs=4k -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=randwrite -group_reporting -name=&quot;randwrite&quot;
+randwrite: (g=0): rw=randwrite, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=psync, iodepth=32
+...
+fio-3.28
+Starting 24 threads
+Jobs: 24 (f=24): [w(24)][100.0%][w=41.9MiB/s][w=10.7k IOPS][eta 00m:00s]
+randwrite: (groupid=0, jobs=24): err= 0: pid=5532: Sun May 21 17:51:08 2023
+  write: IOPS=18.7k, BW=73.0MiB/s (76.5MB/s)(4378MiB/60003msec); 0 zone resets
+    clat (usec): min=64, max=104970, avg=1283.01, stdev=3124.97
+     lat (usec): min=64, max=104970, avg=1283.23, stdev=3124.99
+    clat percentiles (usec):
+     |  1.00th=[   83],  5.00th=[   87], 10.00th=[   92], 20.00th=[   99],
+     | 30.00th=[  119], 40.00th=[  167], 50.00th=[  208], 60.00th=[  247],
+     | 70.00th=[  302], 80.00th=[  408], 90.00th=[ 5669], 95.00th=[ 8586],
+     | 99.00th=[14746], 99.50th=[15795], 99.90th=[17433], 99.95th=[18482],
+     | 99.99th=[33424]
+   bw (  KiB/s): min=17064, max=391024, per=100.00%, avg=75022.99, stdev=4135.19, samples=2856
+   iops        : min= 4266, max=97756, avg=18755.73, stdev=1033.80, samples=2856
+  lat (usec)   : 100=21.50%, 250=39.43%, 500=23.41%, 750=1.20%, 1000=0.37%
+  lat (msec)   : 2=1.11%, 4=1.59%, 10=7.95%, 20=3.41%, 50=0.03%
+  lat (msec)   : 100=0.01%, 250=0.01%
+  cpu          : usr=0.33%, sys=1.79%, ctx=1762463, majf=0, minf=0
+  IO depths    : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, &gt;=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
+     issued rwts: total=0,1120875,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=32
+
+Run status group 0 (all jobs):
+  WRITE: bw=73.0MiB/s (76.5MB/s), 73.0MiB/s-73.0MiB/s (76.5MB/s-76.5MB/s), io=4378MiB (4591MB), run=60003-60003msec
+
+Disk stats (read/write):
+  sda: ios=0/1123915, merge=0/71430, ticks=0/207957, in_queue=207963, util=99.88%</code></pre>
+</br>
+
+<p>虚拟机Ubuntu下，1M顺序写 24线程 psync：</p>
+<pre><code class="bash">fio -filename=write -direct=1 -ioengine=psync -bs=1M -size=10G -numjobs=24 -iodepth=32 -runtime=60 -thread -rw=write -group_reporting -name=&quot;write&quot;
+write: (g=0): rw=write, bs=(R) 1024KiB-1024KiB, (W) 1024KiB-1024KiB, (T) 1024KiB-1024KiB, ioengine=psync, iodepth=32
+...
+fio-3.28
+Starting 24 threads
+Jobs: 24 (f=24): [W(24)][100.0%][w=3311MiB/s][w=3311 IOPS][eta 00m:00s]
+write: (groupid=0, jobs=24): err= 0: pid=5469: Sun May 21 17:49:44 2023
+  write: IOPS=3063, BW=3063MiB/s (3212MB/s)(179GiB/60008msec); 0 zone resets
+    clat (usec): min=425, max=119934, avg=7775.27, stdev=4139.62
+     lat (usec): min=451, max=119976, avg=7832.54, stdev=4142.63
+    clat percentiles (usec):
+     |  1.00th=[   611],  5.00th=[   848], 10.00th=[  4883], 20.00th=[  6194],
+     | 30.00th=[  6718], 40.00th=[  7242], 50.00th=[  7701], 60.00th=[  8094],
+     | 70.00th=[  8586], 80.00th=[  9241], 90.00th=[ 10290], 95.00th=[ 11338],
+     | 99.00th=[ 20055], 99.50th=[ 30540], 99.90th=[ 55837], 99.95th=[ 69731],
+     | 99.99th=[116917]
+   bw (  MiB/s): min= 1092, max= 3761, per=100.00%, avg=3068.96, stdev=19.31, samples=2856
+   iops        : min= 1092, max= 3761, avg=3067.40, stdev=19.31, samples=2856
+  lat (usec)   : 500=0.06%, 750=4.13%, 1000=1.07%
+  lat (msec)   : 2=0.56%, 4=1.51%, 10=80.77%, 20=10.90%, 50=0.86%
+  lat (msec)   : 100=0.13%, 250=0.01%
+  cpu          : usr=1.03%, sys=0.39%, ctx=367956, majf=0, minf=1
+  IO depths    : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, &gt;=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%
+     issued rwts: total=0,183806,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=32
+
+Run status group 0 (all jobs):
+  WRITE: bw=3063MiB/s (3212MB/s), 3063MiB/s-3063MiB/s (3212MB/s-3212MB/s), io=179GiB (193GB), run=60008-60008msec
+
+Disk stats (read/write):
+  sda: ios=0/183581, merge=0/108, ticks=0/623119, in_queue=623127, util=99.94%</code></pre>
 </br>
 
 
