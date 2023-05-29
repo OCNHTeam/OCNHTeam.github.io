@@ -8,16 +8,16 @@
 	
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
-	<meta name="description" content="0 介绍TrueNAS Core已更新至FreeBSD 13，其两款免费产品Scale和Core也已转至OpenZFS。考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不够熟悉，又想获得Linux的一些优势，因此使用了TrueNAS Scale。但体验不佳，所以最终选择回到了TrueNAS Core 13。 家里装修时布置了2条MPO数据线的，不知为何只有一条能通网络，">
+	<meta name="description" content="0 介绍TrueNAS Core已更新至FreeBSD 13，其两款免费产品Scale和Core也已转至OpenZFS。考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不够熟悉，又想获得Linux的一些优势，因此使用了TrueNAS Scale。但体验不佳，后来换成了NixOS，这篇文章主要是讲述40GB网卡在TrueNAS下的使用，Infiniband和RDMA，当然">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ZFS:从10Gbps升级到40Gbps网络">
 <meta property="og:url" content="https://blog.xjn819.com/post/Upgrade-from-10Gbps-to-40Gbps-network.html">
 <meta property="og:site_name" content="Xjn&#39;s Blog">
-<meta property="og:description" content="0 介绍TrueNAS Core已更新至FreeBSD 13，其两款免费产品Scale和Core也已转至OpenZFS。考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不够熟悉，又想获得Linux的一些优势，因此使用了TrueNAS Scale。但体验不佳，所以最终选择回到了TrueNAS Core 13。 家里装修时布置了2条MPO数据线的，不知为何只有一条能通网络，">
+<meta property="og:description" content="0 介绍TrueNAS Core已更新至FreeBSD 13，其两款免费产品Scale和Core也已转至OpenZFS。考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不够熟悉，又想获得Linux的一些优势，因此使用了TrueNAS Scale。但体验不佳，后来换成了NixOS，这篇文章主要是讲述40GB网卡在TrueNAS下的使用，Infiniband和RDMA，当然">
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-05-21T11:56:20.866Z">
+<meta property="article:modified_time" content="2023-05-29T11:09:50.949Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-5-21 19:56:20">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-5-29 19:09:50">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							13.3k 字
+							15.2k 字
 						</div>
 					
 						
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							56 分钟
+							64 分钟
 						</div>
 					
 		</div>
@@ -634,7 +634,7 @@
 	</header>
 
 	<div class="post-content" id="post_content">
-		<h1 id="0-介绍"><a href="#0-介绍" class="headerlink" title="0 介绍"></a>0 介绍</h1><p>TrueNAS Core已更新至FreeBSD 13，其两款免费产品Scale和Core也已转至OpenZFS。考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不够熟悉，又想获得Linux的一些优势，因此使用了TrueNAS Scale。但体验不佳，所以最终选择回到了TrueNAS Core 13。</p>
+		<h1 id="0-介绍"><a href="#0-介绍" class="headerlink" title="0 介绍"></a>0 介绍</h1><p>TrueNAS Core已更新至FreeBSD 13，其两款免费产品Scale和Core也已转至OpenZFS。考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不够熟悉，又想获得Linux的一些优势，因此使用了TrueNAS Scale。但体验不佳，后来换成了NixOS，这篇文章主要是讲述40GB网卡在TrueNAS下的使用，Infiniband和RDMA，当然后来嫌在Scale弄麻烦，还是切换到了NixOS这种发行版上跑NAS了。</p>
 <p>家里装修时布置了2条MPO数据线的，不知为何只有一条能通网络，导致我有段时间是NAS和MAC电脑端对端连着，用着也还行就没想太多。刚好早些时候拼车买了Mellanox SX6036，疫情闲赋在家就拿出来换了一套猫扇，NAS和Proxmox VE连接Mellanox SX6036，再连接家里的10Gbps交换机Mikrotik CRS312，至此把40Gbps网络并入整个家庭内网。<br></br></p>
 <h1 id="1-硬件添置"><a href="#1-硬件添置" class="headerlink" title="1 硬件添置"></a>1 硬件添置</h1><ul>
 <li><p>Mellanox SX6036交换机。闲鱼差不多2000-3000左右，但是海淘Ebay大概在600-1200左右，邮费非常贵，如果有拼车最好了，需要授权才能使用以太网ETH模式，这个可以自己算号得到授权的。</p>
@@ -782,11 +782,11 @@ fae mlxi2c set_fan set_fan /PS1/FAN 1 65    #PS1代表第一个电源，此交�
 <p>通过BIOS Legacy模式在开机引导此固件Rom的时候也可以直接进入Setup界面关闭SR-IOV，这样无需安装别的软件来设置</p>
 </blockquote>
 <p>暂时不懂怎么在TrueNAS下修改一些内核相关的东西，并且SR-IOV在我的TrueNAS主板上不是必需品，如果你会用，则刷入下面的老固件。</p>
-<p>我在Proxmox VE中习惯使用SR-IOV，请到HPE官网下载并刷入<code>fw-ConnectX3Pro-rel-2_40_5072-764285-B21_Ax-CLP-8025-UEFI-14.11.42-FlexBoot-3.4.747.bin</code>这个老版本固件。<br>即便你使用普通的Linux发行版，驱动都已经deprecated了，插上后可以上网之类的，但是如果你想使用更高级的功能，可能需要下载Nvidia的OFED驱动进行编译。这个驱动看样子也不会再更新了，不知道哪天还能不能编译出来。下载对应的OFED编译，方式跟下面Chelsio的差不多就不写了。另外通过我的观察，即便IOMMU分组已经分开两个口的IRQ了，但是PCI地址还是一个，所以无法将两个口分别直通给两个不同的VM Guests。如果可以，请告知。</p>
+<p>我在Proxmox VE中习惯使用SR-IOV，请到HPE官网下载并刷入<code>fw-ConnectX3Pro-rel-2_40_5072-764285-B21_Ax-CLP-8025-UEFI-14.11.42-FlexBoot-3.4.747.bin</code>这个老版本固件。<br>当你使用Linux发行版，Kernel驱动也没啥问题，该有的功能都有。只是官方OFED驱动有更好的调优，但官方的OFED已经无法在Linux 5以上的内核编译出来，我看了一下要编译几乎是等于重构，所以没啥办法了，家用的话使用kernel tree上的驱动足以。另外通过我的观察，即便IOMMU分组已经分开两个口的IRQ了，但是PCI地址还是一个，所以无法将两个口分别直通给两个不同的VM Guests。如果可以，请告知。</p>
 </br>
 
 
-<p>尽管搜索国外论坛提示如果不用OFED可能会在使用SR-IOV或者Pause帧中遇到问题，我这两天还是试用tree上自带的驱动并使用SR-IOV，只是发现了windows虚拟机上的VF有个小问题，下面给了解决方案了，别的没碰到啥问题。我没有编译过OFED，随便看了一下好像还行，但是能用tree上的驱动就不想动了。<br>安装<code>mstflint</code>,以Proxmox VE为例：</p>
+<p>尽管搜索国外论坛提示如果不用OFED可能会在使用SR-IOV或者Pause帧中遇到问题，我这两天还是试用kernel tree上自带的驱动并使用SR-IOV，只是发现了windows虚拟机上的VF有个小问题，下面给了解决方案了，别的没碰到啥问题。<br>安装<code>mstflint</code>,以Proxmox VE为例：</p>
 <pre><code class="bash">apt update &amp;&amp; apt install mstflint</code></pre>
 <p>通过<code>lspci</code>获得Mellanox网卡的设备号并设置，例如：</p>
 <pre><code class="bash">lspci |grep Mellanox
@@ -1328,6 +1328,110 @@ Run status group 0 (all jobs):
 
 Disk stats (read/write):
   sda: ios=0/183581, merge=0/108, ticks=0/623119, in_queue=623127, util=99.94%</code></pre>
+<h2 id="Perftest"><a href="#Perftest" class="headerlink" title="Perftest"></a>Perftest</h2><p>在NAS和PVE两台物理机之间跑perftest</p>
+<p>以下是ib_write_bw</p>
+<pre><code class="bash">---------------------------------------------------------------------------------------
+                    RDMA_Write BW Test
+ Dual-port       : OFF          Device         : mlx4_0
+ Number of qps   : 1            Transport type : IB
+ Connection type : RC           Using SRQ      : OFF
+ PCIe relax order: ON
+ ibv_wr* API     : OFF
+ TX depth        : 128
+ CQ Moderation   : 1
+ Mtu             : 2048[B]
+ Link type       : IB
+ Max inline data : 0[B]
+ rdma_cm QPs     : OFF
+ Data ex. method : Ethernet
+---------------------------------------------------------------------------------------
+ local address: LID 0x04 QPN 0x0255 PSN 0x5aff2c RKey 0x90010100 VAddr 0x007ff8e4722000
+ remote address: LID 0x02 QPN 0x0264 PSN 0x89e18 RKey 0x8030c18 VAddr 0x007fcda477b000
+---------------------------------------------------------------------------------------
+ #bytes     #iterations    BW peak[MB/sec]    BW average[MB/sec]   MsgRate[Mpps]
+Conflicting CPU frequency values detected: 3000.000000 != 3300.384000. CPU Frequency is not max.
+ 65536      469709           0.00               5871.31            0.093941
+Conflicting CPU frequency values detected: 3000.000000 != 3299.814000. CPU Frequency is not max.
+ 65536      469523           0.00               5869.03            0.093905
+Conflicting CPU frequency values detected: 3000.000000 != 3259.731000. CPU Frequency is not max.
+ 65536      469685           0.00               5871.09            0.093937
+Conflicting CPU frequency values detected: 3279.238000 != 3000.000000. CPU Frequency is not max.
+ 65536      469546           0.00               5869.18            0.093907
+Conflicting CPU frequency values detected: 3000.000000 != 3299.655000. CPU Frequency is not max.
+ 65536      469684           0.00               5871.05            0.093937
+--------------------------------------------------------------------------------------</code></pre>
+<p>以下是ib_write_lat</p>
+<pre><code class="bash">--------------------------------------------------------------------------------------
+                    RDMA_Write Latency Test
+ Dual-port       : OFF          Device         : mlx4_0
+ Number of qps   : 1            Transport type : IB
+ Connection type : RC           Using SRQ      : OFF
+ PCIe relax order: OFF
+ ibv_wr* API     : OFF
+ TX depth        : 1
+ Mtu             : 2048[B]
+ Link type       : IB
+ Max inline data : 220[B]
+ rdma_cm QPs     : OFF
+ Data ex. method : Ethernet
+---------------------------------------------------------------------------------------
+ local address: LID 0x04 QPN 0x0256 PSN 0x9363e6 RKey 0x98010100 VAddr 0x00000000d23000
+ remote address: LID 0x02 QPN 0x0265 PSN 0xf60716 RKey 0x10030c18 VAddr 0x0055836d79c000
+---------------------------------------------------------------------------------------
+ #bytes #iterations    t_min[usec]    t_max[usec]  t_typical[usec]    t_avg[usec]    t_stdev[usec]   99% percentile[usec]   99.9% percentile[usec] 
+Conflicting CPU frequency values detected: 3000.000000 != 3299.067000. CPU Frequency is not max.
+Conflicting CPU frequency values detected: 3000.000000 != 3297.173000. CPU Frequency is not max.
+ 2       1000          1.01           2.56         1.07                1.10             0.03            1.40 
+--------------------------------------------------------------------------------------</code></pre>
+<p>以下是ib_read_bw</p>
+<pre><code class="bash">---------------------------------------------------------------------------------------
+                    RDMA_Read BW Test
+ Dual-port       : OFF          Device         : mlx4_0
+ Number of qps   : 1            Transport type : IB
+ Connection type : RC           Using SRQ      : OFF
+ PCIe relax order: ON
+ ibv_wr* API     : OFF
+ TX depth        : 128
+ CQ Moderation   : 1
+ Mtu             : 2048[B]
+ Link type       : IB
+ Outstand reads  : 16
+ rdma_cm QPs     : OFF
+ Data ex. method : Ethernet
+---------------------------------------------------------------------------------------
+ local address: LID 0x04 QPN 0x0258 PSN 0x48418e OUT 0x10 RKey 0xa8010100 VAddr 0x007f440f3bb000
+ remote address: LID 0x02 QPN 0x0267 PSN 0xc3159e OUT 0x10 RKey 0x20030c18 VAddr 0x007f6769c2f000
+---------------------------------------------------------------------------------------
+ #bytes     #iterations    BW peak[MB/sec]    BW average[MB/sec]   MsgRate[Mpps]
+Conflicting CPU frequency values detected: 2930.376000 != 3000.000000. CPU Frequency is not max.
+ 65536      436871           0.00               5460.75            0.087372
+Conflicting CPU frequency values detected: 3000.000000 != 1876.346000. CPU Frequency is not max.
+ 65536      435374           0.00               5442.16            0.087075
+Conflicting CPU frequency values detected: 3000.000000 != 3299.691000. CPU Frequency is not max.
+ 65536      435425           0.00               5442.79            0.087085</code></pre>
+<p>以下是ib_read_lat</p>
+<pre><code class="bash">---------------------------------------------------------------------------------------
+                    RDMA_Read Latency Test
+ Dual-port       : OFF          Device         : mlx4_0
+ Number of qps   : 1            Transport type : IB
+ Connection type : RC           Using SRQ      : OFF
+ PCIe relax order: ON
+ ibv_wr* API     : OFF
+ TX depth        : 1
+ Mtu             : 2048[B]
+ Link type       : IB
+ Outstand reads  : 16
+ rdma_cm QPs     : OFF
+ Data ex. method : Ethernet
+---------------------------------------------------------------------------------------
+ local address: LID 0x04 QPN 0x0257 PSN 0x147e9c OUT 0x10 RKey 0xa0010100 VAddr 0x000000021ab000
+ remote address: LID 0x02 QPN 0x0266 PSN 0x62a237 OUT 0x10 RKey 0x18030c18 VAddr 0x0055e271b30000
+---------------------------------------------------------------------------------------
+ #bytes #iterations    t_min[usec]    t_max[usec]  t_typical[usec]    t_avg[usec]    t_stdev[usec]   99% percentile[usec]   99.9% percentile[usec] 
+Conflicting CPU frequency values detected: 3000.000000 != 3242.373000. CPU Frequency is not max.
+Conflicting CPU frequency values detected: 3000.000000 != 3242.780000. CPU Frequency is not max.
+ 2       1000          2.02           28.12        2.08                2.48             0.77            3.73                    28.12  
+---------------------------------------------------------------------------------------</code></pre>
 </br>
 
 
@@ -1336,6 +1440,7 @@ Disk stats (read/write):
 </li>
 <li><p>MTU 9000, AKA <code>Jumbo Frames</code>, 你需要慎重去考虑你整个网络内的所有设备通信，这个东西带来的收益其实远比它带来的问题多，如果你家里有很多无线智能设备的话，考虑尽可能用vlan去划分。网络inbound的话，需要修正mss，Mikrotik ROS则加一条mangle：</p>
 <pre><code class="bash">/ip firewall mangle add action=change-mss chain=forward new-mss=clamp-to-pmtu passthrough=yes protocol=tcp tcp-flags=syn</code></pre>
+<p>其实如果40/56GB走IB的话，以太网络走正常的1500MTU是很舒服的选择。</p>
 </li>
 </ul>
 
