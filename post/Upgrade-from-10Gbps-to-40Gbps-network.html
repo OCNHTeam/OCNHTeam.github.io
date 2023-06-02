@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-06-01T11:48:34.852Z">
+<meta property="article:modified_time" content="2023-06-02T05:21:33.233Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-6-1 19:48:34">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-6-2 13:21:33">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							64 分钟
+							65 分钟
 						</div>
 					
 		</div>
@@ -1439,15 +1439,18 @@ Conflicting CPU frequency values detected: 3000.000000 != 3242.780000. CPU Frequ
 </br>
 
 
-<h1 id="10-一些题外话"><a href="#10-一些题外话" class="headerlink" title="10 一些题外话"></a>10 一些题外话</h1><ul>
-<li><p>非常喜欢用网卡ipxe+Ventoy这套东西跑系统，最近发现Mikrotik ROS系统在DHCP Server选项中增加了一个<code>Option Matcher</code>的功能。配合Option 93可以根据主板的架构分配不同的引导文件e.g.ArmUEFI,LegacyBIOS,x86UEFI.</p>
-</li>
-<li><p>MTU 9000, AKA <code>Jumbo Frames</code>, 你需要慎重去考虑你整个网络内的所有设备通信，这个东西带来的收益其实远比它带来的问题多，如果你家里有很多无线智能设备的话，考虑尽可能用vlan去划分。网络inbound的话，需要修正mss，Mikrotik ROS则加一条mangle：</p>
+<h1 id="10-关于MTU"><a href="#10-关于MTU" class="headerlink" title="10 关于MTU"></a>10 关于MTU</h1><p>一般来说，除非你一定要用ETH的RDMA(RoCE)，我们需要设置MTU 9000, AKA <code>Jumbo Frames</code>,去提高小文件的读写速度，但这个MTU有一个问题是如果你家里有一些智能的联网设备无法设置MTU，这些设备可能会联网异常的，因此我们要处理一下。有很多种处理方法比如划分VLAN等，但考虑每个人家中网络拓扑都不一样，就说一下简单的一个基本框架。</p>
+<blockquote>
+<p>SX6036内的ETH全部走MTU 9000，然后SX6036连接到你家中万兆或者千兆的交换机这一段也设置成9000，而万兆/千兆的交换机接到家中的AP那些低速网络层全部使用MTU 1500。<br>网络inbound的话，也许需要修正mss，具体看你<code>git clone</code>之类的命令会不会遇到TLS握手问题。Mikrotik ROS则加一条mangle：</p>
+</blockquote>
 <pre><code class="bash">/ip firewall mangle add action=change-mss chain=forward new-mss=clamp-to-pmtu passthrough=yes protocol=tcp tcp-flags=syn</code></pre>
 <blockquote>
-<p>其实如果40/56GB走IB的话，以太网络走正常的1500MTU，IB网络走高MTU是很舒服的选择。</p>
+<p>如果更为复杂的网络情况，要用到VLAN则实在没法写一个说明了，请自行脑补。。<br>尽可能使用Infiniband网络，因为Infiniband内的网络走多少帧，跟你家中的以太网络毫无关系，解决很多烦恼。</p>
 </blockquote>
-</li>
+</br>
+
+<h1 id="11-一些题外话"><a href="#11-一些题外话" class="headerlink" title="11 一些题外话"></a>11 一些题外话</h1><ul>
+<li>非常喜欢用网卡ipxe+Ventoy这套东西跑系统，最近发现Mikrotik ROS系统在DHCP Server选项中增加了一个<code>Option Matcher</code>的功能。配合Option 93可以根据主板的架构分配不同的引导文件e.g.ArmUEFI,LegacyBIOS,x86UEFI.</li>
 </ul>
 
 	</div>
