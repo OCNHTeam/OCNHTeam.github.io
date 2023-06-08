@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-06-08T04:49:15.261Z">
+<meta property="article:modified_time" content="2023-06-08T05:12:57.893Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-6-8 12:49:15">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-6-8 13:12:57">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -787,7 +787,7 @@ fae mlxi2c set_fan set_fan /PS1/FAN 1 65    #PS1代表第一个电源，此交�
 </blockquote>
 <p>暂时不懂怎么在TrueNAS下修改一些内核相关的东西，并且SR-IOV在我的TrueNAS主板上不是必需品，如果你会用，则刷入下面的老固件。</p>
 <p>我在Proxmox VE中习惯使用SR-IOV，请到HPE官网下载并刷入<code>fw-ConnectX3Pro-rel-2_40_5072-764285-B21_Ax-CLP-8025-UEFI-14.11.42-FlexBoot-3.4.747.bin</code>这个老版本固件。</p>
-<p>Mellanox的驱动一般是分为两种的，一种是系统自带的驱动，比如Linux内核中自带的，还有一种是Nvdia官方提供的驱动叫OFED。OFED对各种场景有更好的调优，但是因为其out-of-tree的原因，你每次升级内核都需要重新编译驱动。但官方的OFED已经无法在Linux 5以上的内核编译出来，毕竟这张卡已经EOL了，我看了一下要编译几乎是等于重构，所以没啥办法了，家用的话使用kernel tree上的驱动足以。<br>另外通过我的观察，即便IOMMU分组已经分开两个口的IRQ了，但是PCI地址还是一个，所以无法将两个口分别直通给两个不同的VM Guests。如果可以，请告知。</p>
+<p>Mellanox的驱动一般是分为两种的，一种是系统自带的驱动，比如Linux内核中自带的，还有一种是Nvdia官方提供的驱动叫OFED。OFED对各种场景有更好的调优，但因其out-of-tree的原因，你每次升级内核都需要重新编译驱动。官方的OFED已经无法在Linux 5以上的内核编译出来，毕竟这张卡已经EOL了，我看了一下要编译几乎是等于重构，所以没啥办法了，家用的话使用kernel tree上的驱动足以。<br>另外通过我的观察，即便IOMMU分组已经分开两个口的IRQ了，但是PCI地址还是一个，所以无法将两个口分别直通给两个不同的VM Guests。如果可以，请告知。</p>
 </br>
 
 
@@ -846,13 +846,13 @@ WantedBy=multi-user.target</code></pre>
 </br>
 </br>
 
-<p>如果要用Windows的VM，则尽可能使用Windows的LTSC版本。在PVE内核大于Linux 5.13的情况下，使用3代网卡的VF直通到Windows你要对Proxmox的kernel进行patch，不然Windows Guest的设备管理器里，这个VF会报错code 43。具体参考<a target="_blank" rel="noopener" href="https://forums.servethehome.com/index.php?threads/help-with-connectx-3-sr-iov-with-linux-host-and-windows-guest-via-kvm.28956/page-1">这里</a>。 有空我把我自己patch好的传到Github上去，或者自行去切换到老一点的内核，然后pin内核。</p>
+<p>如果要用Windows的VM，则尽可能使用Windows的LTSC版本。在PVE内核大于Linux 5.3的情况下（我有点记不清了），使用3代网卡的VF直通到Windows你要对Proxmox的kernel进行patch，不然Windows Guest的设备管理器里，这个VF会报错code 43。具体参考<a target="_blank" rel="noopener" href="https://forums.servethehome.com/index.php?threads/help-with-connectx-3-sr-iov-with-linux-host-and-windows-guest-via-kvm.28956/page-1">这里</a>。 有空我把我自己patch好的传到Github上去，或者自行去切换到老一点的内核，然后pin内核。</p>
 <pre><code class="bash">uname -a #查看内核版本
 apt update
 apt search pve-kernel|grep pve-kernel- #查看可以安装的内核
 apt install pve-kernel-5.xxxxxx-pve #安装特定版本内核，当然初次安装的是新的内核切回去旧的太麻烦了，还不如重装。
 proxmox-boot-tool kernel list #查看pve下已经有的内核
-proxmox-boot-tool kernel pin 5.13.19-6-pve #pin住内核</code></pre>
+proxmox-boot-tool kernel pin 5.xxx-pve #pin住内核</code></pre>
 <blockquote>
 <p>说实在的，Windows我都懒得用。都不知道Windows怎么跑40Gbps，文件管理器是单线程的，SMB是单线程的，ISCSI在较新的windows 10版本中也是单线程的=。=。<br>Linux 6.1的ksmbd内核模块似乎支持了Linux作为服务端来连接Windows客户端达到多线程以及SMB-Direct(RDMA)，咱没时间测试。</p>
 </blockquote>
