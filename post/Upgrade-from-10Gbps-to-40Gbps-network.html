@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-06-11T15:56:48.993Z">
+<meta property="article:modified_time" content="2023-06-20T19:00:30.148Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-6-11 23:56:48">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-6-21 3:00:30">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							15.6k 字
+							15.5k 字
 						</div>
 					
 						
@@ -635,13 +635,13 @@
 
 	<div class="post-content" id="post_content">
 		<h1 id="0-介绍"><a href="#0-介绍" class="headerlink" title="0 介绍"></a>0 介绍</h1><p>TrueNAS Core已更新至FreeBSD 13，其两款免费产品Scale和Core也已转至OpenZFS。考虑到之前一直使用SolarisZFS，可能会对OpenZFS的tuning不够熟悉，又想获得Linux的一些优势，因此使用了TrueNAS Scale。但体验不佳，后来换成了NixOS，这篇文章主要是讲述40GB网卡在TrueNAS下的使用，Infiniband和RDMA，当然后来嫌在Scale弄RDMA麻烦，弄好了也是不能升级，并且WebUI估计是没法用了，以及我不喜欢用K3S，这种情况的话，还是切换到了NixOS这种发行版上跑NAS了。</p>
-<p>家里装修时布置了2条MPO数据线的，不知为何只有一条能通网络，导致我有段时间是NAS和MAC电脑端对端连着，用着也还行就没想太多。刚好早些时候拼车买了Mellanox SX6036，疫情闲赋在家就拿出来换了一套猫扇，NAS和Proxmox VE连接Mellanox SX6036，再连接家里的10Gbps交换机Mikrotik CRS312，至此把40Gbps网络并入整个家庭内网。<br></br></p>
+<p>早些时候海淘拼车买了Mellanox SX6036，疫情闲赋在家就拿出来换了一套猫扇，NAS和Proxmox VE连接Mellanox SX6036，再连接家里的10Gbps交换机Mikrotik CRS312，至此把40Gbps网络并入整个家庭内网。<br></br></p>
 <h1 id="1-硬件添置"><a href="#1-硬件添置" class="headerlink" title="1 硬件添置"></a>1 硬件添置</h1><ul>
-<li><p>Mellanox SX6036交换机。闲鱼差不多2000-3000左右，但是海淘Ebay大概在600-1200左右，邮费非常贵，如果有拼车最好了，需要授权才能使用以太网ETH模式，这个可以自己算号得到授权的。</p>
+<li><p>Mellanox SX6036交换机。闲鱼差不多2000-3000左右，但是海淘Ebay大概在600-1000左右，邮费非常贵，如果有拼车最好了，需要授权才能使用以太网ETH模式，可以自己算号得到授权的。</p>
 </li>
 <li><p>HP 544+ 40Gbps ETH 56Gbps IB QSFP网卡。闲鱼加转接卡一起卖大概在80-120之间，便宜一般来说带来了很多坑。</p>
 </li>
-<li><p>Chelsio T580 40Gbps 网卡。这张卡我之前800左右买的，闲鱼现在我看有的1500，有的1000，看运气吧。此卡是唯一一张可以在MacOS下驱动的40Gbps PCIE网卡。此卡目前的驱动只支持到MacOS Big Sur。Monterey开始，苹果使用了DriverKit驱动，只能等Chelsio去做DriverKit。</p>
+<li><p>Chelsio T580 40Gbps 网卡。这张卡我之前800左右买的，闲鱼现在我看有的1500，有的1000，看运气吧。此卡是唯一一张可以在MacOS下驱动的40Gbps PCIE网卡。此卡目前的驱动只支持到MacOS Big Sur。Monterey开始，苹果使用了DriverKit驱动，只能等Chelsio去做DriverKit。+++已支持到Ventura，有空补充。</p>
 </li>
 <li><p>在写这篇文章的时候MacOS突然更新支持了Mellanox ConnectX-4代及以上的eth网卡的驱动，看了一下匹配非常宽泛，感觉200G的都支持，但不确定是否带有ROCE2；同时也支持了intel的几张40G以上的网卡。如果只是MacOS使用的话，推荐mcx-4131a。</p>
 </li>
@@ -651,16 +651,13 @@
 </li>
 <li><p>如果购买了MPO多模线的用户，可以考虑购买Finisar的FTL414QB2N-E5这个模块，65元左右，此模块支持ETH并且似乎是唯一支持56G Infiniband的多模模块，价格非常便宜。</p>
 </li>
-<li><p>如果你使用单模40GB模块，你可能无法获得任何Infiniband的收益，首先我没见过这样的模块，其次家用单模40GB模块请一定要加单模光纤衰减器，不然就是几个月烧毁，跟换灯泡差不多吧。也许单模是可以用到ROCE这种RDMA的，但即便是用多模ETH ROCE RDMA效果与Infiniband的RDMA还是差的有点多，可想而知单模的效果了，性价比极低。</p>
-</br>
-
+<li><p>如果你使用单模40GB模块，你可能无法获得任何Infiniband的收益，首先我没见过这样的模块，其次家用单模40GB模块请一定要加单模光纤衰减器，不然就是几个月烧毁，跟换灯泡差不多吧。也许单模是可以用到ROCE这种RDMA的，但即便是用多模ETH ROCE RDMA效果与Infiniband的RDMA还是差的有点多。ROCE需要交换机支持PFC ECN，而sx6036并不支持，性价比极低。</p>
 </li>
 </ul>
+</br>
+
 <h2 id="1-1-非必选添置"><a href="#1-1-非必选添置" class="headerlink" title="1.1 非必选添置"></a>1.1 非必选添置</h2><ul>
 <li><p>我把NAS机箱的四个8CM风扇卡槽换成了三个12CM风扇卡槽，并购买了追风者T30风扇，以解决因极高温度导致的硬盘过热问题。新的12CM风扇效果很好，因为它们具有兼具PWM和广泛转速范围的特点，而且噪音很低。此外，我还找淘宝上用PETG材质3D打印的卡槽来更换旧的卡槽。打印文件<a target="_blank" rel="noopener" href="https://www.thetylergibson.com/supermicro-846-120mm-fan-shroud/">购买链接</a> </p>
-<blockquote>
-<p>人家的劳动成果，免费分享并不道义。</p>
-</blockquote>
 <blockquote>
 <p>追风者T30风扇需要拨动风扇中央的开关到Advance模式才能达到3000转。</p>
 </blockquote>
@@ -685,7 +682,7 @@
 </li>
 <li><p>如果使用QSFP一分四SFP线，则需要关闭其中一个口才能使用，并在ssh管理界面中标注4口为1分4。请查阅说明书来找到关闭对应口的方法，推荐购买Console线进行管理。</p>
 </li>
-<li><p>尽量不要使用单模40G模块，SX6036只有1、3、33、35口支持单模40G，并且需要在ssh中输入<code>fae cable-stamping-unlock 40g_lr4</code>来开启单模支持。单模模块价格昂贵，电压过高、热量大，一般几个月就要更换，建议不要购买。</p>
+<li><p>尽量不要使用单模40G模块，SX6036只有1、3、33、35口支持单模40G，并且需要在ssh中输入<code>fae cable-stamping-unlock 40g_lr4</code>来开启单模支持。如之前所提示，建议不要购买单模模块。</p>
 </li>
 </ul>
 </br>
@@ -787,11 +784,11 @@ fae mlxi2c set_fan set_fan /PS1/FAN 1 65    #PS1代表第一个电源，此交�
 </blockquote>
 <p>暂时不懂怎么在TrueNAS下修改一些内核相关的东西，并且SR-IOV在我的TrueNAS主板上不是必需品，如果你会用，则刷入下面的老固件。</p>
 <p>我在Proxmox VE中习惯使用SR-IOV，请到HPE官网下载并刷入<code>fw-ConnectX3Pro-rel-2_40_5072-764285-B21_Ax-CLP-8025-UEFI-14.11.42-FlexBoot-3.4.747.bin</code>这个老版本固件。</p>
-<p>Mellanox的驱动一般是分为两种的，一种是系统自带的驱动，比如Linux内核中自带的，还有一种是Nvdia官方提供的驱动叫OFED。OFED对各种场景有更好的调优，但因其out-of-tree的原因，你每次升级内核都需要重新编译驱动。官方的OFED已经无法在Linux 5以上的内核编译出来，毕竟这张卡已经EOL了，我看了一下要编译几乎是等于重构，所以没啥办法了，家用的话使用kernel tree上的驱动足以。<br>另外通过我的观察，即便IOMMU分组已经分开两个口的IRQ了，但是PCI地址还是一个，所以无法将两个口分别直通给两个不同的VM Guests。如果可以，请告知。</p>
+<p>Mellanox的驱动一般是分为两种的，一种是系统自带的驱动，比如Linux内核中自带的，还有一种是Nvdia官方提供的驱动叫OFED。OFED对各种场景有更好的调优，但因其out-of-tree的原因，你每次升级内核都需要重新编译驱动。官方的OFED已经无法在Linux 5以上的内核编译出来，毕竟这张卡已经EOL了，我看了一下要编译几乎是等于重构，所以没啥办法了，家用的话使用kernel tree上的驱动足以。</p>
 </br>
 
 
-<p>尽管搜索国外论坛提示如果不用OFED可能会在使用SR-IOV或者Pause帧中遇到问题，我这两天还是试用kernel tree上自带的驱动并使用SR-IOV，只是发现了windows虚拟机上的VF有个小问题，下面给了解决方案了，别的没碰到啥问题。<br>安装<code>mstflint</code>,以Proxmox VE为例：</p>
+<p>已使用kernel tree上自带的驱动并使用SR-IOV，只是发现了windows虚拟机上的VF有个小问题，下面给了解决方案了，别的没碰到啥问题。<br>安装<code>mstflint</code>,以Proxmox VE为例：</p>
 <pre><code class="bash">apt update &amp;&amp; apt install mstflint</code></pre>
 <p>通过<code>lspci</code>获得Mellanox网卡的设备号并设置，例如：</p>
 <pre><code class="bash">lspci |grep Mellanox
@@ -808,7 +805,7 @@ mstconfig -d 03:00.00 set LINK_TYPE_P1=ETH  #设置p1端口为ETH模式</code></
 <ul>
 <li>port_type_array=1,2 意味着第一个端口是infiniband(1);第二个端口是ETH</li>
 <li>num_vfs 是VF数量，格式是a,b,c。a和b分别代表端口1和2的VF量，而C是总量。注意当两个网口都是ETH的时候才需要你计算总量，而当两个口是不同的两种模式时，只能填<code>0</code>。具体可以参考<a target="_blank" rel="noopener" href="https://docs.nvidia.com/networking/pages/viewpage.action?pageId=37849263">这个文档</a>。</li>
-<li>probe_vf 格式同上；这个是为Proxmox是否载入VF的数量，因为我的PVE宿主机需要一个IB，所以我第一个口只绑定了1个口，剩下的三个IB VF用来直通，则不需在PVE下载入。但是ETH是应该全都要载入的，因为ETH你需要在PVE下先载入设置MAC地址，设置完之后再直通去虚拟机。</li>
+<li>probe_vf 格式同上；这个是为Proxmox是否载入VF的数量，因为我的PVE宿主机需要一个IB，所以我第一个口只绑定了1个口，剩下的三个IB VF用来直通，则不需在PVE载入。但是ETH是应该全都要载入的，因为ETH你需要在PVE下先载入设置MAC地址，设置完之后再直通去虚拟机。</li>
 </ul>
 <p>设置完后记得<code>update-initramfs -u</code>后重启。</p>
 <p>创建一个shell，assign mac地址以及vf link up:</p>
@@ -841,7 +838,7 @@ ExecStart=/opt/sr-iov.sh
 WantedBy=multi-user.target</code></pre>
 <p>创建完执行<code>systemctl start mlx-sr-iov.service</code>则看到效果了；执行<code>systemctl enable mlx-sr-iov.service</code>则开机自动运行</p>
 <blockquote>
-<p>注意给虚拟机增加一些延迟启动的时间。这个脚本我设置了在网络初始化完成后运行，但是在<code>pveproxy.service</code>(PVE的WEBUI等服务)之前执行。因为如果你的WEBUI套用了VF作为虚拟网桥，则必须要考虑这个启动顺序。<br>如果不是标准的服务器主板，是不具备<code>ARI forwarding</code>功能的，没有此功能的主板是无法分出超过7个以上的VF的。这里指的是真正的服务器主板，不包括C246那些魔改家用主板的芯片组。你在支持的主板中开启此功能，并且在系统中通过<code>lspci -vvv | grep ARIFwd</code>查看是否已经开启。</p>
+<p>注意给虚拟机增加一些延迟启动的时间。这个脚本我设置了在网络初始化完成后运行，但是在<code>pveproxy.service</code>(PVE的WEBUI等服务)之前执行。因为如果你的WEBUI套用了VF作为虚拟网桥，则必须要考虑这个启动顺序。<br>如果不是标准的服务器主板，是不具备<code>ARI forwarding</code>功能的，没有此功能的主板在一张网卡上无法分出超过7个以上的VF的，当然多张卡可以叠加上去。这里指的是真正的服务器主板，不包括C246那些魔改家用主板的芯片组。你在支持的主板中开启此功能，并且在系统中通过<code>lspci -vvv | grep ARIFwd</code>查看是否已经开启。</p>
 </blockquote>
 </br>
 </br>
@@ -855,7 +852,7 @@ proxmox-boot-tool kernel pin 5.xxx-pve #pin住内核</code></pre>
 </br>
 
 
-<h3 id="3-1-2-VF直通LXC"><a href="#3-1-2-VF直通LXC" class="headerlink" title="3.1.2 VF直通LXC"></a>3.1.2 VF直通LXC</h3><p>我别的虚拟机全是LXC，很方便通PF或者VF。通过修改/etc/pve/lxc/xxx.conf文件，加入你想要通过去的VF即可了：</p>
+<h3 id="3-1-2-VF直通LXC"><a href="#3-1-2-VF直通LXC" class="headerlink" title="3.1.2 VF直通LXC"></a>3.1.2 VF直通LXC</h3><p>LXC很方便通PF或者VF。通过修改/etc/pve/lxc/xxx.conf文件，加入你想要通过去的VF即可了：</p>
 <pre><code class="bash">lxc.net.1.type: phys
 lxc.net.1.flags: up
 lxc.net.1.link: enp3s0v0
@@ -911,6 +908,7 @@ DISTRO := Debian</code></pre>
 </br>
 
 <h3 id="3-2-1-Chelsio-T580在MacOS下的驱动"><a href="#3-2-1-Chelsio-T580在MacOS下的驱动" class="headerlink" title="3.2.1 Chelsio T580在MacOS下的驱动"></a>3.2.1 Chelsio T580在MacOS下的驱动</h3><p>这张卡直接在官网下载驱动安装就行，最高只支持到Big Sur (有新的支持了，有空写。。。看有没人催，没的话懒得写了=。=），如遇签名过期，断网修改本地时间。<br>如果你希望干净一点安装，在MacOS下通过命令<code>pkgutil --expand-full [pkg] [dir]</code>获得PKG内的KEXT。其中cxgb.kext是Chelsio T580的驱动，cxgb3.kext是T3xx系列的驱动。</p>
+<p>待补充支持Ventura！！！！！！！！</p>
 <ul>
 <li>下载<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/OCNHTeam/OCNHTeam.github.io/main/tools/cxgb.kext.zip">cxgb.kext</a></li>
 </ul>
@@ -1050,7 +1048,7 @@ iface ibs1d1 inet static
       pre-up echo rdma 20049 &gt; /proc/fs/nfsd/portlist
       mtu 2044</code></pre>
 </li>
-<li>在另一端pve的/etc/modules中增加一个<code>xprtrdma</code>，保存重启。</li>
+<li>在pve的/etc/modules中增加一个<code>xprtrdma</code>，保存重启。</li>
 <li>在pve中直接输入mount指令挂载nfs，这个nfs是带RDMA的，比如:<pre><code class="bash">mount -t nfs 10.99.0.2:/mnt/SSD/works /mnt/test -o vers=4.2,_netdev,rdma,port=20049,hard,intr,noatime,nodiratime,async,nolock,noacl,sec=sys,noresvport</code></pre>
 </li>
 <li>如果是在pve的webui中使用，则修改/etc/pve/storage.cfg，在nfs的池的option中增加rdma，例如：<pre><code class="bash">nfs: ib-nfs
