@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-06-22T14:31:42.627Z">
+<meta property="article:modified_time" content="2023-06-22T19:45:59.554Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-6-22 22:31:42">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-6-23 3:45:59">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							15.5k 字
+							15.6k 字
 						</div>
 					
 						
@@ -1259,7 +1259,7 @@ Run status group 0 (all jobs):
 </br>
 </br>
 
-<h2 id="ZFS-over-ISER"><a href="#ZFS-over-ISER" class="headerlink" title="ZFS over ISER"></a>ZFS over ISER</h2><p>虚拟机直接通了PVE上的iscsi，那个iscsi的zvol是SSD的池。方法大概是修改/etc/pve/qemu-server/1xx.conf:</p>
+<h2 id="ZFS-over-ISER"><a href="#ZFS-over-ISER" class="headerlink" title="ZFS over ISER"></a>ZFS over ISER</h2><p>虚拟机直接通了PVE上的iscsi，那个iscsi的zvol是SSD的池。方法大概是修改/etc/pve/qemu-server/xxx.conf:</p>
 <pre><code class="bash">scsi0: /dev/disk/by-id/scsi-3600140512333f9ef3744ed7bc7c2527f,size=100G,ssd=1</code></pre>
 </br>
 
@@ -1452,8 +1452,9 @@ Conflicting CPU frequency values detected: 3000.000000 != 3242.780000. CPU Frequ
 
 <h1 id="11-补充"><a href="#11-补充" class="headerlink" title="11 补充"></a>11 补充</h1><ul>
 <li>非常喜欢用网卡ipxe+Ventoy这套东西跑系统，最近发现Mikrotik ROS系统在DHCP Server选项中增加了一个<code>Option Matcher</code>的功能。配合Option 93可以根据主板的架构分配不同的引导文件e.g.ArmUEFI,LegacyBIOS,x86UEFI.</li>
-<li>关于MacOS使用RDMA，答案是可以，但只能用ATTO的雷电网卡，因为DK驱动现在是残疾的，但kext可以做到，无法分享，有太多签名，适配不同系统的问题了。</li>
+<li>关于MacOS使用RDMA，答案是可以，但只能用ATTO的雷电网卡，因为目前苹果给的那些4代以上网卡的driverkit驱动现在是残疾的。但ATTO的kext驱动可以做到，并且效果还算不错，无法分享，有太多签名，适配不同系统的问题了，有条件自己port一下吧。</li>
 <li>关于4代-5代卡，最近老黄发了这两代卡的一些EOL Notice，闲鱼价格断崖式下降，还是老黄刀法准啊，我捡了一张456A试了一下很多设置以及实现方式都完全不同，有空补充。</li>
+<li>关于Ksmbd的smb多线程以及RDMA，因为我自己从来不使用windows，虽然问的人多，但我真的懒得搞，这玩意现在要在编译内核的时候设置那些<code>SMB-Direct</code>之类的功能。我觉得好像不用Windows不就解决了所有问题了吗？</li>
 </ul>
 
 	</div>
