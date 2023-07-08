@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-07-08T14:59:08.098Z">
+<meta property="article:modified_time" content="2023-07-08T15:05:44.355Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-7-8 22:59:08">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-7-8 23:05:44">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -908,10 +908,11 @@ DISTRO := Debian</code></pre>
 </br>
 
 <h3 id="3-2-1-Chelsio-T580在MacOS下的驱动"><a href="#3-2-1-Chelsio-T580在MacOS下的驱动" class="headerlink" title="3.2.1 Chelsio T580在MacOS下的驱动"></a>3.2.1 Chelsio T580在MacOS下的驱动</h3><p>这张卡直接在官网下载驱动安装就行，最高只支持到Big Sur (有新的支持了，有空写。。。看有没人催，没的话懒得写了=。=），如遇签名过期，断网修改本地时间。<br>如果你希望干净一点安装，在MacOS下通过命令<code>pkgutil --expand-full [pkg] [dir]</code>获得PKG内的KEXT。其中cxgb.kext是Chelsio T580的驱动，cxgb3.kext是T3xx系列的驱动。</p>
+<p>这个官方驱动只支持到big sur。</p>
 <ul>
 <li>下载<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/OCNHTeam/OCNHTeam.github.io/main/tools/cxgb.kext.zip">cxgb.kext</a></li>
 </ul>
-<p>这个官方驱动只支持到big sur，如果你升级到big sur以上请关闭SIP，或者用opencore引导。</p>
+<p>这个patched驱动支持到Ventura，在MacOS下你应该要关闭SIP来加载这张过期的签名，或者如果是Hackintosh的话，使用Opencore加载这个驱动</p>
 <ul>
 <li>下载<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/OCNHTeam/OCNHTeam.github.io/main/tools/cxgb.kext-patched.zip">cxgb-patched.kext</a></li>
 </ul>
