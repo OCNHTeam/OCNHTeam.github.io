@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-07-14T14:54:18.422Z">
+<meta property="article:modified_time" content="2023-07-14T14:55:36.515Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-7-14 22:54:18">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-7-14 22:55:36">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -1061,7 +1061,7 @@ iface ibs1d1 inet static
 </li>
 </ul>
 <p>这里要说明的是这个modprobe三个内核模块应该放到/etc/modules下面里面去，我不清楚Scale可不可以修改这个东西。<br>第二和第三条echo命令应该放到WEBUI的init script开机脚本里加载。<br>我这么写主要是我太懒了。</p>
-<ul>
+<h3 id="9-1-2-Proxmox-VE客户端"><a href="#9-1-2-Proxmox-VE客户端" class="headerlink" title="9.1.2 Proxmox VE客户端"></a>9.1.2 Proxmox VE客户端</h3><ul>
 <li>在pve的/etc/modules中增加一个<code>xprtrdma</code>，保存重启。</li>
 <li>在pve中直接输入mount指令挂载nfs，这个nfs是带RDMA的，比如:<pre><code class="bash">mount -t nfs 10.99.0.2:/mnt/SSD/works /mnt/test -o vers=4.2,_netdev,rdma,port=20049,hard,intr,noatime,nodiratime,async,nolock,noacl,sec=sys,noresvport</code></pre>
 </li>
