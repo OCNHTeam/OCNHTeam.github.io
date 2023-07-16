@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-07-16T04:00:39.647Z">
+<meta property="article:modified_time" content="2023-07-16T04:11:29.490Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-7-16 12:00:39">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-7-16 12:11:29">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							15.6k 字
+							15.7k 字
 						</div>
 					
 						
@@ -1011,8 +1011,13 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 mstconfig -d 03:00.00 set LINK_TYPE_P1=IB LINK_TYPE_P2=ETH #设置p1端口为IB模式</code></pre>
 <p>这里假设p1口是IB模式，p2口是ETH模式。</p>
 <h2 id="8-1-SX6036设置"><a href="#8-1-SX6036设置" class="headerlink" title="8.1 SX6036设置"></a>8.1 SX6036设置</h2><ul>
-<li>在SX6036的WebUI下切换profile到vpi模式，然后在端口管理处修改端口类型。我这里把1-21口设置成了ETH模式，22-36口为IB模式。</li>
-<li>在IB SM Mgmt菜单中找到base SM，选择SM Enabled来开启SM。注意，这些设置完后都要按右上角的SAVE按钮，不然重启就失效了。</li>
+<li><p>在SX6036的WebUI下切换profile到vpi模式，然后在端口管理处修改端口类型。我这里把1-21口设置成了ETH模式，22-36口为IB模式。</p>
+</li>
+<li><p>在IB SM Mgmt菜单中找到base SM，选择SM Enabled来开启SM。注意，这些设置完后都要按右上角的SAVE按钮，不然重启就失效了。</p>
+<blockquote>
+<p>这个SM Mgmt就是<code>Subnet manager</code>，是用来管理IB网络的，因为网卡的固件版本的更新，用新版本的SM可能会更好一点，但是SX6036是不会再去更新SM了。我们可以通过两个地方下载到新的SM(OpenSM)：下载官网的OFED包，只安装里面的OPENSM的deb包，这个是最新的，或者从apt等软件管理包里通过<code>apt install opensm</code>安装，这个版本在写这篇文章的时候还是2021年更新的，但也比6036上的新一点。OpenSM只需要在6036内的网络下任何机器安装一个跑就行了。实际体验下来，6036自带的SM和最新的OpenSM在我家用环境中没有啥区别。如果你使用4代及以上的卡的情况下，那么6036的SM就没用了，必须装新的了，4代以上的卡设置有很大区别，请不要拿4代以上的卡根据这个教程来设置。</p>
+</blockquote>
+</li>
 </ul>
 <h2 id="8-2-Proxmox-VE-设置"><a href="#8-2-Proxmox-VE-设置" class="headerlink" title="8.2 Proxmox VE 设置"></a>8.2 Proxmox VE 设置</h2><p> 输入<code>modprobe ib_ipoib</code>加载ipoib的驱动，然后通过<code>ip a</code>看到加载的ib口了，一般就是叫<code>ibp2s0</code>或者<code>ibp2S0d1</code>。<br> 修改/etc/network/interfaces，按实际情况填写网卡名字，注意，这里面的网端不能跟你eth网段相同的。</p>
 <pre><code class="bash">auto ibp2s0
