@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-07-15T17:31:53.980Z">
+<meta property="article:modified_time" content="2023-07-16T03:55:13.873Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-7-16 1:31:53">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-7-16 11:55:13">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							15.6k 字
+							15.7k 字
 						</div>
 					
 						
@@ -1005,38 +1005,37 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 <p>使用<a target="_blank" rel="noopener" href="https://github.com/Corsinvest/cv4pve-autosnap">这个</a>工具可以对VM Guest自动化操作snapshot。这里的快照是使用<code>ZFS Snapshot</code>的，可以完全利用到ZFS的功能了。链接中有好多个视频操作演示教程，这里就不赘述了。</p>
 <h1 id="8-IP-over-Infiniband"><a href="#8-IP-over-Infiniband" class="headerlink" title="8 IP over Infiniband"></a>8 IP over Infiniband</h1><p>InfiniBand是一种高速网络通信技术，用于在计算机系统和数据中心中连接高性能计算、存储和网络设备。InfiniBand提供了一种高效的低延迟和高带宽的解决方案，通过使用专用硬件和协议来提高数据传输的速度和可靠性。与传统的以太网技术相比，InfiniBand提供了更高的带宽和更低的延迟。</p>
 <p>然而，不是所有的软件都支持Infiniband，因此赋予infiniband一个IP则可以让它兼容大部分的软件协议，这种方法就是IP over Infiniband(IPoIB)。<br>Proxmox VE和TrueNAS都支持IPoIB。这里最好买原装的Mellanox 56GB FDR QSFP+铜缆，别的牌子可能兼容性没有这么好，闲鱼大概2米的在100元左右（线比网卡贵系列）。</p>
-<p>首先最好找一台机器把两张HP 544+的卡的其中一个口刷成IB mode，TrueNAS系统下是无法操作的。</p>
+<p>首先最好找一台机器把两张HP 544+的卡的其中一个口刷成IB mode，TrueNAS系统下可能要提权apt和修改源才能完成。</p>
 <pre><code class="bash">lspci |grep Mellanox
 03:00.0 Ethernet controller: Mellanox Technologies MT27520 Family [ConnectX-3 Pro]
 mstconfig -d 03:00.00 set LINK_TYPE_P1=IB LINK_TYPE_P2=ETH #设置p1端口为IB模式</code></pre>
 <p>这里假设p1口是IB模式，p2口是ETH模式。</p>
-<ul>
-<li><p>SX6036<br>在SX6036的WebUI下切换profile到vpi模式，然后在端口管理处修改端口类型。我这里把1-21口设置成了ETH模式，22-36口为IB模式。<br>在IB SM Mgmt菜单中找到base SM，选择SM Enabled来开启SM。注意，这些设置完后都要按右上角的SAVE按钮，不然重启就失效了。</p>
-</li>
-<li><p>PVE端<br>输入<code>modprobe ib_ipoib</code>加载ipoib的驱动，然后通过<code>ip a</code>看到加载的ib口了，一般就是叫<code>ibp2s0</code>或者<code>ibp2S0d1</code>。<br>修改/etc/network/interfaces</p>
+<h2 id="8-1-SX6036设置"><a href="#8-1-SX6036设置" class="headerlink" title="8.1 SX6036设置"></a>8.1 SX6036设置</h2><ul>
+<li>在SX6036的WebUI下切换profile到vpi模式，然后在端口管理处修改端口类型。我这里把1-21口设置成了ETH模式，22-36口为IB模式。</li>
+<li>在IB SM Mgmt菜单中找到base SM，选择SM Enabled来开启SM。注意，这些设置完后都要按右上角的SAVE按钮，不然重启就失效了。</li>
+</ul>
+<h2 id="8-2-Proxmox-VE-设置"><a href="#8-2-Proxmox-VE-设置" class="headerlink" title="8.2 Proxmox VE 设置"></a>8.2 Proxmox VE 设置</h2><p> 输入<code>modprobe ib_ipoib</code>加载ipoib的驱动，然后通过<code>ip a</code>看到加载的ib口了，一般就是叫<code>ibp2s0</code>或者<code>ibp2S0d1</code>。<br> 修改/etc/network/interfaces，按实际情况填写网卡名字，注意，这里面的网端不能跟你eth网段相同的。</p>
 <pre><code class="bash">auto ibp2s0
 iface ibp2s0 inet static
-     address  10.99.0.1
-     netmask  255.255.255.0
-     pre-up echo connected &gt; /sys/class/net/ibp2s0/mode
-     mtu 2044</code></pre>
-<p>然后修改/etc/modules 开机加载<code>ib_ipoib</code>和<code>ib_umad</code>模块</p>
+        address  10.99.0.1
+        netmask  255.255.255.0
+        pre-up echo connected &gt; /sys/class/net/ibp2s0/mode
+        mtu 2044</code></pre>
+<p>然后修改/etc/modules 开机加载<code>ib_ipoib</code>和<code>ib_umad</code>模块，这样开机就会自动加载IPoIB所需要的模块了。</p>
 <pre><code class="bash"># /etc/modules: kernel modules to load at boot time.
 #
 # This file contains the names of kernel modules that should be loaded
 # at boot time, one per line. Lines beginning with &quot;#&quot; are ignored.
 ib_ipoib
 ib_umad</code></pre>
-<p>自己修改网卡名字，注意，这里面的网端不能跟你eth网段相同的。最后输入<code>systemctl restart networking.service</code>生效，我们可以看到SX6036交换机的管理界面中已经有IB流量出现了。</p>
-</li>
-</ul>
-<ul>
-<li>TrueNAS端<br>在Core的BSD分支中，直接在Tunables中增加一条:<pre><code class="xml">mlx4ib_load 
+<p>最后输入<code>systemctl restart networking.service</code>生效，我们可以看到SX6036交换机的管理界面中已经有IB流量出现了。</p>
+<h2 id="8-3-TrueNAS-设置"><a href="#8-3-TrueNAS-设置" class="headerlink" title="8.3 TrueNAS 设置"></a>8.3 TrueNAS 设置</h2><p>在Core的BSD分支中，直接在Tunables中增加一条:</p>
+<pre><code class="xml">mlx4ib_load 
 Value: YES
 type: loaders</code></pre>
-并在Tasks/Init/Shutdown Scripts中增加一条postinit 命令：<pre><code class="bash">kldload ipoib</code></pre>
-最后如同设置普通网卡的ip地址一样，在webui中设置与PVE同一段的ip，比如10.99.0.2/24。</li>
-</ul>
+<p> 并在Tasks/Init/Shutdown Scripts中增加一条postinit 命令：</p>
+<pre><code class="bash">kldload ipoib</code></pre>
+<p>最后如同设置普通网卡的ip地址一样，在webui中设置与PVE同一段的ip，比如10.99.0.2/24。</p>
 <p>如果是Scale版本的话，插上网卡在WebUI上啥都别设置，输入<code>modprobe ib_ipoib &amp;&amp; modprobe ib_umad</code>后，你通过<code>ls /sys/class/net</code>就能知道你IB口的名字了，接着直接修改/etc/network/interfaces</p>
 <pre><code class="bash">auto ibs1d1
 iface ibs1d1 inet static
@@ -1051,7 +1050,7 @@ ib_umad</code></pre>
 </br>
 </br>
 
-<h1 id="9-Remote-Direct-Memory-Access-RDMA"><a href="#9-Remote-Direct-Memory-Access-RDMA" class="headerlink" title="9 Remote Direct Memory Access (RDMA)"></a>9 Remote Direct Memory Access (RDMA)</h1><p>上一个章节中我们在设置好IPoIB后，我们发现虽然获得了更低的延迟，比如ping你能看到非常低的延迟，但是实际的传输速度又很慢，这主要是因为tcp/ip的overhead，协议等问题，这就非常考验你的CPU了。因此我们使用RDMA技术来解决这个问题。<br>Remote Direct Memory Access（远程直接内存访问，简称RDMA），是一种用于在网络中直接访问异地计算机内存的技术。传统的数据传输方式需要在发送端和接收端CPU中进行多次数据拷贝，增加了CPU的使用和数据传输的延迟。而RDMA技术可以通过网络适配器，让一个计算机的内存直接传输到另一个计算机的内存中，不需要CPU的干预，避免了数据拷贝和CPU资源的浪费，从而显著提高了数据传输的速度和效率。<br>RDMA有很多种，一般我们用InfiniBand是自带RDMA的，但是需要开启。同样在以太网络模式下(ETH)也有相应的RDMA比如iWrap, RoCE。这里我们只介绍IB的RDMA。<br>RDMA只有在scale中比较容易设置。</p>
+<h1 id="9-Remote-Direct-Memory-Access-RDMA"><a href="#9-Remote-Direct-Memory-Access-RDMA" class="headerlink" title="9 Remote Direct Memory Access (RDMA)"></a>9 Remote Direct Memory Access (RDMA)</h1><p>上一个章节中我们在设置好IPoIB后，我们发现虽然获得了更低的延迟，比如ping你能看到非常低的延迟，但是实际的传输速度又很慢，这主要是因为tcp/ip的overhead，协议等问题，这就非常考验你的CPU了。使用RDMA技术来解决这个问题。<br>Remote Direct Memory Access（远程直接内存访问，简称RDMA），是一种用于在网络中直接访问异地计算机内存的技术。传统的数据传输方式需要在发送端和接收端CPU中进行多次数据拷贝，增加了CPU的使用和数据传输的延迟。而RDMA技术可以通过网卡，让一个计算机的内存直接传输到另一个计算机的内存中，不需要CPU的干预，避免了数据拷贝和CPU资源的浪费，从而显著提高了数据传输的速度和效率。<br>RDMA有很多种，一般我们用InfiniBand是自带RDMA的，但是需要开启。同样在以太网络模式下(ETH)也有相应的RDMA比如iWrap, RoCE。这里我们只介绍IB的RDMA。<br>RDMA只有在scale中比较容易设置。</p>
 <h2 id="9-1-NFS-over-RDMA"><a href="#9-1-NFS-over-RDMA" class="headerlink" title="9.1 NFS over RDMA"></a>9.1 NFS over RDMA</h2><p>这里分为TrueNas Scale服务端和PVE作为客户端两部分设置。因为Scale在最近的版本中换回了NFS-Kernel-Server，因此非常简单；而Core版本用的是NFS-Ganesha，我不太懂怎么弄这个玩意。 </p>
 <h3 id="9-1-1-TrueNAS-Scale-服务端"><a href="#9-1-1-TrueNAS-Scale-服务端" class="headerlink" title="9.1.1 TrueNAS Scale 服务端"></a>9.1.1 TrueNAS Scale 服务端</h3><ul>
 <li>接着之前的ipoib设置，对networks再进行修改一下<pre><code class="bash">auto ibs1d1
@@ -1082,11 +1081,11 @@ svcrdma</code></pre>
 <li>在pve下输入<code>nfsstat -m</code> 你可以看到proto已经是RDMA了。</li>
 <li>试试NFS Over RDMA的速度吧。</li>
 </ul>
-<h2 id="9-2-ZFS-over-ISER"><a href="#9-2-ZFS-over-ISER" class="headerlink" title="9.2 ZFS over ISER"></a>9.2 ZFS over ISER</h2><p>其实我几乎没有使用过scst这种iscsi，再者我也懒得在一个debian based truenas上折腾来折腾去，这部分我就想写个大方向。其实本质上就是scale的scst是自己魔改的，那么我们把原版的scst编译好替换掉应该就行了，但这么做的话，估计WEBUI那边的iscsi设置会有很多问题的，你要熟悉scst的cli。如果你熟悉linux的话，还是推荐用LIO更为方便简单。<br>最主要的是！我没有在用scale，写这个我还得抽空装一个，再者我平时工作挺忙的，在写这个博客没想到还是有很多人看的，就坚持写写吧，但我希望大家通过这里获得一些启发，主动学一些基本的zfs cli，那么在各种linux正式发行版中使用RDMA才游刃有余，不被客制化系统所束缚。</p>
+<h2 id="9-2-ZFS-over-ISER"><a href="#9-2-ZFS-over-ISER" class="headerlink" title="9.2 ZFS over ISER"></a>9.2 ZFS over ISER</h2><p>其实我几乎没有使用过scst这种iscsi，再者我也懒得在一个debian based truenas上折腾来折腾去，这部分我就想写个大方向。本质上就是scale的scst是自己魔改的，那么我们把原版的scst编译好替换掉应该就行了，但这么做的话，估计WEBUI那边的iscsi设置会有很多问题的，你要熟悉scst的cli。如果你熟悉linux的话，还是推荐用LIO更为方便简单。<br>最主要的是！我没有在用scale，写这个我还得抽空装一个，再者我平时工作挺忙的，在写这个博客没想到还是有很多人看的，就坚持写写吧，但我希望大家通过这里获得一些启发，主动学一些基本的zfs cli，那么在各种linux正式发行版中使用RDMA才游刃有余，不被客制化系统所束缚。</p>
 <ul>
 <li><p><a target="_blank" rel="noopener" href="https://github.com/SCST-project/scst">在这里</a>下载最新的scst进行编译，记得改一下truenas的启动项的位置应该是在/etc/systemd/system/scst.service.d，这个包我看还是在用rc-service。</p>
 </li>
-<li><p>因为我不爱用scst，重新编译原版的scst后，你根据<a target="_blank" rel="noopener" href="https://enterprise-support.nvidia.com/s/article/howto-configure-scst-block-storage-target-enabled-with-iser">这里</a> 修改对应的conf文件就可以了。</p>
+<li><p>重新编译原版的scst后，你根据<a target="_blank" rel="noopener" href="https://enterprise-support.nvidia.com/s/article/howto-configure-scst-block-storage-target-enabled-with-iser">这里</a>修改对应的conf文件就可以了。</p>
 </li>
 <li><p>iser要注意zvol的写放大问题，这个问题是无法彻底解决的，你能做到的是减缓CoW对Zvol之间的冲突，比如，增加dirty_data，增加async时间，保证zvol以及iscsi的block size都是4k以上对齐，并且在使用zvol前格式化也要注意对齐，最好在SSD上使用。</p>
 </li>
