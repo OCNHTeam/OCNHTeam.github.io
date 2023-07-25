@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2023-07-16T04:33:40.639Z">
+<meta property="article:modified_time" content="2023-07-25T15:17:03.007Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-7-16 12:33:40">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2023-7-25 23:17:03">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -811,7 +811,7 @@ mstconfig -d 03:00.00 set LINK_TYPE_P1=ETH  #设置p1端口为ETH模式</code></
 <p>创建一个shell，assign mac地址以及vf link up:</p>
 <pre><code class="bash">nano /opt/sr-iov.sh</code></pre>
 <p>内容如下</p>
-<pre><code class="bash">#!/bin/sh
+<pre><code class="bash">#!/bin/bash
 ip link set dev enp2s0 mtu 9000  #这个你看自己需求是否要设置mtu。如果pf是1500，那么vf设置9000会有问题。
 ip link set dev enp2s0 vf 0 mac ae:51:1a:2b:c0:00
 ip link set dev enp2s0 vf 1 mac ae:51:1a:2b:c0:01
@@ -843,7 +843,7 @@ WantedBy=multi-user.target</code></pre>
 </br>
 </br>
 
-<h3 id="3-1-1-VF直通Windows-Guest"><a href="#3-1-1-VF直通Windows-Guest" class="headerlink" title="3.1.1 VF直通Windows Guest"></a>3.1.1 VF直通Windows Guest</h3><p>如果要用Windows的VM，则尽可能使用Windows的LTSC版本。在PVE内核大于Linux 5.3的情况下（我有点记不清了），使用3代网卡的VF直通到Windows你要对Proxmox的kernel进行patch，不然Windows Guest的设备管理器里，这个VF会报错code 43。具体参考<a target="_blank" rel="noopener" href="https://forums.servethehome.com/index.php?threads/help-with-connectx-3-sr-iov-with-linux-host-and-windows-guest-via-kvm.28956/page-1">这里</a>。 我把我自己patch好的放在了<a target="_blank" rel="noopener" href="https://github.com/xjn819/PVE-kernel-for-mlx3">这里</a>。我自己用了几个月没啥毛病才放出来了，别的奇奇怪怪的功能未经测试，我已经把kernel patch的文件放在里面了，你也可以根据自己需求定制内核。下载后通过<code>dpkg-i *.deb</code>安装，并且pin住这个内核。在使用这种自行修改的内核后，请非常注意apt upgrade升级的内容。</p>
+<h3 id="3-1-1-VF直通Windows-Guest"><a href="#3-1-1-VF直通Windows-Guest" class="headerlink" title="3.1.1 VF直通Windows Guest"></a>3.1.1 VF直通Windows Guest</h3><p>如果要用Windows的VM，则尽可能使用Windows的LTSC版本。在PVE内核大于Linux 5.3的情况下（我有点记不清了），使用3代网卡的VF直通到Windows你要对Proxmox的kernel进行patch，不然Windows Guest的设备管理器里，这个VF会报错code 43，参考<a target="_blank" rel="noopener" href="https://forums.servethehome.com/index.php?threads/help-with-connectx-3-sr-iov-with-linux-host-and-windows-guest-via-kvm.28956/page-1">这里</a>。 我把我自己patch好的放在了<a target="_blank" rel="noopener" href="https://github.com/xjn819/PVE-kernel-for-mlx3">这里</a>。我自己用了几个月没啥毛病才放出来了，别的奇奇怪怪的功能未经测试，我已经把kernel patch的文件放在里面了，你也可以根据自己需求定制内核。下载后通过<code>dpkg-i *.deb</code>安装，并且pin住这个内核。在使用这种自行修改的内核后，请非常注意apt upgrade升级的内容。</p>
 <pre><code class="bash">proxmox-boot-tool kernel list #查看pve下已经有的内核
 proxmox-boot-tool kernel pin 5.xxx-pve #pin住内核</code></pre>
 <blockquote>
@@ -907,7 +907,7 @@ DISTRO := Debian</code></pre>
 </br>
 </br>
 
-<h3 id="3-2-1-Chelsio-T580在MacOS下的驱动"><a href="#3-2-1-Chelsio-T580在MacOS下的驱动" class="headerlink" title="3.2.1 Chelsio T580在MacOS下的驱动"></a>3.2.1 Chelsio T580在MacOS下的驱动</h3><p>这张卡直接在官网下载驱动安装就行，最高只支持到Big Sur (有新的支持了，有空写。。。看有没人催，没的话懒得写了=。=），如遇签名过期，断网修改本地时间。<br>如果你希望干净一点安装，在MacOS下通过命令<code>pkgutil --expand-full [pkg] [dir]</code>获得PKG内的KEXT。其中cxgb.kext是Chelsio T580的驱动，cxgb3.kext是T3xx系列的驱动。</p>
+<h3 id="3-2-1-Chelsio-T580在MacOS下的驱动"><a href="#3-2-1-Chelsio-T580在MacOS下的驱动" class="headerlink" title="3.2.1 Chelsio T580在MacOS下的驱动"></a>3.2.1 Chelsio T580在MacOS下的驱动</h3><p>这张卡直接在官网下载驱动安装就行，如果你希望干净一点安装，在MacOS下通过命令<code>pkgutil --expand-full [pkg] [dir]</code>获得PKG内的KEXT。其中cxgb.kext是Chelsio T580的驱动，cxgb3.kext是T3xx系列的驱动。</p>
 <p>这个官方驱动只支持到big sur。</p>
 <ul>
 <li>下载<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/OCNHTeam/OCNHTeam.github.io/main/tools/cxgb.kext.zip">cxgb.kext</a></li>
