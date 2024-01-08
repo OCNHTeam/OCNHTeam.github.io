@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2024-01-03T06:31:22.799Z">
+<meta property="article:modified_time" content="2024-01-08T16:39:19.240Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2024-1-3 14:31:22">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2024-1-9 0:39:19">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -809,7 +809,7 @@ mstconfig -d 03:00.00 set LINK_TYPE_P1=ETH  #设置p1端口为ETH模式</code></
 </ul>
 <p>设置完后记得<code>update-initramfs -u</code>后重启。</p>
 <blockquote>
-<p>如果不生效，清楚你在更新的内核是哪个再用这个指令，如果你完全不知道，也尽可能谨慎使用<code>update-initramfs -u -k all</code>这个指令去更新所有内核。</p>
+<p>一般来说更新的是当前系统运行的内核，<code>update-initramfs -u -k &lt;kernel version&gt;</code>来更新指定的内核，或者<code>update-initramfs -u -k $(uname -r)</code>来更新当前使用的内核。<br>如果你完全不知道，也尽可能谨慎使用<code>update-initramfs -u -k all</code>这个指令去更新所有内核，这不是一个靠谱的操作。</p>
 </blockquote>
 <p>创建一个shell，assign mac地址以及vf link up:</p>
 <pre><code class="bash">nano /opt/sr-iov.sh</code></pre>
