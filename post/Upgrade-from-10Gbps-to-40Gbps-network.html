@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2024-01-08T16:39:19.240Z">
+<meta property="article:modified_time" content="2024-01-14T20:39:56.197Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2024-1-9 0:39:19">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2024-1-15 4:39:56">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -861,13 +861,14 @@ lxc.net.1.flags: up
 lxc.net.1.link: enp3s0v0
 lxc.net.1.hwaddr: ae:54:1c:2b:c0:00
 lxc.net.1.name: eth11
+
 lxc.net.0.type: phys
 lxc.net.0.flags: up
 lxc.net.0.link: enp3s0v1
 lxc.net.0.hwaddr: ae:54:1c:2b:c0:01
 lxc.net.0.name: eth2
 
-####下面这部分是我的NixOS LXC使用proxmox主板的核心显卡，跟主题无关，当个小彩蛋吧。
+####下面这部分是我的NixOS LXC使用proxmox主板的核心显卡。
 lxc.cgroup2.devices.allow: c 226:0 rwm
 lxc.cgroup2.devices.allow: c 226:128 rwm
 lxc.cgroup2.devices.allow: c 29:0 rwm
@@ -875,9 +876,6 @@ lxc.mount.entry: /dev/dri dev/dri none bind,optional,create=dir
 lxc.mount.entry: /dev/fb0 dev/fb0 none bind,optional,create=file
 lxc.autodev: 1
 lxc.hook.autodev: sh -c &quot;chmod -R 666 /dev/dri/card*; chmod -R 666 /dev/dri/render*&quot;</code></pre>
-<blockquote>
-<p>我通两个VF是因为有一个eth11我是给transmission下载PT用的，transmission的config.json中可以设置<code>bind-address-ipv4</code>，这样我在路由器上就可以更方便的管理transmission.,e.g.定时限速，是否走特殊的流量代理。</p>
-</blockquote>
 </br>
 </br>
 
