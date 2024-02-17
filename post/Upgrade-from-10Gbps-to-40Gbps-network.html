@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2024-01-14T20:39:56.197Z">
+<meta property="article:modified_time" content="2024-02-17T10:42:47.131Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2024-1-15 4:39:56">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2024-2-17 18:42:47">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -618,7 +618,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-words">
 							<i class="fa fa-file-word-o" aria-hidden="true"></i>
-							15.7k 字
+							15.8k 字
 						</div>
 					
 						
@@ -778,7 +778,8 @@ fae mlxi2c set_fan set_fan /PS1/FAN 1 65    #PS1代表第一个电源，此交�
 <p> 待传…..</p>
 <h1 id="3-网卡过坑"><a href="#3-网卡过坑" class="headerlink" title="3 网卡过坑"></a>3 网卡过坑</h1><p>说一下HP 544+和Chelsio T580这两张卡。</p>
 <h2 id="3-1-HP-Mellanox-544"><a href="#3-1-HP-Mellanox-544" class="headerlink" title="3.1 HP Mellanox 544+"></a>3.1 HP Mellanox 544+</h2><p>如果你不太想折腾，请购买原装原厂的Mellanox卡，最好是还在维护的Mellanox 4代以上。<br>我买了两张544+，说明一下情况，我的NAS和计算是彻底分开的两台机器，NAS是真的只做存储，而乱七八糟玩的是一台Proxmox VE，因此买两张分别给两台机器。<br>HP544+这张卡是Mellanox CX354a-FCCT的套娃卡，并不能刷入原装固件。HPE官网最新的固件在TrueNas使用的话，必须把此网卡的SR-IOV功能关闭，不然可能连开机都开不了。</p>
-<pre><code class="bash">mstconfig -d 03:00.00 set SRIOV_EN=0</code></pre>
+<pre><code class="bash">apt update &amp;&amp; apt install mstflint
+mstconfig -d 03:00.00 set SRIOV_EN=0</code></pre>
 <blockquote>
 <p>通过BIOS Legacy模式在开机引导此固件Rom的时候也可以直接进入Setup界面关闭SR-IOV，这样无需安装别的软件来设置</p>
 </blockquote>
@@ -935,7 +936,7 @@ DISTRO := Debian</code></pre>
 </br>
 
 
-<h2 id="4-2-Meta-Vdevs"><a href="#4-2-Meta-Vdevs" class="headerlink" title="4.2 Meta Vdevs"></a>4.2 Meta Vdevs</h2><p>Meta Vdevs是近几年新出的一个功能。这个Vdev并不是一个缓存，而是一个Storage，因此，你需要确保这个Vdev有较高的安全性，比如两个optane硬盘组成一个Mirror甚至更大的冗余，如果这组Vdev坏了，在同一个Pool下的机械池数据也同样丢失。请不要想着<code>试试看能不能用</code>，操作不可逆。</p>
+<h2 id="4-2-Meta-Vdevs"><a href="#4-2-Meta-Vdevs" class="headerlink" title="4.2 Meta Vdevs"></a>4.2 Meta Vdevs</h2><p>Meta Vdevs是近几年新出的一个功能。这个Vdev并不是一个缓存，而是一个Storage，因此，你需要确保这个Vdev有较高的安全性，比如两个optane硬盘组成一个Mirror甚至更大的冗余，如果这组Vdev坏了，在同一个Pool下的机械池数据也同样丢失。请不要想着<code>试试看能不能用</code>，操作尤其是在raidz的阵列上几乎不可逆。</p>
 </br>
 
 <p>Meta Vdevs解决了两个问题。</p>
@@ -962,8 +963,7 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 </br>
 </br>
 
-<h2 id="4-6-HDD-Storage-Pool"><a href="#4-6-HDD-Storage-Pool" class="headerlink" title="4.6 HDD Storage Pool"></a>4.6 HDD Storage Pool</h2><p>TrueNAS通过WebUI建立的pool非常平庸，如果你对自己的硬盘参数性能非常了解，请通过zfs命令建立。</p>
-<p>有空再写。</p>
+<h2 id="4-6-HDD-Storage-Pool"><a href="#4-6-HDD-Storage-Pool" class="headerlink" title="4.6 HDD Storage Pool"></a>4.6 HDD Storage Pool</h2><p>TrueNAS通过WebUI建立的pool非常平庸，但想了想也不知道写啥，默认的ashift=0，意味着是让系统自己判断，这里最好是自己在创建pool的时候设置好。别的一些功能应该根据不同dataset的应用去分别设置的，这个就没啥好说的了。</p>
 </br>
 </br>
 
@@ -978,7 +978,13 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 </br>
 </br>
 
-<h2 id="4-8-读写放大优化"><a href="#4-8-读写放大优化" class="headerlink" title="4.8 读写放大优化"></a>4.8 读写放大优化</h2><p>有空再写，很难搞的一个东西。</p>
+<h2 id="4-8-写放大优化"><a href="#4-8-写放大优化" class="headerlink" title="4.8 写放大优化"></a>4.8 写放大优化</h2><p>但凡是CoW的文件系统，都无法避免写放大的问题，在一段时间的使用后，尤其是有删除行为后，你的block会越写越碎，最后顺序写会变成随机写。这种情况在机械硬盘上尤其让人无法忍受，因为sata机械硬盘的queue非常小，虽然有很多种优化方法，比如：</p>
+<ul>
+<li>设置正确的<code>record size</code>，比如电影文件夹的话，目前openzfs 2.2以上已经支持了<code>large record size</code>选项。</li>
+<li>数据库类的dataset可以通过数据库软件本身的设置，设置数据库的<code>page size</code>来对应你dataset的<code>record size</code>。</li>
+<li>zvol也会遇到一样的问题，因此iscsi的服务端软件比如LIO，对block size设置对应的设置也有一定的帮助。</li>
+</ul>
+<p>但是，如开头所说，不只是ZFS，只要这个文件系统是CoW的，即便再怎么优化都无法彻底解决的，有一些极端的办法比如把<code>zfs_txg_timeout</code>设置的非常高，尽量让文件写到内存里，我觉得这都不是一种比较好的办法。如果真的有一个读写非常敏感的dataset，更建议用1-2个ssd，哪怕是raid0的也行，写在上面并且每小时zfs send回HDD池，毕竟nvme的queue depth，可以硬抗这种碎片化带来的顺序写变成随机写的问题。另外，定期的阵列scrub以及trim还是很有必要的。</p>
 </br>
 </br>
 
@@ -1025,7 +1031,7 @@ mstconfig -d 03:00.00 set LINK_TYPE_P1=IB LINK_TYPE_P2=ETH #设置p1端口为IB�
 iface ibp2s0 inet static
         address  10.99.0.1
         netmask  255.255.255.0
-        pre-up echo connected &gt; /sys/class/net/ibp2s0/mode
+        #pre-up echo connected &gt; /sys/class/net/ibp2s0/mode 三代卡可以用connected模式，如果家里还有别的4代以上的卡，建议不要写这条，默认就是datagram模式
         mtu 2044</code></pre>
 <p>然后修改/etc/modules 开机加载<code>ib_ipoib</code>和<code>ib_umad</code>模块，这样开机就会自动加载IPoIB所需要的模块了。</p>
 <pre><code class="bash"># /etc/modules: kernel modules to load at boot time.
@@ -1063,7 +1069,7 @@ ib_umad</code></pre>
 iface ibs1d1 inet static
       address  10.99.0.2
       netmask  255.255.255.0
-      pre-up echo connected &gt; /sys/class/net/ibs1d1/mode
+      #pre-up echo connected &gt; /sys/class/net/ibs1d1/mode 三代卡可以用connected模式，如果家里还有别的4代以上的卡，建议不要写这条，默认就是datagram模式
       pre-up echo rdma 20049 &gt; /proc/fs/nfsd/portlist
       mtu 2044</code></pre>
 修改/etc/modules文件，增加这三个模块确保开机启动。<pre><code class="bash">ib_ipoib
@@ -1088,12 +1094,8 @@ svcrdma</code></pre>
 </ul>
 <h2 id="9-2-ZFS-over-ISER"><a href="#9-2-ZFS-over-ISER" class="headerlink" title="9.2 ZFS over ISER"></a>9.2 ZFS over ISER</h2><p>其实我几乎没有使用过scst这种iscsi，再者我也懒得在一个debian based truenas上折腾来折腾去，这部分我就想写个大方向。本质上就是scale的scst是自己魔改的，那么我们把原版的scst编译好替换掉应该就行了，但这么做的话，估计WEBUI那边的iscsi设置会有很多问题的，你要熟悉scst的cli。如果你熟悉linux的话，还是推荐用LIO更为方便简单。<br>最主要的是！我没有在用scale，写这个我还得抽空装一个，再者我平时工作挺忙的，在写这个博客没想到还是有很多人看的，就坚持写写吧，但我希望大家通过这里获得一些启发，主动学一些基本的zfs cli，那么在各种linux正式发行版中使用RDMA才游刃有余，不被客制化系统所束缚。</p>
 <ul>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/SCST-project/scst">在这里</a>下载最新的scst进行编译，记得改一下truenas的启动项的位置应该是在/etc/systemd/system/scst.service.d，这个包我看还是在用rc-service。</p>
-</li>
-<li><p>重新编译原版的scst后，你根据<a target="_blank" rel="noopener" href="https://enterprise-support.nvidia.com/s/article/howto-configure-scst-block-storage-target-enabled-with-iser">这里</a>修改对应的conf文件就可以了。</p>
-</li>
-<li><p>iser要注意zvol的写放大问题，这个问题是无法彻底解决的，你能做到的是减缓CoW对Zvol之间的冲突，比如，增加dirty_data，增加async时间，保证zvol以及iscsi的block size都是4k以上对齐，并且在使用zvol前格式化也要注意对齐，最好在SSD上使用。</p>
-</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/SCST-project/scst">在这里</a>下载最新的scst进行编译，记得改一下truenas的启动项的位置应该是在/etc/systemd/system/scst.service.d，这个包我看还是在用rc-service。</li>
+<li>重新编译原版的scst后，你根据<a target="_blank" rel="noopener" href="https://enterprise-support.nvidia.com/s/article/howto-configure-scst-block-storage-target-enabled-with-iser">这里</a>修改对应的conf文件就可以了。</li>
 </ul>
 <p>没写完，有空再说。</p>
 <h1 id="10-性能测试"><a href="#10-性能测试" class="headerlink" title="10 性能测试"></a>10 性能测试</h1><p>配置如下：</p>
@@ -1105,7 +1107,7 @@ svcrdma</code></pre>
 <li>机械硬盘：16T Seagate EXOS x 10 + 12T Seagate EXOS x10；两组RaidZ2后stripe，已经用了54%的容量了，其实有几个是酷狼pro，我记不得是多大的在哪组里了，反正没啥区别。</li>
 <li>NVME1：480G Optane 905P x1 + 480G Samsung 983zet x1；组成mirror后放在了同一组机械池作为Meta Dev。</li>
 <li>NVME2: 单独一组SSD Kioxia CD6 3.84T stripe, 每小时通过<code>zfs send</code>传回HDD池</li>
-<li>网卡：HP 544+；最新固件，ETH模式，关闭了SR-IOV。</li>
+<li>网卡：HP 544+；最新固件，关闭了SR-IOV</li>
 <li>SAS卡：LSI 9300-8i</li>
 <li>背板：超微BPN-SAS3-846EL1</li>
 <li>系统：NixOS 22.05</li>
@@ -1117,7 +1119,7 @@ svcrdma</code></pre>
 <li>内存：Samsung DDR4 UDIMM ECC 2666 16G x8</li>
 <li>机械硬盘：无</li>
 <li>NVME：无</li>
-<li>网卡：HP 544+；老固件，ETH模式，开了SR-IOV</li>
+<li>网卡：HP 544+；老固件，开了SR-IOV</li>
 <li>内核：Linux 6.0.15 自己patch的</li>
 </ul>
 </li>
