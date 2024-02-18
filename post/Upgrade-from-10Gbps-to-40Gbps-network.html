@@ -17,7 +17,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2023/01/08/EpQUks3IynWcbrd.jpg">
 <meta property="article:published_time" content="2023-01-08T12:27:50.000Z">
-<meta property="article:modified_time" content="2024-02-17T10:42:47.131Z">
+<meta property="article:modified_time" content="2024-02-18T01:42:49.476Z">
 <meta property="article:author" content="Seon">
 <meta property="article:tag" content="NAS">
 <meta property="article:tag" content="Hardware">
@@ -601,7 +601,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-time">
 							<i class="fa fa-clock-o" aria-hidden="true"></i>
-							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2024-2-17 18:42:47">2023-1-8 20:27
+							<time title="发布于 2023-1-8 20:27:50 | 编辑于 2024-2-18 9:42:49">2023-1-8 20:27
 							</time>
 						</div>
 					
@@ -626,7 +626,7 @@
 						
 						<div class="post-meta-detail post-meta-detail-readingtime">
 							<i class="fa fa-hourglass-end" aria-hidden="true"></i>
-							66 分钟
+							67 分钟
 						</div>
 					
 		</div>
@@ -963,7 +963,7 @@ find . -type f -print0 | xargs -0 ls -l | awk &#39;&#123; n=int(log($5)/log(2));
 </br>
 </br>
 
-<h2 id="4-6-HDD-Storage-Pool"><a href="#4-6-HDD-Storage-Pool" class="headerlink" title="4.6 HDD Storage Pool"></a>4.6 HDD Storage Pool</h2><p>TrueNAS通过WebUI建立的pool非常平庸，但想了想也不知道写啥，默认的ashift=0，意味着是让系统自己判断，这里最好是自己在创建pool的时候设置好。别的一些功能应该根据不同dataset的应用去分别设置的，这个就没啥好说的了。</p>
+<h2 id="4-6-HDD-Storage-Pool"><a href="#4-6-HDD-Storage-Pool" class="headerlink" title="4.6 HDD Storage Pool"></a>4.6 HDD Storage Pool</h2><p>TrueNAS通过WebUI建立的pool非常平庸，但想了想也不知道写啥，默认的ashift=0，意味着是让系统自己判断，这里最好是自己在创建pool的时候设置好。别的一些功能应该根据不同dataset的应用去分别设置的，这个就没啥好说的了。<br>另外，现在机械硬盘自带的缓存越来越大了，尽管ZFS已经commit一个写入已经落盘，但在硬盘的层面上仍然会有物理的缓存落到机械硬盘磁碟的这一个过程。这个物理硬盘的缓存可以通过<code>hdparm -W /dev/sda</code>查看当前硬盘是否开启了，一般默认是开启的。值得探讨的是否应该关闭这个缓存:<code>hdparm -W  0 /dev/sda</code>。这个是否应该关闭值得探讨。</p>
 </br>
 </br>
 
